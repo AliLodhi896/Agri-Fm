@@ -40,7 +40,8 @@ const styles = StyleSheet.create({
     channelDescription:{
         fontSize:16,
         fontWeight:'700',
-        marginHorizontal:20
+        marginHorizontal:20,
+        color:'grey'
     }
 });
 export default ChannelCard
