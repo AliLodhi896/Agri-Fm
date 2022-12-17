@@ -8,31 +8,39 @@ import Colors from '../../constant/Colors';
 
 const ChannelCard = (props) => {
   return (
-                <TouchableOpacity style={styles.mainBox}>
+                <View style={[styles.mainBox,props.mainStyle]}>
+                    <TouchableOpacity style={[styles.subBox,props.style]}>
                     <Image
-                        source={require('../../assets/Images/hen1.png')}
-                        style={{width: '90%', height: '75%',borderRadius:10}}
+                        source={require('../../assets/Images/wheat.png')}
+                        style={{width: '100%', height: '70%',borderRadius:10}}
                     />
-                    <Text style={styles.channelName}>{props.title}</Text>
+                    <Text style={[styles.channelName,props.titleStyle]}>{props.title}</Text>
                     <Text style={styles.channelDescription}>{props.description}</Text>
                 </TouchableOpacity>
+                </View>
   )
 }
 const styles = StyleSheet.create({
     mainBox:{
-        height:200,
-        width:180,
-        marginTop:20
+        height:'auto',
+        width:190,
+        marginTop:20,
+    },
+    subBox:{
+        marginHorizontal:10,
+        height:250
     },
     channelName:{
         fontSize:14,
         fontWeight:'700',
         color:Colors.secondary,
-        marginTop:10
+        marginTop:10,
+        marginLeft:20
     },
     channelDescription:{
         fontSize:16,
         fontWeight:'700',
+        marginHorizontal:20
     }
 });
 export default ChannelCard

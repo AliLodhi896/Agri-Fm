@@ -1,17 +1,19 @@
 import React,{useContext,useState} from 'react'
 import {View,Text,ScrollView,StyleSheet,Image, TouchableOpacity,SafeAreaView} from 'react-native'
-import Colors from '../../constant/Colors';
 
 // import Constants
+import Colors from '../../constant/Colors';
 // import components
 // import packages
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const ChannelCard = (props) => {
+
+const FeaturedCard = (props) => {
   return (
     <View style={styles.featuredCards}>
     <View style={styles.imageBox}>
         <Image
-            source={require('../assets/Images/hen1.png')}
+            source={require('../../assets/Images/hen1.png')}
             style={{width: '100%', height: '100%',borderRadius:10}}
         />
     </View>
@@ -25,7 +27,7 @@ const ChannelCard = (props) => {
         <View style={styles.cardiconBox}>
             <View style={{flexDirection:'row',alignContent:'center',alignItems:'center'}}> 
                 <TouchableOpacity style={styles.playButton}>
-                    <Text >Play</Text>
+                    <Text style={{color:'white'}}>Play</Text>
                 </TouchableOpacity>
                 <Text style={styles.timeText}>45:00</Text>
             </View>
@@ -88,4 +90,4 @@ const styles = StyleSheet.create({
     
     
 });
-export default ChannelCard
+export default FeaturedCard

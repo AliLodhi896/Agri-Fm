@@ -2,7 +2,7 @@ import React from 'react'
 import { View, Text,StyleSheet,TouchableOpacity,Image,ScrollView} from 'react-native'
 import ChannelCard from '../components/Cards/ChannelCard';
 import Colors from '../constant/Colors'
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import FeaturedCard from '../components/Cards/FeaturedCard';
 
 
 const Home = () => {
@@ -31,6 +31,44 @@ const Home = () => {
             id:5,
             name:'Aqua',
             image:require('../assets/Images/nutrition.png')
+        },
+    ];
+    const channels = [
+        {
+            id:1,
+            name:'Less is more',
+            description:'CEVA'
+        },
+        {
+            id:2,
+            name:'Less is more',
+            description:'CEVA'
+        },
+        {
+            id:3,
+            name:'Less is more',
+            description:'CEVA'
+        },
+    ];
+    const podcasts = [
+        {
+            id:1,
+        },
+        {
+            id:2,
+        },
+        {
+            id:3,
+        },
+    ];
+    const featuredchannels = [
+        {
+            id:1,
+            name:'Hablando de nutrición animal - Es uncanal ',
+        },
+        {
+            id:2,
+            name:'Hablando de nutrición animal - Es uncanal ',
         },
     ];
   return (
@@ -73,7 +111,12 @@ const Home = () => {
                 <Text style={styles.subHeading}>See All</Text>
             </View>
             <ScrollView style={styles.categoryBox} horizontal>
-                <ChannelCard title="Less is more"  description="Ceva"/>
+                {channels.map((item)=>{
+                    return(
+                        <ChannelCard title={item.name}  description={item.description} />
+                    );
+                })
+                }
             </ScrollView>
         </View> 
         <View style={{height:1,backgroundColor:Colors.secondary,opacity:0.5}}></View>
@@ -82,39 +125,27 @@ const Home = () => {
                 <Text style={styles.mainHeading}>Featured Podcasts</Text>
                 <Text style={styles.subHeading}>See All</Text>
             </View>
-            <View style={styles.featuredCards}>
-                <View style={styles.imageBox}>
-                    <Image
-                        source={require('../assets/Images/hen1.png')}
-                        style={{width: '100%', height: '100%',borderRadius:10}}
-                    />
-                </View>
-                <View styles={styles.detailBox}>
-                    <View style={styles.channelnameBox}>
-                        <Text style={styles.channelname}>Channel Name</Text>
-                    </View>
-                    <View style={styles.descriptionBox}>
-                        <Text style={styles.description}>Testing: Dessxription of featured podcast</Text>
-                    </View>
-                    <View style={styles.cardiconBox}>
-                        <View style={{flexDirection:'row',alignContent:'center',alignItems:'center'}}> 
-                            <TouchableOpacity style={styles.playButton}>
-                                <Text >Play</Text>
-                            </TouchableOpacity>
-                            <Text style={styles.timeText}>45:00</Text>
-                        </View>
-                        <View>
-                        <Ionicons
-                            name="ios-cloud-download-outline"
-                            color="white"
-                            size={25}
-                        />
-                        </View>
-                    </View>
-                </View>
-            </View>
+            {podcasts.map(()=>{
+                return(
+                    <FeaturedCard />
+                );
+            })}
         </View> 
         <View style={{height:1,backgroundColor:Colors.secondary,opacity:0.5}}></View>
+        <View style={styles.cardBox}>
+            <View style={styles.headingBox}>
+                <Text style={styles.mainHeading}>Featured Channels</Text>
+                <Text style={styles.subHeading}>See All</Text>
+            </View>
+            <ScrollView style={styles.categoryBox} horizontal>
+                {featuredchannels.map((item)=>{
+                    return(
+                        <ChannelCard title={item.name} mainStyle={{width:220,}} titleStyle={{color:Colors.primary,marginBottom:10}}  style={{backgroundColor:'white',borderRadius:10}} />
+                    );
+                })
+                }
+            </ScrollView>
+        </View> 
     </ScrollView>
   )
 }
@@ -144,7 +175,7 @@ const styles = StyleSheet.create({
         alignSelf:'center'
     },
     categoryBox:{
-        flexDirection:'row'
+        flexDirection:'row',
     },
     categories:{
         height:70,
