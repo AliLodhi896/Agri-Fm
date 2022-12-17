@@ -1,5 +1,4 @@
 import React from 'react';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 import {Image, StyleSheet, View, Text} from 'react-native';
 ///***********Icon
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -9,21 +8,23 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
-
+import Home from '../screens/Home';
+import Explore from '../screens/Explore';
+import MyLibrary from '../screens/MyLibrary';
 
 //Import Navigation
 import {createStackNavigator} from '@react-navigation/stack';
-
+import {TouchableOpacity} from 'react-native-gesture-handler';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import { createDrawerNavigator } from '@react-navigation/drawer'
 // import colors from '../constants/colors';
 import colors from '../constant/Colors';
+import Colors from '../constant/Colors';
 
 const MainStack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
   
-  export const Patient = ({navigation}) => {
+  export const App = ({navigation}) => {
     const defaultStackNavOptions = {
       headerStyle: {
         backgroundColor: colors.primary,
@@ -50,8 +51,8 @@ const Tab = createBottomTabNavigator();
     return (
       <MainStack.Navigator screenOptions={defaultStackNavOptions}>
         <MainStack.Screen
-          name="DrawerPatientNavigation"
-          component={DrawerPatientNavigation}
+          name="Home"
+          component={Home}
           options={{headerShown: false}}
         />
         
@@ -60,44 +61,47 @@ const Tab = createBottomTabNavigator();
   };
 
 
-  export const PatientBottomTabNavigator = navigation => {
+  export const AppNavigation = navigation => {
     const defaultTabNavOptions = {
       tabBarStyle: {
-        backgroundColor: Colors.secondary,
-        height: 62,
-        paddingBottom: 12,
+        backgroundColor: Colors.primary,
+        height: 80,
       },
-      tabBarActiveTintColor: Colors.secondary,
+      tabBarActiveTintColor: "#fff",
+      tabBarInactiveTintColor: "#fff",
+      tabBarActiveBackgroundColor: "#93bf1e",
+      tabBarInactiveBackgroundColor: "#594079",
     };
     return (
       <Tab.Navigator
-        initialRouteName="Dashboard"
+        initialRouteName="Home"
         screenOptions={{...defaultTabNavOptions}}>
           <Tab.Screen
-          name="Medical"
-          component={Medical}
+          name="Home"
+          component={App}
           options={{
             headerShown: false,
-            tabBarShowLabel: false,
-            tabBarVisible: false,
+            tabBarShowLabel: true,
+            tabBarVisible: true,
             tabBarIcon: ({focused, color, size}) => (
               <View style={focused ? styles.focusedIcon : styles.notFocusedIcon}>
                 <FontAwesome5
                   name="clinic-medical"
                   color='white'
-                  size={22}
+                  size={30}
                 />
               </View>
             ),
           }}
         />
         <Tab.Screen
-          name="Dashboard"
-          component={Patient}
+          name="Explore"
+          component={Explore}
           options={{
             headerShown: false,
-            tabBarShowLabel: false,
-            tabBarVisible: false,
+            tabBarShowLabel: true,
+            tabBarVisible: true,
+            
             tabBarIcon: ({focused, color, size}) => (
               <View style={focused ? styles.focusedIcon : styles.notFocusedIcon}>
                 <MaterialCommunityIcons
@@ -110,12 +114,12 @@ const Tab = createBottomTabNavigator();
           }}
         />
       <Tab.Screen
-          name="Profile"
-          component={Profile}
+          name="My Library"
+          component={MyLibrary}
           options={{
             headerShown: false,
-            tabBarShowLabel: false,
-            tabBarVisible: false,
+            tabBarShowLabel: true,
+            tabBarVisible: true,
             tabBarIcon: ({focused, color, size}) => (
               <View style={focused ? styles.focusedIcon : styles.notFocusedIcon}>
                 <FontAwesome
@@ -133,16 +137,5 @@ const Tab = createBottomTabNavigator();
 
 
 const styles = StyleSheet.create({
-    focusedIcon: {
-      marginBottom: 30,
-      borderWidth: 8,
-      height: 60,
-      alignItems: 'center',
-      aspectRatio: 1 / 1,
-      borderRadius: 100,
-  
-      justifyContent: 'center',
-      backgroundColor: Colors.secondary,
-      borderColor: 'white'
-    },
+
   });
