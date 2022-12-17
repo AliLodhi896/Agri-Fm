@@ -14,27 +14,35 @@ const FeaturedCard = (props) => {
     <View style={styles.imageBox}>
         <Image
             source={require('../../assets/Images/hen1.png')}
-            style={{width: '100%', height: '100%',borderRadius:10}}
+            style={{width: '100%', height: '100%',borderRadius:10,
+            shadowColor: "#000000",
+            shadowOffset: {
+              width: 0,
+              height: 4,
+            },
+            shadowOpacity:  0.19,
+            shadowRadius: 5.62,
+            elevation: 6}}
         />
     </View>
     <View styles={styles.detailBox}>
         <View style={styles.channelnameBox}>
-            <Text style={styles.channelname}>Channel Name</Text>
+            <Text style={[styles.channelname,props.headingText]}>Channel Name</Text>
         </View>
         <View style={styles.descriptionBox}>
-            <Text style={styles.description}>Testing: Dessxription of featured podcast</Text>
+            <Text style={[styles.description,props.textstyle]}>Testing: Dessxription of featured podcast</Text>
         </View>
         <View style={styles.cardiconBox}>
             <View style={{flexDirection:'row',alignContent:'center',alignItems:'center'}}> 
                 <TouchableOpacity style={styles.playButton}>
                     <Text style={{color:'white'}}>Play</Text>
                 </TouchableOpacity>
-                <Text style={styles.timeText}>45:00</Text>
+                <Text style={[styles.timeText,props.timeText]}>45:00</Text>
             </View>
             <View>
             <Ionicons
                 name="ios-cloud-download-outline"
-                color="white"
+                color='white'
                 size={25}
             />
             </View>
@@ -50,7 +58,17 @@ const styles = StyleSheet.create({
        },
        imageBox:{
         height:100,
-        width:'30%'
+        width:'30%',
+        backgroundColor:'white',
+        shadowColor: "#000000",
+        shadowOffset: {
+            width: 0,
+            height: 4,
+        },
+        shadowOpacity:  0.19,
+        shadowRadius: 5.62,
+        elevation: 6,
+        borderRadius:10
        },
        detailBox:{
         marginHorizontal:20
