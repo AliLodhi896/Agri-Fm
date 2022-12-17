@@ -18,7 +18,6 @@ const Profile = () => {
                 isVisible={modalVisible}
                 onClose={() => setModalVisible(false)}
                 onPress={() => setModalVisible(false)}
-                onPressLogin={()=>navigation.navigate('Login')}
             />
             <Header icon={true} />
             <View style={{ alignSelf: 'center' }}>
@@ -41,6 +40,16 @@ const Profile = () => {
             </View>
             <WhiteButton onPress={()=>navigation.navigate('ChangeProduction')} title={'Chagne intrest'} />
             <WhiteButton onPress={()=>navigation.navigate('ChangeProduction')} title={'Chagne productiin'} />
+            <View style={{marginHorizontal:20,justifyContent:'center',marginVertical:30}}>
+            <View style={{ alignSelf: 'center' }}>
+                <Image style={styles.image} source={require('../assets/Images/mic.png')} />
+                <TouchableOpacity onPress={()=>navigation.navigate('EditProfile')} style={{ borderRadius: 100, alignItems: 'flex-end', marginTop: -20 }}>
+                    <AntDesign style={styles.edit} name="plus" color={'white'} size={18} />
+                </TouchableOpacity>
+                <Text style={{color:Colors.secondary,fontSize:12,marginTop:10,textAlign:'center'}}>Create Channel</Text>
+
+            </View>
+      </View>
         </ScrollView>
     )
 }

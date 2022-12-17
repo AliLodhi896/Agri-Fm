@@ -1,4 +1,4 @@
-import { StyleSheet, View, Image, Text, TextInput } from "react-native"
+import { StyleSheet, View, Image, Text, TextInput,TouchableOpacity,ScrollView } from "react-native"
 import SocialModal from "../components/Cards/Modals/SocialModal";
 import Header from "../components/Header/Header";
 import Colors from "../constant/Colors";
@@ -8,10 +8,11 @@ import AntDesign from 'react-native-vector-icons/AntDesign'
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import WhiteButton from "../components/Buttons/WhiteButton";
 import Input from "../components/Input/Input";
+import CommonButton from "../components/Buttons/CommonButton";
 
 const EditProfile = () => {
     return (
-        <View style={styles.mainBox}>
+        <ScrollView style={styles.mainBox}>
             <Header
                 style={{ backgroundColor: 'white', paddingHorizontal: 20 }}
                 textStyle={{ color: Colors.primary, fontWeight: 'Bold' }}
@@ -19,13 +20,23 @@ const EditProfile = () => {
                 icon={true}
                 title={'Edit Profile'}
             />
-            <Input placeholder ={'Actual Name'} />
-            <Input placeholder ={'Actual Surname'} />
-            <Input placeholder ={'Actual Company'} />
-            <Input placeholder ={'Actual Mobile Phone'} />
 
-            
-        </View>
+            <View style={{marginVertical:30}}>
+                <Input placeholder ={'Actual Name'} />
+                <Input placeholder ={'Actual Surname'} />
+                <Input placeholder ={'Actual Company'} />
+                <Input placeholder ={'Actual Mobile Phone'} />
+
+                <Input placeholder ={'New Job'} />
+                <Input placeholder ={'New Activity'} />
+                <Input placeholder ={'New Language'} />
+                <Input placeholder ={'New Country'} />
+                <View style={{marginVertical:30}}>
+                    <CommonButton  green={true} title={'Update'} />
+                    <Text style={{marginTop:20,textAlign:'center',fontSize:16,color:'white',fontWeight:'bold'}}>Cancel</Text>
+                </View>
+            </View>
+        </ScrollView>
     )
 }
 

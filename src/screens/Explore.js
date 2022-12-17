@@ -3,7 +3,8 @@ import { View, Text,StyleSheet,TouchableOpacity,Image,ScrollView} from 'react-na
 import Colors from '../constant/Colors'
 import SearchInput from '../components/Inputs/SearchInput';
 import InterestCard from '../components/Cards/InterestCard';
-
+import Header from '../components/Header/Header';
+import * as Animatable from 'react-native-animatable';
 
 const Explore = () => {
     const Interest = [
@@ -18,7 +19,8 @@ const Explore = () => {
         },
     ];
   return (
-    <ScrollView style={styles.mainBox}>
+    <ScrollView style={styles.mainBox}  >
+        <Header icon={true}  />
         <View style={styles.searchBar}>
             <SearchInput placeholder="Explore our podcast" />
         </View>
@@ -26,13 +28,13 @@ const Explore = () => {
             <View style={styles.headingBox}>
                 <Text style={styles.mainHeading}>Interests</Text>
             </View>
-            <View style={styles.interestlList}>
+            <Animatable.View style={styles.interestlList}animation="fadeInUpBig" >
                 {Interest.map(()=>{
                     return(
                         <InterestCard />
                     );
                 })}
-            </View>
+            </Animatable.View>
         </View>
     </ScrollView>
   )
@@ -44,11 +46,8 @@ const styles = StyleSheet.create({
         backgroundColor:Colors.primary,
         paddingHorizontal:10,
     },
-    searchBar:{
-        marginTop:50
-    },
     cardBox:{
-        marginTop:40,
+        marginTop:20,
         marginBottom:20,
         marginHorizontal:25
     },
@@ -62,7 +61,7 @@ const styles = StyleSheet.create({
         color:Colors.secondary
     },
     interestlList:{
-        marginTop:20,
+        marginTop:10,
         justifyContent:'space-between',
         flexDirection:'row',
         flexWrap:'wrap'

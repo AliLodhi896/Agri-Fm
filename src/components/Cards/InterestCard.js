@@ -10,7 +10,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const InterestCard = (props) => {
   return (
-    <TouchableOpacity style={styles.mainBox1}>
+    <TouchableOpacity style={[styles.mainBox1,props.mainStyle]}>
                     <Image
                         source={require('../../assets/Images/interest.jpg')}
                         style={{width: '100%', height: '100%',borderRadius:10,opacity:0.5}}

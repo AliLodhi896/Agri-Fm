@@ -28,6 +28,9 @@ import EditProfile from '../screens/EditProfile';
 import ChangeProduction from '../screens/ChangeProduction';
 import LanguageSelection from '../screens/Auth/LanguageSelection';
 import ChannelDetails from '../screens/ChannelDetails';
+import LoginEmail from '../screens/Auth/LoginEmail';
+import LoginPassword from '../screens/Auth/LoginPassword';
+
 
 
 const MainStack = createStackNavigator();
@@ -44,7 +47,6 @@ const Tab = createBottomTabNavigator();
   
       headerTitleStyle: {
         fontSize: 18,
-        marginBottom:-30
       },
       headerTintColor: 'white',
       headerLeft: () => (
@@ -96,6 +98,17 @@ const Tab = createBottomTabNavigator();
           component={ChangeProduction}
           options={{headerShown: false}}
         />
+        <MainStack.Screen
+          name="LoginEmail"
+          component={LoginEmail}
+          options={{headerShown: false}}
+        />
+         <MainStack.Screen
+          name="LoginPassword"
+          component={LoginPassword}
+          options={{headerShown: false}}
+        />
+
       </MainStack.Navigator>
     );
   };
@@ -103,14 +116,17 @@ const Tab = createBottomTabNavigator();
 
   export const AppNavigation = navigation => {
     const defaultTabNavOptions = {
-      tabBarStyle: {
-        backgroundColor: Colors.primary,
-        height: 80,
-      },
       tabBarActiveTintColor: "#fff",
       tabBarInactiveTintColor: "#fff",
       tabBarActiveBackgroundColor: "#93bf1e",
       tabBarInactiveBackgroundColor: "#594079",
+      tabBarLabelStyle: {
+        fontSize: 12,
+        paddingBottom: 15,
+        fontWeight: "bold",
+      },
+      tabBarStyle: { height: 75, borderTopWidth: 0 },
+      tabBarItemStyle: { height: 75, borderTopWidth: 0 },
     };
     return (
       <Tab.Navigator
@@ -124,12 +140,8 @@ const Tab = createBottomTabNavigator();
             tabBarShowLabel: true,
             tabBarVisible: true,
             tabBarIcon: ({focused, color, size}) => (
-              <View style={focused ? styles.focusedIcon : styles.notFocusedIcon}>
-                <AntDesign
-                  name="home"
-                  color='white'
-                  size={30}
-                />
+              <View style={{marginBottom:-10}}>
+                <Image  style={{width: 25, height:25}} source={require('../assets/Images/home.png')} />
               </View>
             ),
           }}
@@ -143,48 +155,36 @@ const Tab = createBottomTabNavigator();
             tabBarVisible: true,
             
             tabBarIcon: ({focused, color, size}) => (
-              <View style={focused ? styles.focusedIcon : styles.notFocusedIcon}>
-                <FontAwesome
-            color={Colors.secondary}
-            name="search"
-            size={22}
-          />
+              <View style={{marginBottom:-10}}>
+                <Image  style={{width: 25, height:25}} source={require('../assets/Images/explore.png')} />
               </View>
             ),
           }}
         />
       <Tab.Screen
-          name="My Library"
+          name="Library"
           component={MyLibrary}
           options={{
             headerShown: false,
             tabBarShowLabel: true,
             tabBarVisible: true,
             tabBarIcon: ({focused, color, size}) => (
-              <View style={focused ? styles.focusedIcon : styles.notFocusedIcon}>
-                <MaterialIcons
-                  name="favorite-outline"
-                  color='white'
-                  size={30}
-                />
+              <View style={{marginBottom:-10}}>
+                <Image  style={{width: 30, height:25}} source={require('../assets/Images/heart.png')} />
               </View>
             ),
           }}
         />
         <Tab.Screen
-          name="Profile"
+          name="MyAgriFm"
           component={Profile}
           options={{
             headerShown: false,
             tabBarShowLabel: true,
             tabBarVisible: true,
             tabBarIcon: ({focused, color, size}) => (
-              <View >
-                <FontAwesome
-                  name="user"
-                  color='white'
-                  size={30}
-                />
+              <View style={{marginBottom:-10}}>
+                <Image  style={{width: 25, height:25}} source={require('../assets/Images/profile.png')} />
               </View>
             ),
           }}

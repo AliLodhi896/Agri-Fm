@@ -16,7 +16,6 @@ import {useNavigation} from '@react-navigation/native';
 
 const ChannelDetails = () => {
   const navigation = useNavigation();
-
     const podcasts = [
         {
             id: 1,
@@ -38,26 +37,26 @@ const ChannelDetails = () => {
     return (
         <ScrollView style={styles.mainBox}>
             <Header icon={true} />
-            <View style={{ flexDirection: 'row', justifyContent: 'center', }}>
+            <View style={{ flexDirection: 'row', justifyContent:'flex-end',marginTop:-20 }}>
                 {channels.map((item)=>{
                         return(
-                            <ChannelCard   title={item.name}  description={item.description} />
+                            <ChannelCard style={{height:280}} titleStyle={{textAlign:'center',marginRight:15}}   title={item.name}  />
                         );
                 })
                 }
-                <View style={{ flexDirection: 'column',marginLeft:30,marginTop:30 }}>
+                <View style={{ flexDirection: 'column',marginTop:30}}>
                         <View style={{ marginTop: '5%', justifyContent: 'center', width: 80, justifyContent: 'center', alignItems: 'center' }}>
-                            <AntDesign name="sharealt" size={25} color={'white'} />
+                        <Image style={{ height: 22, width: 31 }} source={require('../assets/Images/whiteshare.png')} />
                             <Text style={{ fontSize: 12, color: 'white' }}>Share</Text>
                         </View>
                         <View style={{ marginTop: '20%',  width: 80, justifyContent: 'center', alignItems: 'center' }}>
-                            <Ionicons name="cloud-download-outline" size={25} color={'white'} />
-                            <Text style={{ fontSize: 12, color: 'white' }}>Download</Text>
+                        <Image style={{ height: 26, width: 28 }} source={require('../assets/Images/with.png')} />
+                            <Text style={{ fontSize: 12, color: 'white' }}>123</Text>
                         </View>
-                    </View>
+                </View>
             </View>
 
-            <View style={{ backgroundColor: Colors.button, padding: 10, marginHorizontal: '30%', flexDirection: 'row', borderRadius: 10, alignItems: 'center',justifyContent:'center' }}>
+            <View style={{ marginTop:-60,backgroundColor: Colors.button, padding: 10, marginHorizontal: '30%', flexDirection: 'row', borderRadius: 10, alignItems: 'center',justifyContent:'center' }}>
                 <Text style={{ fontSize: 15, color: 'white', marginLeft: 10, fontWeight: '900',textAlign:'center' }}>Follow</Text>
             </View>
             <View style={{ marginHorizontal: 10, marginTop: 20 }}>

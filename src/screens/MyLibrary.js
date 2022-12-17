@@ -63,9 +63,9 @@ const styles = StyleSheet.create({
       marginHorizontal:20
     },
     playButton:{
-      padding:10,
+      padding:5,
       borderRadius:50,
-      width:100,
+      width:110,
       borderWidth:1,
       borderColor:Colors.primary,
       alignContent:'center',
@@ -73,9 +73,9 @@ const styles = StyleSheet.create({
       
      },
      playButtonActive:{
-      padding:10,
+      padding:5,
       borderRadius:50,
-      width:100,
+      width:110,
       backgroundColor:Colors.primary,
       alignContent:'center',
       alignItems:'center',
