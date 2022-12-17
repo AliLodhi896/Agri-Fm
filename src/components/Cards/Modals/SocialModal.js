@@ -5,27 +5,27 @@ import Colors from '../../../constant/Colors';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import CommonButton from '../../Buttons/CommonButton';
 
-const SocialModal = ({ modalVisible, close, error }) => {
+const SocialModal = ({ isVisible,onClose, error }) => {
     return (
         <Modal
             animationType="slide"
             transparent={true}
-            visible={true}
-            onRequestClose={close}>
+            visible={isVisible}
+            onBackButtonPress={onClose}
+            onBackdropPress={onClose}
+            >
             <View style={styles.centeredView}>
                 <View style={styles.modalView}>
                     <View style={styles.second_view}>
                         <MaterialIcons name='close' color={Colors.primary} size={35} />
                     </View>
                     <View style={{ alignSelf: 'center', marginHorizontal: 30, justifyContent: 'center', alignItems: 'center', width: '100%' }}>
-
-                        <Pressable style={{ paddingBottom: 20, padding: 15 }} onPress={close}>
+                        <Pressable style={{ paddingBottom: 20, padding: 15 }} onPress={onClose}>
                             <Image source={require('../../../assets/Images/logo.png')} resizeMode='stretch' style={{ width: 70, height: 70 }} />
                         </Pressable>
                         <Text style={{ fontSize: 16, color: Colors.primary, fontWeight: '600' , width : '85%' , textAlign : 'center'}}> You have to be login o register to do more</Text>
-
                         <CommonButton green={true} title={'Register'} />
-                        <CommonButton  title={'Login'} />
+                        <CommonButton title={'Login'} />
                     </View>
                 </View>
             </View>

@@ -1,12 +1,17 @@
+import React, {useContext, useState} from 'react';
 import { StyleSheet, View } from "react-native"
 import SocialModal from "../components/Cards/Modals/SocialModal";
 import Colors from "../constant/Colors";
 
 const Profile = () => {
+    const [modalVisible, setModalVisible] = useState(true);
     return (
         <View style={styles.mainBox}>
-            {/* <Text>Ayan</Text> */}
-            <SocialModal />
+            <SocialModal
+                isVisible={modalVisible}
+                onClose={() => setModalVisible(false)}
+                onPress={() => setModalVisible(false)}
+            />
         </View>
     )
 }

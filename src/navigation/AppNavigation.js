@@ -7,6 +7,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+
 
 import Home from '../screens/Home';
 import Explore from '../screens/Explore';
@@ -19,6 +21,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 // import colors from '../constants/colors';
 import colors from '../constant/Colors';
 import Colors from '../constant/Colors';
+import Profile from '../screens/Profile';
 
 const MainStack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -34,6 +37,7 @@ const Tab = createBottomTabNavigator();
   
       headerTitleStyle: {
         fontSize: 18,
+        marginBottom:-30
       },
       headerTintColor: 'white',
       headerLeft: () => (
@@ -85,8 +89,8 @@ const Tab = createBottomTabNavigator();
             tabBarVisible: true,
             tabBarIcon: ({focused, color, size}) => (
               <View style={focused ? styles.focusedIcon : styles.notFocusedIcon}>
-                <FontAwesome5
-                  name="clinic-medical"
+                <AntDesign
+                  name="home"
                   color='white'
                   size={30}
                 />
@@ -104,11 +108,11 @@ const Tab = createBottomTabNavigator();
             
             tabBarIcon: ({focused, color, size}) => (
               <View style={focused ? styles.focusedIcon : styles.notFocusedIcon}>
-                <MaterialCommunityIcons
-                  name="home-outline"
-                  color='white'
-                  size={30}
-                />
+                <FontAwesome
+            color={Colors.secondary}
+            name="search"
+            size={22}
+          />
               </View>
             ),
           }}
@@ -122,6 +126,24 @@ const Tab = createBottomTabNavigator();
             tabBarVisible: true,
             tabBarIcon: ({focused, color, size}) => (
               <View style={focused ? styles.focusedIcon : styles.notFocusedIcon}>
+                <MaterialIcons
+                  name="favorite-outline"
+                  color='white'
+                  size={30}
+                />
+              </View>
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Profile"
+          component={Profile}
+          options={{
+            headerShown: false,
+            tabBarShowLabel: true,
+            tabBarVisible: true,
+            tabBarIcon: ({focused, color, size}) => (
+              <View >
                 <FontAwesome
                   name="user"
                   color='white'
