@@ -34,7 +34,7 @@ const FeaturedCard = (props) => {
         </View>
         <View style={styles.cardiconBox}>
             <View style={{flexDirection:'row',alignContent:'center',alignItems:'center'}}> 
-                <TouchableOpacity style={styles.playButton}>
+                <TouchableOpacity style={styles.playButton} onPress={props.onPress}>
                     <Text style={{color:'white'}}>Play</Text>
                 </TouchableOpacity>
                 <Text style={[styles.timeText,props.timeText]}>45:00</Text>

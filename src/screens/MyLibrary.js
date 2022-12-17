@@ -7,6 +7,7 @@ import FeaturedCard from '../components/Cards/FeaturedCard';
 
 import Podcast from '../components/Sections/Podcast';
 import Channel from '../components/Sections/Channel';
+import Header from '../components/Header/Header';
 
 const MyLibrary = () => {
   const [podcast, setPodcast] = useState(true)
@@ -15,6 +16,12 @@ const MyLibrary = () => {
 
   return (
     <ScrollView style={styles.mainBox}>
+            <Header
+                style={{ backgroundColor:Colors.lightBackground, paddingHorizontal: 20 }}
+                textStyle={{ color: Colors.primary, fontWeight: 'Bold' }}
+                icon={true}
+                title={'My Library'}
+            />
         <View style={styles.switchComponentsBox}>
           <TouchableOpacity style={podcast == true ? styles.playButtonActive : styles.playButton} onPress={()=>[setPodcast(true),setChannels(false)]}>
             <Text style={podcast == true ? styles.buttonTextActive : styles.buttonText}>Podcasts</Text>
@@ -43,7 +50,6 @@ const styles = StyleSheet.create({
     mainBox:{
         flex:1,
         backgroundColor:Colors.secondary,
-        paddingHorizontal:10,
     },
     cardBox:{
       marginTop:20,
@@ -51,7 +57,7 @@ const styles = StyleSheet.create({
       marginHorizontal:10
     },
     switchComponentsBox:{
-      marginTop:80,
+      marginTop:30,
       flexDirection:"row",
       justifyContent:'space-between',
       marginHorizontal:20

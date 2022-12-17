@@ -22,6 +22,13 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import colors from '../constant/Colors';
 import Colors from '../constant/Colors';
 import Profile from '../screens/Profile';
+import Music from '../screens/Music';
+import CategoriesDetail from '../screens/CategoriesDetail';
+import EditProfile from '../screens/EditProfile';
+import ChangeProduction from '../screens/ChangeProduction';
+import LanguageSelection from '../screens/Auth/LanguageSelection';
+import ChannelDetails from '../screens/ChannelDetails';
+
 
 const MainStack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -54,12 +61,41 @@ const Tab = createBottomTabNavigator();
   
     return (
       <MainStack.Navigator screenOptions={defaultStackNavOptions}>
+        {/* <MainStack.Screen
+          name="LanguageSelection"
+          component={LanguageSelection}
+          options={{headerShown: false}}
+        /> */}
         <MainStack.Screen
           name="Home"
           component={Home}
           options={{headerShown: false}}
         />
-        
+        <MainStack.Screen
+          name="ChannelDetails"
+          component={ChannelDetails}
+          options={{headerShown: false}}
+        />
+        <MainStack.Screen
+          name="Music"
+          component={Music}
+          options={{headerShown: false}}
+        />
+        <MainStack.Screen
+          name="CategoriesDetail"
+          component={CategoriesDetail}
+          options={{headerShown: false}}
+        />
+        <MainStack.Screen
+          name="EditProfile"
+          component={EditProfile}
+          options={{headerShown: false}}
+        />
+        <MainStack.Screen
+          name="ChangeProduction"
+          component={ChangeProduction}
+          options={{headerShown: false}}
+        />
       </MainStack.Navigator>
     );
   };

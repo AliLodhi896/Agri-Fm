@@ -5,6 +5,7 @@ export default {
 
     placeholder:'#B9B9B9',
 
-    lightPurple:'#584571'
+    lightPurple:'#584571',
+    lightBackground:'#E6E3EB'
 
 };

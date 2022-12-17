@@ -3,9 +3,11 @@ import { View, Text,StyleSheet,TouchableOpacity,Image,ScrollView} from 'react-na
 import ChannelCard from '../components/Cards/ChannelCard';
 import Colors from '../constant/Colors'
 import FeaturedCard from '../components/Cards/FeaturedCard';
-
+import {useNavigation} from '@react-navigation/native';
 
 const Home = () => {
+  const navigation = useNavigation();
+
     const categories = [
         {
             id:1,
@@ -82,7 +84,7 @@ const Home = () => {
                     style={{width: '100%', height: '100%'}}
                 />
             </View>
-            <TouchableOpacity style={styles.iconBox}>
+            <TouchableOpacity style={styles.iconBox} onPress={()=>navigation.navigate('Profile')}>
                 <Image
                     source={require('../assets/Images/uk-flag.png')}
                     style={{width: '100%', height: '100%',borderRadius:100}}
@@ -92,7 +94,7 @@ const Home = () => {
        <ScrollView style={styles.categoryBox} horizontal>
         {categories.map((item)=>{
             return(
-                <TouchableOpacity style={styles.categories}>
+                <TouchableOpacity style={styles.categories} onPress={()=>navigation.navigate('CategoriesDetail')}>
                     <Image
                         source={item.image}
                         style={{width: '75%', height: '75%',borderRadius:100}}
@@ -113,7 +115,7 @@ const Home = () => {
             <ScrollView style={styles.categoryBox} horizontal>
                 {channels.map((item)=>{
                     return(
-                        <ChannelCard title={item.name}  description={item.description} />
+                        <ChannelCard onPress={()=>navigation.navigate('ChannelDetails')}  title={item.name}  description={item.description} />
                     );
                 })
                 }
@@ -127,7 +129,7 @@ const Home = () => {
             </View>
             {podcasts.map(()=>{
                 return(
-                    <FeaturedCard />
+                    <FeaturedCard onPress={()=>navigation.navigate('Music')} />
                 );
             })}
         </View> 

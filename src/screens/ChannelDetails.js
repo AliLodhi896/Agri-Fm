@@ -11,8 +11,12 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 
 import WhiteButton from "../components/Buttons/WhiteButton";
 import FeaturedCard from "../components/Cards/FeaturedCard";
+import ChannelCard from "../components/Cards/ChannelCard";
+import {useNavigation} from '@react-navigation/native';
 
-const Music = () => {
+const ChannelDetails = () => {
+  const navigation = useNavigation();
+
     const podcasts = [
         {
             id: 1,
@@ -24,48 +28,46 @@ const Music = () => {
             id: 3,
         },
     ];
+    const channels = [
+        {
+            id:1,
+            name:'Less is more',
+            description:'CEVA'
+        },
+    ];
     return (
         <ScrollView style={styles.mainBox}>
             <Header icon={true} />
-            <View style={{ flexDirection: 'row' }}>
-                <Image style={{ height: 150, width: 150, borderRadius: 10 }} source={require('../assets/Images/interest.jpg')} />
-                <View style={{ padding: 10 }}>
-                    <Text>50 min</Text>
-                    <Text style={{ width: '45%', color: 'white', fontWeight: 'bold' }}>Hictor Mota: En avicultura es clave reiventense y adapters </Text>
-                    <View style={{ flexDirection: 'row' }}>
-
-                        <View style={{ marginTop: '5%', justifyContent: 'center', width: 50, justifyContent: 'center', alignItems: 'center' }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'center', }}>
+                {channels.map((item)=>{
+                        return(
+                            <ChannelCard   title={item.name}  description={item.description} />
+                        );
+                })
+                }
+                <View style={{ flexDirection: 'column',marginLeft:30,marginTop:30 }}>
+                        <View style={{ marginTop: '5%', justifyContent: 'center', width: 80, justifyContent: 'center', alignItems: 'center' }}>
                             <AntDesign name="sharealt" size={25} color={'white'} />
                             <Text style={{ fontSize: 12, color: 'white' }}>Share</Text>
                         </View>
-                        <View style={{ marginTop: '5%', justifyContent: 'center', marginLeft: 10, width: 80, justifyContent: 'center', alignItems: 'center' }}>
+                        <View style={{ marginTop: '20%',  width: 80, justifyContent: 'center', alignItems: 'center' }}>
                             <Ionicons name="cloud-download-outline" size={25} color={'white'} />
                             <Text style={{ fontSize: 12, color: 'white' }}>Download</Text>
                         </View>
                     </View>
-                </View>
             </View>
 
-            <View style={{ backgroundColor: Colors.button, padding: 10, marginHorizontal: '20%', flexDirection: 'row', borderRadius: 10, alignItems: 'center', marginTop: '10%' }}>
-                <AntDesign name="hearto" size={25} color={'white'} />
-                <Text style={{ fontSize: 15, color: 'white', marginLeft: 10, fontWeight: '900' }}>Add to my library</Text>
-            </View>
-
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '60%', alignSelf: 'center', marginTop: '10%' }}>
-                <FontAwesome name="repeat" size={30} color={'white'} />
-                <AntDesign name="play" size={100} color={'white'} />
-                <FontAwesome name="repeat" size={25} color={'white'} />
+            <View style={{ backgroundColor: Colors.button, padding: 10, marginHorizontal: '30%', flexDirection: 'row', borderRadius: 10, alignItems: 'center',justifyContent:'center' }}>
+                <Text style={{ fontSize: 15, color: 'white', marginLeft: 10, fontWeight: '900',textAlign:'center' }}>Follow</Text>
             </View>
             <View style={{ marginHorizontal: 10, marginTop: 20 }}>
                 <Text style={{}} numberOfLines={5}>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</Text>
 
                 <View style={styles.cardBox}>
-                    <View style={styles.headingBox}>
-                        <Text style={styles.mainHeading}>Featured Podcasts</Text>
-                    </View>
+
                     {podcasts.map(() => {
                         return (
-                            <FeaturedCard />
+                            <FeaturedCard onPress={()=>navigation.navigate('Music')}/>
                         );
                     })}
                 </View>
@@ -99,4 +101,4 @@ const styles = StyleSheet.create({
 })
 
 
-export default Music;
+export default ChannelDetails;

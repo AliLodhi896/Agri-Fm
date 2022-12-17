@@ -8,9 +8,11 @@ import Colors from '../../constant/Colors';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FeaturedCard from '../Cards/FeaturedCard';
 import ChannelCard from '../Cards/ChannelCard';
+import {useNavigation} from '@react-navigation/native';
 
 
 const Podcast = (props) => {
+    const navigation = useNavigation();
     const channelsList = [
         {
             id:1,
@@ -64,6 +66,7 @@ const Podcast = (props) => {
                           textstyle={{color:Colors.primary}} 
                           headingText={{color:'grey'}} 
                           timeText={{color:'grey'}} 
+                          onPress={()=>navigation.navigate('Music')}
                         />
                     );
                 })}

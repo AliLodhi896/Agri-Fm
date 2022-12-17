@@ -9,7 +9,7 @@ import Colors from '../../constant/Colors';
 const ChannelCard = (props) => {
   return (
                 <View style={[styles.mainBox,props.mainStyle]}>
-                    <TouchableOpacity style={[styles.subBox,props.style]}>
+                    <TouchableOpacity style={[styles.subBox,props.style]} onPress={props.onPress}>
                     <Image
                         source={require('../../assets/Images/wheat.png')}
                         style={{width: '100%', height: '70%',borderRadius:10}}
