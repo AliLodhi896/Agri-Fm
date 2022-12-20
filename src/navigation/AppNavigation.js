@@ -30,6 +30,10 @@ import LanguageSelection from '../screens/Auth/LanguageSelection';
 import ChannelDetails from '../screens/ChannelDetails';
 import LoginEmail from '../screens/Auth/LoginEmail';
 import LoginPassword from '../screens/Auth/LoginPassword';
+import AccountDetails from '../screens/Auth/AccountDetails';
+import UserData from '../screens/Auth/UserData';
+import ProfessionalDatas from '../screens/Auth/ProfessionalDatas';
+import SelectInterest from '../screens/Auth/SelectInterest';
 
 
 
@@ -108,7 +112,26 @@ const Tab = createBottomTabNavigator();
           component={LoginPassword}
           options={{headerShown: false}}
         />
-
+        <MainStack.Screen
+          name="AccountDetails"
+          component={AccountDetails}
+          options={{headerShown: false}}
+        />
+<MainStack.Screen
+          name="UserData"
+          component={UserData}
+          options={{headerShown: false}}
+        />
+        <MainStack.Screen
+          name="ProfessionalDatas"
+          component={ProfessionalDatas}
+          options={{headerShown: false}}
+        />
+        <MainStack.Screen
+          name="SelectInterest"
+          component={SelectInterest}
+          options={{headerShown: false}}
+        />
       </MainStack.Navigator>
     );
   };

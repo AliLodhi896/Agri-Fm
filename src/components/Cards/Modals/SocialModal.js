@@ -26,7 +26,7 @@ const SocialModal = ({ isVisible,onClose, error,onPressLogin }) => {
                             <Image source={require('../../../assets/Images/agrim1.png')} resizeMode='stretch' style={{ width: 70, height: 70 }} />
                         </Pressable>
                         <Text style={{ fontSize: 16, color: Colors.primary, fontWeight: '600' , width : '85%' , textAlign : 'center'}}> You have to be login o register to do more</Text>
-                        <CommonButton onPress={()=>navigation.navigate('LoginEmail')} green={true} title={'Register'} />
+                        <CommonButton onPress={()=>navigation.navigate('AccountDetails')} green={true} title={'Register'} />
                         <CommonButton onPress={()=>navigation.navigate('LoginEmail')} title={'Login'} />
                     </View>
                 </View>
