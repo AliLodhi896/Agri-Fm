@@ -1,7 +1,7 @@
 {
 
     "Poultry": "Poultry",
-    "Rumninant": "Rumninant",
+    "Ruminant": "Rumninant",
     "Swine": "Swine",
     "Nutrition": "Nutrition",
     "Aqua": "Aqua",
@@ -15,6 +15,8 @@
     "CreateChannel": "Create Channel",
     "CreateProfile": "Create Profile",
     "TrendingInterest": "Trending Interest",
+    "seeAll": "See All",
+
 
     "ExploreOurPodcast": "Explore our podcast",
     "Interests": "Interests",

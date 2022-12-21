@@ -67,11 +67,7 @@ const Tab = createBottomTabNavigator();
   
     return (
       <MainStack.Navigator screenOptions={defaultStackNavOptions}>
-        {/* <MainStack.Screen
-          name="LanguageSelection"
-          component={LanguageSelection}
-          options={{headerShown: false}}
-        /> */}
+
         <MainStack.Screen
           name="Home"
           component={Home}
