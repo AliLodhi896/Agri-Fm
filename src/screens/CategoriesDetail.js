@@ -1,4 +1,4 @@
-import React,{useState} from 'react'
+import React, {useState,useContext} from 'react';
 import { View, Text,StyleSheet,TouchableOpacity,Image,ScrollView} from 'react-native'
 import ChannelCard from '../components/Cards/ChannelCard';
 import Colors from '../constant/Colors'
@@ -7,10 +7,12 @@ import FeaturedCard from '../components/Cards/FeaturedCard';
 
 import Podcast from '../components/Sections/Podcast';
 import Channel from '../components/Sections/Channel';
+import { AuthContext } from '../context/Context';
 
 const CategoriesDetail = () => {
   const [podcast, setPodcast] = useState(true)
   const [channels, setChannels] = useState(false)
+  const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
 
 
   return (
@@ -23,10 +25,10 @@ const CategoriesDetail = () => {
         </View>
         <View style={styles.switchComponentsBox}>
           <TouchableOpacity style={podcast == true ? styles.playButtonActive : styles.playButton} onPress={()=>[setPodcast(true),setChannels(false)]}>
-            <Text style={podcast == true ? styles.buttonTextActive : styles.buttonText}>Podcasts</Text>
+            <Text style={podcast == true ? styles.buttonTextActive : styles.buttonText}>{language?.Podcasts}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={channels == true ? styles.playButtonActive : styles.playButton} onPress={()=>[setChannels(true),setPodcast(false)]}>
-            <Text style={channels == true ? styles.buttonTextActive : styles.buttonText}>Channels</Text>
+            <Text style={channels == true ? styles.buttonTextActive : styles.buttonText}>{language?.Channels}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.playButton}>
             <Ionicons

@@ -8,9 +8,11 @@ import Colors from '../../constant/Colors';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import ListModals from './Modals/ListModals';
+import { AuthContext } from '../../context/Context';
 
 
 const FeaturedCard = (props) => {
+    const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
   return (
     <View style={styles.featuredCards}>
 
@@ -49,7 +51,7 @@ const FeaturedCard = (props) => {
                         source={require('../../assets/Images/playbtn.png')}
                         style={{width: '20%', height: 15,marginLeft:10}}
                     />
-                    <Text style={{color:'white',marginLeft:5}}>Play</Text>
+                    <Text style={{color:'white',marginLeft:5}}>{language?.Play}</Text>
                 </TouchableOpacity>
                 <Text style={[styles.timeText,props.timeText]}>45:00</Text>
             </View>

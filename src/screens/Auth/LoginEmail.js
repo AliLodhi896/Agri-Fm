@@ -1,3 +1,4 @@
+import React, {useState,useContext} from 'react';
 import { StyleSheet, View, Image, Text, TextInput,TouchableOpacity,ScrollView } from "react-native"
 import SocialModal from "../../components/Cards/Modals/SocialModal";
 import Header from "../../components/Header/Header";
@@ -10,9 +11,11 @@ import WhiteButton from "../../components/Buttons/WhiteButton";
 import Input from "../../components/Input/Input";
 import CommonButton from "../../components/Buttons/CommonButton";
 import {useNavigation} from '@react-navigation/native';
+import { AuthContext } from '../../context/Context';
 
 const LoginEmail = () => {
     const navigation = useNavigation();
+    const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
     return (
         <ScrollView style={styles.mainBox}>
             <Header
@@ -23,9 +26,9 @@ const LoginEmail = () => {
                 title={'Login/Registration'}
             />
             <View style={{marginVertical:30}}>
-                <Input placeholder ={'Your Email'} />
+                <Input placeholder ={language?.YourEmail} />
                 <View style={{marginVertical:30}}>
-                    <CommonButton  green={true} onPress={()=>navigation.navigate('LoginPassword')} title={'Next'} />
+                    <CommonButton  green={true} onPress={()=>navigation.navigate('LoginPassword')} title={language?.Next} />
                 </View>
             </View>
         </ScrollView>
