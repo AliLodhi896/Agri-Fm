@@ -55,7 +55,21 @@
     "Avicultura": "Avicultura",
 
     "Select5Interests": "Selecione 5 Interesses",
-    "GoBack": "Volte"
+    "GoBack": "Volte",
+
+    "Register": "Registro",
+    "Login": "Conecte-se",
+    "Follow": "Seguir",
+
+    "ActualName": "Nome Real",
+    "ActualSurname": "Sobrenome Atual",
+    "ActualCompany": "Empresa Real",
+    "ActualMobilePhone": "Celular Real",
+    "NewJob": "Novo Emprego",
+    "NewActivity": "Nova Atividade",
+    "NewLanguage": "Nova Linguagem",
+    "NewCountry": "Novo País"
+
 
     
 

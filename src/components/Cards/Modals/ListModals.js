@@ -1,11 +1,13 @@
-import React from 'react';
+import React, {useState,useContext} from 'react';
 import { View, Text, Modal, Pressable, StyleSheet, Image,TouchableOpacity } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Colors from '../../../constant/Colors';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import CommonButton from '../../Buttons/CommonButton';
+import { AuthContext } from '../../../context/Context';
 
 const ListModals = ({ isVisible,onClose, error,onPressLogin }) => {
+    const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
     return (
         <Modal
             animationType="slide"
@@ -22,21 +24,21 @@ const ListModals = ({ isVisible,onClose, error,onPressLogin }) => {
                     <View style={{ alignSelf: 'center', marginHorizontal: 30,   width: '100%' }}>
                         <TouchableOpacity style={styles.second_view} onPress={onClose}>
                             <Text style={{color:Colors.primary,fontSize:16}}>
-                                Go to Library
+                            {language?.GoToLibrary}
                             </Text>
                             <Image style={{width: '12%', height: 25}} source={require('../../../assets/Images/asdsa.png')} />
                         </TouchableOpacity>
                         <View style={{height:1,backgroundColor:Colors.primary,opacity:0.5,marginTop:15}}></View>
                         <TouchableOpacity style={styles.second_view} onPress={onClose}>
                             <Text style={{color:Colors.primary,fontSize:16}}>
-                                Download Podcast
+                            {language?.DownloadPodcast}
                             </Text>
                             <Image  style={{width: '12%', height: 27}} source={require('../../../assets/Images/downlaod.png')} />
                         </TouchableOpacity>
                         <View style={{height:1,backgroundColor:Colors.primary,opacity:0.5,marginTop:15}}></View>
                         <TouchableOpacity style={styles.second_view} onPress={onClose}>
                             <Text style={{color:Colors.primary,fontSize:16}}>
-                                Share
+                            {language?.Share}
                             </Text>
                             <Image  style={{width: '12%', height: 20}} source={require('../../../assets/Images/shares.png')} />
                         </TouchableOpacity>
@@ -44,7 +46,7 @@ const ListModals = ({ isVisible,onClose, error,onPressLogin }) => {
 
                         <TouchableOpacity style={styles.second_view} onPress={onClose}>
                             <Text style={{color:Colors.primary,fontSize:16}}>
-                                Add to Library
+                            {language?.AddToLibrary}
                             </Text>
                             <Image style={{width: '12%', height: 25}} source={require('../../../assets/Images/fav.png')} />
                         </TouchableOpacity>

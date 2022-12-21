@@ -1,3 +1,4 @@
+import React, {useState,useContext} from 'react';
 import { StyleSheet, View, Image, Text, TextInput,TouchableOpacity,ScrollView } from "react-native"
 import SocialModal from "../../components/Cards/Modals/SocialModal";
 import Header from "../../components/Header/Header";
@@ -11,9 +12,11 @@ import Input from "../../components/Input/Input";
 import CommonButton from "../../components/Buttons/CommonButton";
 import {useNavigation} from '@react-navigation/native';
 import CommonBack from "../../components/CommonBack";
+import { AuthContext } from '../../context/Context';
 
 const AccountDetails = () => {
     const navigation = useNavigation();
+    const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
     return (
         <ScrollView style={styles.mainBox}>
             <Header
@@ -27,14 +30,14 @@ const AccountDetails = () => {
         <Image style={{ height: '100%', width: '100%' }} source={require('../../assets/Images/first.jpg')} />
     </View>
             <View style={{marginVertical:30}}>
-                <Input placeholder ={'Name'} />
-                <Input placeholder ={'Surname'} />
-                <Input placeholder ={'Company'} />
-                <Input placeholder ={'Phone'} />
+                <Input placeholder ={language?.Name} />
+                <Input placeholder ={language?.Surname} />
+                <Input placeholder ={language?.Company} />
+                <Input placeholder ={language?.Phone} />
 
 
                 <View style={{marginVertical:30}}>
-                    <CommonButton  green={true} onPress={()=>navigation.navigate('UserData')} title={'Next'} />
+                    <CommonButton  green={true} onPress={()=>navigation.navigate('UserData')} title={language?.Next} />
                 </View>
             </View>
         </ScrollView>
