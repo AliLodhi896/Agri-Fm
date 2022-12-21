@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState,useEffect} from 'react';
 import {
   View,
   Text,
@@ -18,6 +18,29 @@ import AntDesign from 'react-native-vector-icons/AntDesign'
 
 const Home = () => {
   const navigation = useNavigation();
+  const [user, setUser] = useState([]);
+  const[id, setId] = useState();
+
+  const fetchData = () => {
+    return fetch("https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/cargo-app.php")
+          .then((response) => response.json())
+          .then((data) =>{ 
+            console.log(data),
+            console.log('yee');
+            setUser(data);
+          
+          })
+          .catch((err) => {
+            console.log(err,'API Failed');
+          });
+          
+  }
+
+  useEffect(() => {
+    fetchData();
+    
+    
+  },[])
   const categories = [
     {
       id: 1,
@@ -124,7 +147,10 @@ const Home = () => {
           return (
             <TouchableOpacity
               style={styles.categories}
-              onPress={() => navigation.navigate('CategoriesDetail')}>
+              onPress={() => {
+                navigation.navigate('CategoriesDetail',{test: item.id})
+                
+                }}>
               <Image
                 source={item.image}
                 style={{width: '80%', height: '75%', borderRadius: 100}}
@@ -183,10 +209,10 @@ const Home = () => {
           <Text style={styles.subHeading}>See All</Text>
         </View>
         <ScrollView style={styles.categoryBox} horizontal>
-          {featuredchannels.map(item => {
+          {user.map(item => {
             return (
               <ChannelCard
-                title={item.name}
+                title={item.nombrees}
                 mainStyle={{width: 220}}
                 titleStyle={{color: Colors.primary, marginBottom: 10}}
                 style={{backgroundColor: 'white', borderRadius: 10}}

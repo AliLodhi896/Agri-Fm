@@ -1,14 +1,56 @@
-import React,{useState} from 'react'
+import React,{useState,useEffect} from 'react'
 import { View, Text,StyleSheet,TouchableOpacity,Image,ScrollView} from 'react-native'
 import ChannelCard from '../components/Cards/ChannelCard';
 import Colors from '../constant/Colors'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FeaturedCard from '../components/Cards/FeaturedCard';
 
+
 import Podcast from '../components/Sections/Podcast';
 import Channel from '../components/Sections/Channel';
+import { useRoute } from '@react-navigation/native';
+let api = '';
 
-const CategoriesDetail = () => {
+const CategoriesDetail = (props) => {
+  const route = useRoute();
+ 
+  const [user, setUser] = useState([]);
+  // const [api , setApi] = useState('')
+  console.log(props,'czcz');
+  const fetchData = () => {
+    return fetch(`${api}`)
+          .then((response) => response.json())
+          .then((data) =>{ 
+            console.log(data),
+            setUser(data.length == 0 ? null : (data));
+          
+          })
+          .catch((err) => {
+            console.log(err,'API Failed');
+          });
+          
+  }
+  useEffect(() => {
+    if(route.params.test == 1){
+      alert('1')
+    api = "https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/animals-avicultura-app.php";
+    
+    }
+    else if (route.params.test == 2){
+      alert('2')
+      api ='https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/animals-porcino-app.php';
+    }
+    else if(route.params.test == 3){
+      alert('3')
+      api = 'https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/animals-rumiantes-app.php';
+    }
+    else{
+      alert('4')
+      api = 'https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/animals-otros-app.php';
+    }
+    fetchData();
+  },[route.params.test])
+  
   const [podcast, setPodcast] = useState(true)
   const [channels, setChannels] = useState(false)
 
@@ -37,13 +79,14 @@ const CategoriesDetail = () => {
           </TouchableOpacity>
         </View>
         {podcast == true ?
-          <Podcast />
+          <Podcast user={user} />
           :
-          <Channel />
+          <Channel user={user} />
         }
     </ScrollView>
   )
 }
+
 
 const styles = StyleSheet.create({
     mainBox:{
