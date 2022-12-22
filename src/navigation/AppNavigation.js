@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useContext} from 'react';
 import {Image, StyleSheet, View, Text} from 'react-native';
 ///***********Icon
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -34,14 +34,15 @@ import AccountDetails from '../screens/Auth/AccountDetails';
 import UserData from '../screens/Auth/UserData';
 import ProfessionalDatas from '../screens/Auth/ProfessionalDatas';
 import SelectInterest from '../screens/Auth/SelectInterest';
+import { AuthContext } from '../context/Context';
 
 
 
 const MainStack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-  
   export const App = ({navigation}) => {
+    
     const defaultStackNavOptions = {
       headerStyle: {
         backgroundColor: colors.primary,
@@ -134,6 +135,8 @@ const Tab = createBottomTabNavigator();
 
 
   export const AppNavigation = navigation => {
+const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
+
     const defaultTabNavOptions = {
       tabBarActiveTintColor: "#fff",
       tabBarInactiveTintColor: "#fff",
@@ -152,7 +155,7 @@ const Tab = createBottomTabNavigator();
         initialRouteName="Home"
         screenOptions={{...defaultTabNavOptions}}>
           <Tab.Screen
-          name="Home"
+          name={language?.Home}
           component={App}
           options={{
             headerShown: false,
@@ -166,7 +169,7 @@ const Tab = createBottomTabNavigator();
           }}
         />
         <Tab.Screen
-          name="Explore"
+          name={language?.Explore}
           component={Explore}
           options={{
             headerShown: false,
@@ -181,7 +184,7 @@ const Tab = createBottomTabNavigator();
           }}
         />
       <Tab.Screen
-          name="Library"
+          name={language?.Library}
           component={MyLibrary}
           options={{
             headerShown: false,
@@ -195,7 +198,7 @@ const Tab = createBottomTabNavigator();
           }}
         />
         <Tab.Screen
-          name="MyAgriFm"
+          name={language?.MyAgriFm}
           component={Profile}
           options={{
             headerShown: false,

@@ -68,9 +68,14 @@
     "NewJob": "Nuevo Trabajo",
     "NewActivity": "Nueva actividad",
     "NewLanguage": "Nuevo Idioma",
-    "NewCountry": "Nuevo País"
+    "NewCountry": "Nuevo País",
+    "Update": "actualizar",
 
+    
 
-
+    "Home": "Casa",
+    "Explore": "Explorar",
+    "Library": "Biblioteca",
+    "MyAgriFm": "MiagriFm"
 
 }

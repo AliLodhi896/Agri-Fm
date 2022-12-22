@@ -70,8 +70,12 @@
     "NewJob": "New Job",
     "NewActivity": "New Activity",
     "NewLanguage": "New Language",
-    "NewCountry": "New Country"
+    "NewCountry": "New Country",
 
+    "Home": "Home",
+    "Explore": "Explore",
+    "Library": "Library",
+    "MyAgriFm": "MyAgriFm"
 
 
 

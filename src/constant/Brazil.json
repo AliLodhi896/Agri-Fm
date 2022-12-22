@@ -57,6 +57,7 @@
     "Select5Interests": "Selecione 5 Interesses",
     "GoBack": "Volte",
 
+
     "Register": "Registro",
     "Login": "Conecte-se",
     "Follow": "Seguir",
@@ -68,9 +69,15 @@
     "NewJob": "Novo Emprego",
     "NewActivity": "Nova Atividade",
     "NewLanguage": "Nova Linguagem",
-    "NewCountry": "Novo País"
+    "NewCountry": "Novo País",
+
+    "Home": "Casa",
+    "Explore": "Explorar",
+    "Library": "Biblioteca",
+    "MyAgriFm": "MyagriFmGenericName",
 
 
     
+    "Update": "actualizar"
 
 }
