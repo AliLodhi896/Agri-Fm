@@ -1,0 +1,83 @@
+{
+
+    "Poultry": "Poultry",
+    "Ruminant": "Rumninant",
+    "Swine": "Swine",
+    "Nutrition": "Nutrition",
+    "Aqua": "Aqua",
+    "LastChannels": "Last Channels",
+    "FeaturedPodcasts": "Featured Podcasts",
+    "GoToLibrary": "Go to Library",
+    "DownloadPodcast": "Download Podcast",
+    "Share": "Share",
+    "AddToLibrary": "Add to Library",
+    "FeaturedChannels": "Featured Channels",
+    "CreateChannel": "Create Channel",
+    "CreateProfile": "Create Profile",
+    "TrendingInterest": "Trending Interest",
+    "seeAll": "See All",
+
+
+    "ExploreOurPodcast": "Explore our podcast",
+    "Interests": "Interests",
+
+    "Podcasts": "Podcasts",
+    "Channels": "Channels",
+    "Play": "Play",
+
+    "Welcome": "Welcome",
+    "Mobile": "Mobile",
+    "Company": "Company",
+    "Job": "Job",
+    "Activity": "Activity",
+    "Production": "Production",
+    "Details": "Details",
+    "EditProfile": "Edit Profile",
+    "ChangeInterest": "Change Interest",
+    "ChangeProducting": "Change Producting",
+    "Update": "Update",
+
+    "Download": "Download",
+    "AddToMyLibrary": "Add to my library",
+
+    "Name": "Name",
+    "Surname": "Surname",
+    "Phone": "Phone",
+    "Next":  "Next",
+
+    "YourEmail": "Your Email",
+    "YourPassword": "Your Password",
+
+    "ChooseYourJob": "Choose your job",
+    "ChooseYourActivity": "Choose your activity",
+    "ChooseYourLanguage": "Choose your language",
+    "ChooseYourCountry": "Choose your country",
+
+    "SelectYourProduction": "Select Your Production",
+    "Avicultura": "Avicultura",
+
+    "Select5Interests": "Select 5 Interests",
+    "GoBack": "Go Back",
+
+    "Register": "Register",
+    "Login": "Login",
+    "Follow": "Follow",
+
+    "ActualName": "Actual Name",
+    "ActualSurname": "Actual Surname",
+    "ActualCompany": "Actual Company",
+    "ActualMobilePhone": "Actual Mobile Phone",
+    "NewJob": "New Job",
+    "NewActivity": "New Activity",
+    "NewLanguage": "New Language",
+    "NewCountry": "New Country",
+
+    "Home": "Home",
+    "Explore": "Explore",
+    "Library": "Library",
+    "MyAgriFm": "MyAgriFm"
+
+
+
+
+}

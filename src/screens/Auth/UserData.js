@@ -1,3 +1,4 @@
+import React, {useState,useContext} from 'react';
 import { StyleSheet, View, Image, Text, TextInput,TouchableOpacity,ScrollView } from "react-native"
 import SocialModal from "../../components/Cards/Modals/SocialModal";
 import Header from "../../components/Header/Header";
@@ -10,9 +11,11 @@ import WhiteButton from "../../components/Buttons/WhiteButton";
 import Input from "../../components/Input/Input";
 import CommonButton from "../../components/Buttons/CommonButton";
 import {useNavigation} from '@react-navigation/native';
+import { AuthContext } from '../../context/Context';
 
 const UserData = () => {
     const navigation = useNavigation();
+    const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
     return (
         <ScrollView style={styles.mainBox}>
             <Header
@@ -26,14 +29,14 @@ const UserData = () => {
         <Image style={{ height: '100%', width: '100%' }} source={require('../../assets/Images/second.jpg')} />
     </View>
             <View style={{marginVertical:30}}>
-                <Input placeholder ={'Choose your job'} />
-                <Input placeholder ={'Choose your activity'} />
-                <Input placeholder ={'Choose your language'} />
-                <Input placeholder ={'Choose your country'} />
+                <Input placeholder ={language?.ChooseYourJob} />
+                <Input placeholder ={language?.ChooseYourActivity} />
+                <Input placeholder ={language?.ChooseYourLanguage} />
+                <Input placeholder ={language?.ChooseYourCountry} />
 
 
                 <View style={{marginVertical:30}}>
-                    <CommonButton  green={true} onPress={()=>navigation.navigate('ProfessionalDatas')} title={'Next'} />
+                    <CommonButton  green={true} onPress={()=>navigation.navigate('ProfessionalDatas')} title={language?.Next} />
                 </View>
             </View>
         </ScrollView>

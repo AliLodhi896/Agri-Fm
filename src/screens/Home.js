@@ -1,4 +1,4 @@
-import React, {useState,useEffect} from 'react';
+import React, {useState,useEffect,useContext} from 'react';
 import {
   View,
   Text,
@@ -15,8 +15,11 @@ import * as Animatable from 'react-native-animatable';
 import ListModals from '../components/Cards/Modals/ListModals';
 import InterestCard from '../components/Cards/InterestCard';
 import AntDesign from 'react-native-vector-icons/AntDesign'
+import { AuthContext } from '../context/Context';
 
 const Home = () => {
+const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
+
   const navigation = useNavigation();
   const [user, setUser] = useState([]);
   const[id, setId] = useState();
@@ -44,27 +47,27 @@ const Home = () => {
   const categories = [
     {
       id: 1,
-      name: 'Poultry',
+      name: language?.Poultry,
       image: require('../assets/Images/poultry.png'),
     },
     {
       id: 2,
-      name: 'Rumninant',
+      name: language?.Ruminant,
       image: require('../assets/Images/ruminant.png'),
     },
     {
       id: 3,
-      name: 'Swine',
+      name: language?.Swine,
       image: require('../assets/Images/swine.png'),
     },
     {
       id: 4,
-      name: 'Nutrition',
+      name: language?.Nutrition,
       image: require('../assets/Images/aqua.png'),
     },
     {
       id: 5,
-      name: 'Aqua',
+      name: language?.Aqua,
       image: require('../assets/Images/nutrition.png'),
     },
   ];
@@ -136,10 +139,22 @@ const Home = () => {
         <TouchableOpacity
           style={styles.iconBox}
           onPress={() => navigation.navigate('Profile')}>
-          <Image
-            source={require('../assets/Images/uk-flag.png')}
-            style={{width: '100%', height: '100%', borderRadius: 100}}
-          />
+            {selectedlang == 'spain' ?
+              <Image
+              source={require('../assets/Images/spain-flag.png')}
+              style={{width: '100%', height: '100%', borderRadius: 100}}
+            /> 
+            : selectedlang == 'brazil' ?
+            <Image
+              source={require('../assets/Images/brazil-flag.jpg')}
+              style={{width: '100%', height: '100%', borderRadius: 100}}
+            />
+            :
+            <Image
+              source={require('../assets/Images/uk-flag.png')}
+              style={{width: '100%', height: '100%', borderRadius: 100}}
+            />
+            }
         </TouchableOpacity>
       </View>
       <ScrollView style={styles.categoryBox} horizontal>
@@ -162,7 +177,7 @@ const Home = () => {
       </ScrollView>
       <View style={styles.cardBox}>
         <View style={styles.headingBox}>
-          <Text style={styles.mainHeading}>Last Channels</Text>
+          <Text style={styles.mainHeading}>{language?.FeaturedPodcasts}</Text>
           <Text style={styles.subHeading}>See All</Text>
         </View>
         <ScrollView style={styles.categoryBox} horizontal  >
@@ -185,7 +200,7 @@ const Home = () => {
         }}></View>
       <Animatable.View style={styles.cardBox} animation="fadeInUpBig">
         <View style={styles.headingBox}>
-          <Text style={styles.mainHeading}>Featured Podcasts</Text>
+          <Text style={styles.mainHeading}>{language?.LastChannels}</Text>
           <Text style={styles.subHeading}>See All</Text>
         </View>
         {podcasts.map(() => {
@@ -205,7 +220,7 @@ const Home = () => {
         }}></View>
         <Animatable.View style={styles.cardBox} animation="fadeInUpBig">
         <View style={styles.headingBox}>
-          <Text style={styles.mainHeading}>Featured Channels</Text>
+          <Text style={styles.mainHeading}>{language?.FeaturedChannels}</Text>
           <Text style={styles.subHeading}>See All</Text>
         </View>
         <ScrollView style={styles.categoryBox} horizontal>
@@ -234,7 +249,7 @@ const Home = () => {
                 <TouchableOpacity onPress={()=>navigation.navigate('EditProfile')} style={{ borderRadius: 100, alignItems: 'flex-end', marginTop: -20 }}>
                     <AntDesign style={styles.edit} name="plus" color={'white'} size={18} />
                 </TouchableOpacity>
-                <Text style={{color:Colors.secondary,fontSize:12,marginTop:10,textAlign:'center'}}>Create Channel</Text>
+                <Text style={{color:Colors.secondary,fontSize:12,marginTop:10,textAlign:'center'}}>{language?.CreateChannel}</Text>
 
             </View>
             <View style={{ alignSelf: 'center' }}>
@@ -242,11 +257,11 @@ const Home = () => {
                 <TouchableOpacity onPress={()=>navigation.navigate('EditProfile')} style={{ borderRadius: 100, alignItems: 'flex-end', marginTop: -20 }}>
                     <AntDesign style={styles.edit} name="plus" color={'white'} size={18} />
                 </TouchableOpacity>
-                <Text style={{color:Colors.secondary,fontSize:12,marginTop:10,textAlign:'center'}}>Create Profile</Text>
+                <Text style={{color:Colors.secondary,fontSize:12,marginTop:10,textAlign:'center'}}>{language?.CreateProfile}</Text>
             </View>
       </View>
       <View style={styles.headingBox}>
-        <Text style={styles.mainHeading}>Trending Interest</Text>
+        <Text style={styles.mainHeading}>{language?.TrendingInterest}</Text>
       </View>
       <View style={styles.interestlList}>
         {Interest.map(() => {

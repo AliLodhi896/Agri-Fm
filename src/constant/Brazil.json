@@ -1,0 +1,83 @@
+{
+
+    "Poultry": "Aves",
+    "Ruminant": "Ruminante",
+    "Swine": "Suíno",
+    "Nutrition": "Nutrição",
+    "Aqua": "Aqua",
+    "LastChannels": "últimos canais",
+    "FeaturedPodcasts": "Podcasts em Destaque",
+    "GoToLibrary": "Ir para a Biblioteca",
+    "DownloadPodcast": "Baixar Podcast",
+    "Share": "Compartilhado",
+    "AddToLibrary": "Adicionar à Biblioteca",
+    "FeaturedChannels": "Canais em Destaque",
+    "CreateChannel": "Criar Canal",
+    "CreateProfile": "Criar Perfil",
+    "TrendingInterest": "Tendências de Interesse",
+
+    "ExploreOurPodcast": "Explore nosso podcast",
+    "Interests": "Interesses",
+
+    "Podcasts": "Podcasts",
+    "Channels": "Canais",
+    "Play": "Jogar",
+
+    "Welcome": "Bem-vindo",
+    "Mobile": "Móvel",
+    "Company": "Empresa",
+    "Job": "Trabalho",
+    "Activity": "Atividade",
+    "Production": "Produção",
+    "Details": "Detalhes",
+    "EditProfile": "Editar Perfil",
+    "ChangeInterest": "Alterar Interesse",
+    "ChangeProducting": "Mudança de Produção",
+    "seeAll": "ver tudo",
+
+    "Download": "Download",
+    "AddToMyLibrary": "Adicionar à minha biblioteca",
+
+    "Name": "Nome",
+    "Surname": "Sobrenome",
+    "Phone": "Telefone",
+    "Next":  "Próximo",
+
+    "YourEmail": "Seu Email",
+    "YourPassword": "Sua Senha",
+
+    "ChooseYourJob": "Escolha seu trabalho",
+    "ChooseYourActivity": "Escolha sua atividade",
+    "ChooseYourLanguage": "Escolha seu idioma",
+    "ChooseYourCountry": "Escolha seu país",
+
+    "SelectYourProduction": "Selecione sua produção",
+    "Avicultura": "Avicultura",
+
+    "Select5Interests": "Selecione 5 Interesses",
+    "GoBack": "Volte",
+
+
+    "Register": "Registro",
+    "Login": "Conecte-se",
+    "Follow": "Seguir",
+
+    "ActualName": "Nome Real",
+    "ActualSurname": "Sobrenome Atual",
+    "ActualCompany": "Empresa Real",
+    "ActualMobilePhone": "Celular Real",
+    "NewJob": "Novo Emprego",
+    "NewActivity": "Nova Atividade",
+    "NewLanguage": "Nova Linguagem",
+    "NewCountry": "Novo País",
+
+    "Home": "Casa",
+    "Explore": "Explorar",
+    "Library": "Biblioteca",
+    "MyAgriFm": "MyagriFmGenericName",
+
+
+    
+    "Update": "actualizar"
+
+}

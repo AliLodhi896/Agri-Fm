@@ -7,10 +7,13 @@ import Colors from "../constant/Colors";
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import {useNavigation} from '@react-navigation/native';
+import { AuthContext } from '../context/Context';
 
 const Profile = () => {
     const [modalVisible, setModalVisible] = useState(true);
     const navigation = useNavigation();
+    const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
+
 
     return (
         <ScrollView style={styles.mainBox}>
@@ -26,7 +29,7 @@ const Profile = () => {
                     <AntDesign style={styles.edit} name="edit" color={'white'} size={20} />
                 </TouchableOpacity>
             </View>
-            <Text style={styles.welcome}>Welcome Name Surname</Text>
+            <Text style={styles.welcome}>{language?.Welcome}</Text>
             <View style={{ backgroundColor: 'rgba(255,255,255,0.2)', padding: 15, borderRadius: 10, paddingVertical: 20, marginTop: 20 }}>
                 {data.map((item, index) => {
                     return (
@@ -35,18 +38,18 @@ const Profile = () => {
                 })}
                 <TouchableOpacity onPress={()=>navigation.navigate('EditProfile')} style={{ alignSelf: 'flex-end', flexDirection: 'row', alignItems: 'center' }}>
                     <FontAwesome5 name="edit" color={Colors.button} size={20}  />
-                    <Text style={{ color: Colors.secondary, fontWeight: 'bold', paddingLeft: 5 }}>Edit Profile</Text>
+                    <Text style={{ color: Colors.secondary, fontWeight: 'bold', paddingLeft: 5 }}>{language?.EditProfile}</Text>
                 </TouchableOpacity>
             </View>
-            <WhiteButton onPress={()=>navigation.navigate('ChangeProduction')} title={'Chagne intrest'} />
-            <WhiteButton onPress={()=>navigation.navigate('ChangeProduction')} title={'Chagne productiin'} />
+            <WhiteButton onPress={()=>navigation.navigate('ChangeProduction')} title={language?.ChangeInterest} />
+            <WhiteButton onPress={()=>navigation.navigate('ChangeProduction')} title={language?.ChangeProducting} />
             <View style={{marginHorizontal:20,justifyContent:'center',marginVertical:30}}>
             <View style={{ alignSelf: 'center' }}>
                 <Image style={styles.image} source={require('../assets/Images/mic.png')} />
                 <TouchableOpacity onPress={()=>navigation.navigate('EditProfile')} style={{ borderRadius: 100, alignItems: 'flex-end', marginTop: -20 }}>
                     <AntDesign style={styles.edit} name="plus" color={'white'} size={18} />
                 </TouchableOpacity>
-                <Text style={{color:Colors.secondary,fontSize:12,marginTop:10,textAlign:'center'}}>Create Channel</Text>
+                <Text style={{color:Colors.secondary,fontSize:12,marginTop:10,textAlign:'center'}}>{language?.CreateChannel}</Text>
 
             </View>
       </View>

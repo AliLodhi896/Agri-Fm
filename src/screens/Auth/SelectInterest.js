@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState,useContext} from 'react';
 import { View, Text,StyleSheet,TouchableOpacity,Image,ScrollView} from 'react-native'
 import Colors from '../../constant/Colors'
 import SearchInput from '../../components/Inputs/SearchInput';
@@ -8,8 +8,10 @@ import * as Animatable from 'react-native-animatable';
 import CommonBack from '../../components/CommonBack';
 import CommonButton from '../../components/Buttons/CommonButton';
 import {useNavigation} from '@react-navigation/native';
+import { AuthContext } from '../../context/Context';
 
 const SelectInterest = () => {
+    const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
     const Interest = [
         {
             id:1,
@@ -27,7 +29,7 @@ const SelectInterest = () => {
         <Header icon={true}  />
         <View style={styles.cardBox}>
             <View style={styles.headingBox}>
-                <Text style={styles.mainHeading}>Select 5 Interests</Text>
+                <Text style={styles.mainHeading}>{language?.Select5Interests}</Text>
             </View>
             <Animatable.View style={styles.interestlList} animation="fadeInUpBig" >
                 {Interest.map(()=>{
@@ -38,8 +40,8 @@ const SelectInterest = () => {
             </Animatable.View>
         </View>
         <Animatable.View animation="fadeInUpBig" >
-        <CommonButton  green={true} onPress={()=>navigation.navigate('Home')} title={'Next'} />
-        <CommonBack title={'Go Back'} />
+        <CommonButton  green={true} onPress={()=>navigation.navigate('Home')} title={language?.Next} />
+        <CommonBack title={language?.GoBack} />
         </Animatable.View>
 
     </ScrollView>
