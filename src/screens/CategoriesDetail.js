@@ -21,8 +21,12 @@ const CategoriesDetail = (props) => {
   const [user, setUser] = useState([]);
   // const [api , setApi] = useState('')
   console.log(props,'czcz');
+  const params ={lang : 'es'};
   const fetchData = () => {
-    return fetch(`${api}`)
+    console.log(`${api}?lang:es`,'checkkkk');
+    debugger;
+    return fetch(`${api}?lang:es`)
+    
           .then((response) => response.json())
           .then((data) =>{ 
             console.log(data),
@@ -41,7 +45,7 @@ const CategoriesDetail = (props) => {
     
     }
     else if (route.params.test == 2){
-      alert('2')
+      alert('2u')
       api ='https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/animals-porcino-app.php';
     }
     else if(route.params.test == 3){
