@@ -177,7 +177,7 @@ const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
       </ScrollView>
       <View style={styles.cardBox}>
         <View style={styles.headingBox}>
-          <Text style={styles.mainHeading}>{language?.FeaturedPodcasts}</Text>
+          <Text style={styles.mainHeading}>{language?.LastChannels}</Text>
           <Text style={styles.subHeading}>See All</Text>
         </View>
         <ScrollView style={styles.categoryBox} horizontal  >
@@ -200,7 +200,7 @@ const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
         }}></View>
       <Animatable.View style={styles.cardBox} animation="fadeInUpBig">
         <View style={styles.headingBox}>
-          <Text style={styles.mainHeading}>{language?.LastChannels}</Text>
+          <Text style={styles.mainHeading}>{language?.FeaturedPodcasts}</Text>
           <Text style={styles.subHeading}>See All</Text>
         </View>
         {podcasts.map(() => {
