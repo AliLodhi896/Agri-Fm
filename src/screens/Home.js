@@ -23,6 +23,7 @@ const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
   const navigation = useNavigation();
   const [podCastData, setPodcastData] = useState([]);
   const[id, setId] = useState();
+  const [interest,setInterest] = useState([])
 
   const fetchData = () => {
     return fetch("https://socialagri.com/agriFM/podcastlist-app.php")
@@ -55,6 +56,17 @@ const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
       setId(data.length == 0 ? undefined || null : (data));
     
     })
+},[])
+useEffect(()=>{
+  fetch('https://socialagri.com/agriFM/wp-json/wp/v2/intereses/')
+  .then(res=>res.json())
+  
+  .then((data) =>{ 
+    console.log(data,'Channelllass'),
+    
+    setInterest(data.length == 0 ? undefined || null : (data));
+  
+  })
 },[])
   const categories = [
     {
@@ -196,7 +208,7 @@ const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
               <ChannelCard
                 onPress={() => navigation.navigate('ChannelDetails')}
                 title={item.name}
-                description={item.description}
+                // description={item.description}
               />
             );
           })}
@@ -213,7 +225,7 @@ const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
           <Text style={styles.mainHeading}>{language?.FeaturedPodcasts}</Text>
           <Text style={styles.subHeading}>See All</Text>
         </View>
-        {podCastData.map((item) => {
+        {podCastData.slice(0, 5).map((item) => {
           return (
             <FeaturedCard
               onPressIcon={() => setModalVisible(true)}
@@ -277,8 +289,8 @@ const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
         <Text style={styles.mainHeading}>{language?.TrendingInterest}</Text>
       </View>
       <View style={styles.interestlList}>
-        {Interest.map(() => {
-          return <InterestCard mainStyle={{width: 170}} />;
+        {interest.slice(0, 4).map((item) => {
+          return <InterestCard mainStyle={{width: 170}} description ={item.name} img_intereses = {item.acf.img_intereses} id={item.id}/>;
         })}
       </View>
     </ScrollView>

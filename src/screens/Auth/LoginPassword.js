@@ -32,7 +32,7 @@ const LoginPassword = () => {
               })
               .catch((err) => {
                 console.log(err,'API Failed');
-                alert('erroe')
+                alert('error')
               });
               
       }
