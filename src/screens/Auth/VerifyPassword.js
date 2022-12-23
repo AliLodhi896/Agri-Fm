@@ -18,20 +18,21 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import WhiteButton from '../../components/Buttons/WhiteButton';
 import Input from '../../components/Input/Input';
 import CommonButton from '../../components/Buttons/CommonButton';
-import {useNavigation} from '@react-navigation/native';
-import CommonBack from '../../components/CommonBack';
 import {AuthContext} from '../../context/Context';
 import {useForm} from 'react-hook-form';
+import {useNavigation} from '@react-navigation/native';
 
-const AccountDetails = () => {
-  const navigation = useNavigation();
+const VerifyPassword = () => {
+    const {
+        control,
+        register,
+        handleSubmit,
+        formState: {errors, isValid},
+      } = useForm({mode: 'all'});
+
   const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
-  const {
-    control,
-    register,
-    handleSubmit,
-    formState: {errors, isValid},
-  } = useForm({mode: 'all'});
+  const navigation = useNavigation();
+
   return (
     <ScrollView style={styles.mainBox}>
       <Header
@@ -39,65 +40,35 @@ const AccountDetails = () => {
         textStyle={{color: Colors.primary, fontWeight: 'Bold'}}
         backgroundColor={'white'}
         icon={true}
-        title={'Registration'}
+        title={'Login/Registration'}
       />
-      <View style={{height: 100, marginHorizontal: 20, marginTop: 30}}>
-        <Image
-          style={{height: '100%', width: '100%'}}
-          source={require('../../assets/Images/first.jpg')}
-        />
-      </View>
       <View style={{marginVertical: 30}}>
         <Input
-          name="name"
+          name="password"
           control={control}
           rules={{
-            required: 'Name is required',
+            required: 'Password is required',
           }}
-          placeholder={language?.Name}
+          placeholder="Password"
         />
-        {errors.name && (
-          <Text style={styles.errormessage}>* {errors.name.message}</Text>
+        {errors.password && (
+          <Text style={styles.errormessage}>* {errors.password.message}</Text>
         )}
         <Input
-          name="surname"
+          name="verify_password"
           control={control}
           rules={{
-            required: 'Surname is required',
+            required: 'Verify Password is required',
           }}
-          placeholder={language?.Surname}
+          placeholder="Verify Password"
         />
-        {errors.surname && (
-          <Text style={styles.errormessage}>* {errors.surname.message}</Text>
-        )}
-        <Input
-          name="company"
-          control={control}
-          rules={{
-            required: 'Company is required',
-          }}
-          placeholder={language?.Company}
-        />
-        {errors.company && (
-          <Text style={styles.errormessage}>* {errors.company.message}</Text>
-        )}
-        <Input
-          name="phone"
-          control={control}
-          rules={{
-            required: 'Phone is required',
-          }}
-          placeholder={language?.Phone}
-        />
-        {errors.phone && (
-          <Text style={styles.errormessage}>* {errors.phone.message}</Text>
+        {errors.verify_password && (
+          <Text style={styles.errormessage}>
+            * {errors.verify_password.message}
+          </Text>
         )}
         <View style={{marginVertical: 30}}>
-          <CommonButton
-            green={true}
-            onPress={() => navigation.navigate('UserData')}
-            title={language?.Next}
-          />
+          <CommonButton  onPress={()=>navigation.navigate('AccountDetails')} green={true} title={language?.Next} />
         </View>
       </View>
     </ScrollView>
@@ -129,4 +100,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AccountDetails;
+export default VerifyPassword;

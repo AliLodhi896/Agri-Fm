@@ -4,12 +4,10 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Colors from '../../../constant/Colors';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import CommonButton from '../../Buttons/CommonButton';
-import {useNavigation} from '@react-navigation/native';
 import { AuthContext } from '../../../context/Context';
 
-const SocialModal = ({ isVisible,onClose, error,onPressLogin }) => {
+const ErrorModal = ({ isVisible,onClose, message,onPressLogin },props) => {
     const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
-    const navigation = useNavigation();
     return (
         <Modal
             animationType="slide"
@@ -21,15 +19,11 @@ const SocialModal = ({ isVisible,onClose, error,onPressLogin }) => {
             <View style={styles.centeredView}>
                 <View style={styles.modalView}>
                     <TouchableOpacity style={styles.second_view} onPress={onClose}>
-                        <MaterialIcons name='close' color={Colors.primary} size={35} />
+                        <MaterialIcons name='close'  color={Colors.primary} size={35} />
                     </TouchableOpacity>
-                    <View style={{ alignSelf: 'center', marginHorizontal: 30, justifyContent: 'center', alignItems: 'center', width: '100%' }}>
-                        <Pressable style={{ paddingBottom: 20, padding: 15 }} onPress={onClose}>
-                            <Image source={require('../../../assets/Images/agrim1.png')} resizeMode='stretch' style={{ width: 70, height: 70 }} />
-                        </Pressable>
-                        <Text style={{ fontSize: 16, color: Colors.primary, fontWeight: '600' , width : '85%' , textAlign : 'center'}}> You have to be login or register to do more</Text>
-                        <CommonButton onPress={()=>navigation.navigate('VerifyPassword')} green={true} title={language?.Register} />
-                        <CommonButton onPress={()=>navigation.navigate('LoginEmail')} title={language?.Login} />
+                    <View style={{ alignSelf: 'center', marginHorizontal: 30,   width: '100%' }}>
+                        <Text style={{ fontSize: 20, color: Colors.primary, fontWeight: '600' , width : '100%' , textAlign : 'center',marginVertical:20}}>{message}</Text>
+                        <CommonButton green={true} title='Try Again' />
                     </View>
                 </View>
             </View>
@@ -57,6 +51,7 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 5,
         borderRadius: 10,
+        paddingBottom:30
     },
     second_view: {
         width: '100%',
@@ -82,4 +77,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default SocialModal;
+export default ErrorModal;

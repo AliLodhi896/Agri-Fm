@@ -16,6 +16,7 @@ import ListModals from '../components/Cards/Modals/ListModals';
 import InterestCard from '../components/Cards/InterestCard';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import { AuthContext } from '../context/Context';
+import ErrorModal from '../components/Cards/Modals/ErrorModal';
 
 const Home = () => {
 const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
@@ -128,6 +129,12 @@ const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
         onClose={() => setModalVisible(false)}
         onPress={() => setModalVisible(false)}
       />
+      {/* <ErrorModal
+        isVisible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        onPress={() => setModalVisible(false)}
+        message='Invalid Password !'
+      /> */}
       <View style={styles.headerBox}>
         <View></View>
         <View style={styles.logoBox}>
