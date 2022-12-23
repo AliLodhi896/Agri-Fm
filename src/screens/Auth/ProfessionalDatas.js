@@ -3,6 +3,8 @@ import { StyleSheet, View, Image, Text, TextInput } from "react-native"
 import SocialModal from "../../components/Cards/Modals/SocialModal";
 import Header from "../../components/Header/Header";
 import Colors from "../../constant/Colors";
+import { useRoute } from '@react-navigation/native';
+
 
 // ====================== icons ==================== 
 
@@ -13,6 +15,8 @@ import {useNavigation} from '@react-navigation/native';
 import { AuthContext } from '../../context/Context';
 
 const ProfessionalDatas = () => {
+    const route = useRoute();
+    console.log(route.params.updatedform,'UpdatedOne');
     const navigation = useNavigation();
     const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
 

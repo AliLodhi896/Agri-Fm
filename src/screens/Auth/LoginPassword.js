@@ -11,8 +11,38 @@ import WhiteButton from "../../components/Buttons/WhiteButton";
 import Input from "../../components/Input/Input";
 import CommonButton from "../../components/Buttons/CommonButton";
 import { AuthContext } from '../../context/Context';
+import { useRoute } from '@react-navigation/native';
 
 const LoginPassword = () => {
+    const fetchData = () => {
+        
+        return fetch(`https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/login-app.php?email=${route.params.email}&password=${pass}`)
+              
+        .then((response) => response.json())
+              .then((data) =>{ 
+                console.log(data[0].validation,'Login')
+                if(data[0].validation === 'ok'){
+                    alert('LoginSuccessfully')
+                }
+                else{
+                    alert(data[0])
+                }
+          
+            //   alert(data[0].validation);
+              })
+              .catch((err) => {
+                console.log(err,'API Failed');
+                alert('erroe')
+              });
+              
+      }
+
+
+
+    const route = useRoute();
+    console.log(route.params.email,'FromEMAILE=')
+ 
+    const [pass, setPass] = useState('');
     const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
     return (
         <ScrollView style={styles.mainBox}>
@@ -24,9 +54,17 @@ const LoginPassword = () => {
                 title={'Login/Registration'}
             />
             <View style={{marginVertical:30}}>
-                <Input placeholder ={language?.YourPassword} />
+                {/* <Input placeholder ={language?.YourPassword} /> */}
+                <TextInput 
+                // placeholder ={language?.YourEmail}
+                style={styles.input}
+                placeholder ={language?.YourPassword}
+                // onChangeText={newText => setText(newText)}
+                onChangeText={(username) => setPass(username)}
+                defaultValue={pass}
+                 />
                 <View style={{marginVertical:30}}>
-                    <CommonButton  green={true} title={language?.Next} />
+                    <CommonButton onPress={()=>{fetchData()}}  green={true} title={language?.Next} />
                 </View>
             </View>
         </ScrollView>
@@ -41,7 +79,8 @@ const styles = StyleSheet.create({
     },
     edit: { backgroundColor: Colors.primary, borderWidth: 1, borderRadius: 100, padding: 5 },
     image: { width: 100, height: 100, borderRadius: 100, },
-    welcome: { color: Colors.secondary, fontSize: 25, fontWeight: '800', marginTop: 20 }
+    welcome: { color: Colors.secondary, fontSize: 25, fontWeight: '800', marginTop: 20 },
+    input: { backgroundColor: 'white', marginTop: 20, marginHorizontal: 20, paddingHorizontal: 15, paddingVertical: 20, borderRadius: 8, fontSize: 16, color: Colors.placeholder }
 })
 
 

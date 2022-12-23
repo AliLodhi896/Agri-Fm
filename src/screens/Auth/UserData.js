@@ -12,10 +12,15 @@ import Input from "../../components/Input/Input";
 import CommonButton from "../../components/Buttons/CommonButton";
 import {useNavigation} from '@react-navigation/native';
 import { AuthContext } from '../../context/Context';
+import { useRoute } from '@react-navigation/native';
 
 const UserData = () => {
     const navigation = useNavigation();
+    const route = useRoute();
+    console.log(route.params.form,'CheckFromAbove')
     const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
+    const [registration, setRegistration] = useState({Job : '' , Activity:'', Language:'',County:''})
+    const combineObject ={...registration, ...route.params.form}
     return (
         <ScrollView style={styles.mainBox}>
             <Header
@@ -29,14 +34,15 @@ const UserData = () => {
         <Image style={{ height: '100%', width: '100%' }} source={require('../../assets/Images/second.jpg')} />
     </View>
             <View style={{marginVertical:30}}>
-                <Input placeholder ={language?.ChooseYourJob} />
-                <Input placeholder ={language?.ChooseYourActivity} />
-                <Input placeholder ={language?.ChooseYourLanguage} />
-                <Input placeholder ={language?.ChooseYourCountry} />
+                
+                <TextInput style={styles.input} onChangeText={(username)=>{setRegistration(prev => ({...prev, Job: username})) }} placeholder ={language?.ChooseYourJob} />
+                <TextInput style={styles.input} onChangeText={(username)=>{setRegistration(prev => ({...prev, Activity: username})) }} placeholder ={language?.ChooseYourActivity} />
+                <TextInput style={styles.input} onChangeText={(username)=>{setRegistration(prev => ({...prev, Language: username})) }}placeholder ={language?.ChooseYourLanguage} />
+                <TextInput style={styles.input} onChangeText={(username)=>{setRegistration(prev => ({...prev, Country: username})) }} placeholder ={language?.ChooseYourCountry} />
 
 
                 <View style={{marginVertical:30}}>
-                    <CommonButton  green={true} onPress={()=>navigation.navigate('ProfessionalDatas')} title={language?.Next} />
+                    <CommonButton  green={true} onPress={()=>navigation.navigate('ProfessionalDatas',{updatedform:combineObject})} title={language?.Next} />
                 </View>
             </View>
         </ScrollView>
@@ -51,7 +57,8 @@ const styles = StyleSheet.create({
     },
     edit: { backgroundColor: Colors.primary, borderWidth: 1, borderRadius: 100, padding: 5 },
     image: { width: 100, height: 100, borderRadius: 100, },
-    welcome: { color: Colors.secondary, fontSize: 25, fontWeight: '800', marginTop: 20 }
+    welcome: { color: Colors.secondary, fontSize: 25, fontWeight: '800', marginTop: 20 },
+    input: { backgroundColor: 'white', marginTop: 20, marginHorizontal: 20, paddingHorizontal: 15, paddingVertical: 20, borderRadius: 8, fontSize: 16, color: Colors.placeholder }
 })
 
 

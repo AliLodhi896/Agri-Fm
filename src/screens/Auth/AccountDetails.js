@@ -17,6 +17,7 @@ import { AuthContext } from '../../context/Context';
 const AccountDetails = () => {
     const navigation = useNavigation();
     const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
+    const [registration, setRegistration] = useState({Name : '' , Surname:'', Company:'',Phone:''})
     return (
         <ScrollView style={styles.mainBox}>
             <Header
@@ -30,14 +31,14 @@ const AccountDetails = () => {
         <Image style={{ height: '100%', width: '100%' }} source={require('../../assets/Images/first.jpg')} />
     </View>
             <View style={{marginVertical:30}}>
-                <Input placeholder ={language?.Name} />
-                <Input placeholder ={language?.Surname} />
-                <Input placeholder ={language?.Company} />
-                <Input placeholder ={language?.Phone} />
+            <TextInput style={styles.input} onChangeText={(username)=>{setRegistration(prev => ({...prev, Name: username})) }} placeholder ={language?.Name} />
+                <TextInput style={styles.input} onChangeText={(username)=>{setRegistration(prev => ({...prev, Surname: username})) }} placeholder ={language?.Surname} />
+                <TextInput style={styles.input} onChangeText={(username)=>{setRegistration(prev => ({...prev, Company: username})) }}placeholder ={language?.Company} />
+                <TextInput style={styles.input} onChangeText={(username)=>{setRegistration(prev => ({...prev, Phone: username})) }} placeholder ={language?.Phone} />
 
 
                 <View style={{marginVertical:30}}>
-                    <CommonButton  green={true} onPress={()=>navigation.navigate('UserData')} title={language?.Next} />
+                    <CommonButton  green={true} onPress={()=>navigation.navigate('UserData',{form:registration})} title={language?.Next} />
                 </View>
             </View>
         </ScrollView>
@@ -52,7 +53,8 @@ const styles = StyleSheet.create({
     },
     edit: { backgroundColor: Colors.primary, borderWidth: 1, borderRadius: 100, padding: 5 },
     image: { width: 100, height: 100, borderRadius: 100, },
-    welcome: { color: Colors.secondary, fontSize: 25, fontWeight: '800', marginTop: 20 }
+    welcome: { color: Colors.secondary, fontSize: 25, fontWeight: '800', marginTop: 20 },
+    input: { backgroundColor: 'white', marginTop: 20, marginHorizontal: 20, paddingHorizontal: 15, paddingVertical: 20, borderRadius: 8, fontSize: 16, color: Colors.placeholder }
 })
 
 
