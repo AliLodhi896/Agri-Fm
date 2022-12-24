@@ -1,3 +1,4 @@
+import React, {useState,useContext} from 'react';
 import { StyleSheet, View, Image, Text, TextInput,TouchableOpacity,ScrollView } from "react-native"
 import SocialModal from "../components/Cards/Modals/SocialModal";
 import Header from "../components/Header/Header";
@@ -9,8 +10,10 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import WhiteButton from "../components/Buttons/WhiteButton";
 import Input from "../components/Input/Input";
 import CommonButton from "../components/Buttons/CommonButton";
+import { AuthContext } from '../context/Context';
 
 const EditProfile = () => {
+    const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
     return (
         <ScrollView style={styles.mainBox}>
             <Header
@@ -22,17 +25,17 @@ const EditProfile = () => {
             />
 
             <View style={{marginVertical:30}}>
-                <Input placeholder ={'Actual Name'} />
-                <Input placeholder ={'Actual Surname'} />
-                <Input placeholder ={'Actual Company'} />
-                <Input placeholder ={'Actual Mobile Phone'} />
+                <Input placeholder ={language?.ActualName} />
+                <Input placeholder ={language?.ActualSurname} />
+                <Input placeholder ={language?.ActualCompany} />
+                <Input placeholder ={language?.ActualMobilePhone} />
 
-                <Input placeholder ={'New Job'} />
-                <Input placeholder ={'New Activity'} />
-                <Input placeholder ={'New Language'} />
-                <Input placeholder ={'New Country'} />
+                <Input placeholder ={language?.NewJob} />
+                <Input placeholder ={language?.NewActivity} />
+                <Input placeholder ={language?.NewLanguage} />
+                <Input placeholder ={language?.NewCountry} />
                 <View style={{marginVertical:30}}>
-                    <CommonButton  green={true} title={'Update'} />
+                    <CommonButton  green={true} title={language?.Update} />
                     <Text style={{marginTop:20,textAlign:'center',fontSize:16,color:'white',fontWeight:'bold'}}>Cancel</Text>
                 </View>
             </View>

@@ -1,3 +1,4 @@
+import React, {useState,useContext} from 'react';
 import { StyleSheet, View, Image, Text,ScrollView } from "react-native"
 import SocialModal from "../components/Cards/Modals/SocialModal";
 import Header from "../components/Header/Header";
@@ -13,9 +14,11 @@ import WhiteButton from "../components/Buttons/WhiteButton";
 import FeaturedCard from "../components/Cards/FeaturedCard";
 import ChannelCard from "../components/Cards/ChannelCard";
 import {useNavigation} from '@react-navigation/native';
+import { AuthContext } from '../context/Context';
 
 const ChannelDetails = () => {
   const navigation = useNavigation();
+  const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
     const podcasts = [
         {
             id: 1,
@@ -47,7 +50,7 @@ const ChannelDetails = () => {
                 <View style={{ flexDirection: 'column',marginTop:30}}>
                         <View style={{ marginTop: '5%', justifyContent: 'center', width: 80, justifyContent: 'center', alignItems: 'center' }}>
                         <Image style={{ height: 22, width: 31 }} source={require('../assets/Images/whiteshare.png')} />
-                            <Text style={{ fontSize: 12, color: 'white' }}>Share</Text>
+                            <Text style={{ fontSize: 12, color: 'white' }}>{language?.Share}</Text>
                         </View>
                         <View style={{ marginTop: '20%',  width: 80, justifyContent: 'center', alignItems: 'center' }}>
                         <Image style={{ height: 26, width: 28 }} source={require('../assets/Images/with.png')} />
@@ -57,7 +60,7 @@ const ChannelDetails = () => {
             </View>
 
             <View style={{ marginTop:-60,backgroundColor: Colors.button, padding: 10, marginHorizontal: '30%', flexDirection: 'row', borderRadius: 10, alignItems: 'center',justifyContent:'center' }}>
-                <Text style={{ fontSize: 15, color: 'white', marginLeft: 10, fontWeight: '900',textAlign:'center' }}>Follow</Text>
+                <Text style={{ fontSize: 15, color: 'white', marginLeft: 10, fontWeight: '900',textAlign:'center' }}>{language?.Follow}</Text>
             </View>
             <View style={{ marginHorizontal: 10, marginTop: 20 }}>
                 <Text style={{}} numberOfLines={5}>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</Text>

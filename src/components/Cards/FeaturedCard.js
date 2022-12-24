@@ -8,9 +8,12 @@ import Colors from '../../constant/Colors';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import ListModals from './Modals/ListModals';
+import { AuthContext } from '../../context/Context';
 
 
 const FeaturedCard = (props) => {
+    const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
+    console.log(props.channelName,"YeCheckKR");
   return (
     <View style={styles.featuredCards}>
 
@@ -30,7 +33,7 @@ const FeaturedCard = (props) => {
     </View>
     <View styles={styles.detailBox}>
         <View style={styles.channelnameBox}>
-            <Text style={[styles.channelname,props.headingText]}>Channel Name</Text>
+            <Text style={[styles.channelname,props.headingText]}>{props.channelName}</Text>
             <TouchableOpacity style={{marginLeft:'30%'}}  onPress={props.onPressIcon}>
                 <Entypo
                     name="dots-three-horizontal"
@@ -40,7 +43,7 @@ const FeaturedCard = (props) => {
             </TouchableOpacity>
         </View>
         <View style={styles.descriptionBox}>
-            <Text style={[styles.description,props.textstyle]}>Testing: Dessxription of featured podcast</Text>
+            <Text style={[styles.description,props.textstyle]}>{props.podcastname}</Text>
         </View>
         <View style={styles.cardiconBox}>
             <View style={{flexDirection:'row',alignContent:'center',alignItems:'center'}}> 
@@ -49,7 +52,7 @@ const FeaturedCard = (props) => {
                         source={require('../../assets/Images/playbtn.png')}
                         style={{width: '20%', height: 15,marginLeft:10}}
                     />
-                    <Text style={{color:'white',marginLeft:5}}>Play</Text>
+                    <Text style={{color:'white',marginLeft:5}}>{language?.Play}</Text>
                 </TouchableOpacity>
                 <Text style={[styles.timeText,props.timeText]}>45:00</Text>
             </View>

@@ -1,3 +1,4 @@
+import React, {useState,useContext} from 'react';
 import { StyleSheet, View, Image, Text, TextInput,TouchableOpacity,ScrollView } from "react-native"
 import SocialModal from "../../components/Cards/Modals/SocialModal";
 import Header from "../../components/Header/Header";
@@ -9,8 +10,24 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import WhiteButton from "../../components/Buttons/WhiteButton";
 import Input from "../../components/Input/Input";
 import CommonButton from "../../components/Buttons/CommonButton";
+import { AuthContext } from '../../context/Context';
+
+import { useRoute } from '@react-navigation/native';
+import {useForm} from 'react-hook-form';
+
 
 const LoginPassword = () => {
+    const {
+        control,
+        register,
+        handleSubmit,
+        formState: {errors, isValid},
+      } = useForm({mode: 'all'});
+    const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
+    const route = useRoute();
+    console.log(route.params.email,'FromEMAILE=')
+ 
+    const [pass, setPass] = useState('');
     return (
         <ScrollView style={styles.mainBox}>
             <Header
@@ -21,9 +38,24 @@ const LoginPassword = () => {
                 title={'Login/Registration'}
             />
             <View style={{marginVertical:30}}>
-                <Input placeholder ={'Your Password'} />
+
+
+            <Input
+                name="password"
+                control={control}
+                rules={{
+                    required: 'Password is required',
+                }}
+                placeholder={language?.YourPassword}
+                  onChangeText={(username) => setPass(username)}
+                defaultValue={pass}
+                />
+                {errors.password && (
+                <Text style={styles.errormessage}>* {errors.password.message}</Text>
+            )}
+
                 <View style={{marginVertical:30}}>
-                    <CommonButton  green={true} title={'Next'} />
+                    <CommonButton onPress={()=>{fetchData()}}  green={true} title={language?.Next} />
                 </View>
             </View>
         </ScrollView>
@@ -36,9 +68,14 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.primary,
         // paddingHorizontal: 20,
     },
+    errormessage: {
+        color: 'red',
+        marginLeft: '8%',
+      },
     edit: { backgroundColor: Colors.primary, borderWidth: 1, borderRadius: 100, padding: 5 },
     image: { width: 100, height: 100, borderRadius: 100, },
-    welcome: { color: Colors.secondary, fontSize: 25, fontWeight: '800', marginTop: 20 }
+    welcome: { color: Colors.secondary, fontSize: 25, fontWeight: '800', marginTop: 20 },
+    input: { backgroundColor: 'white', marginTop: 20, marginHorizontal: 20, paddingHorizontal: 15, paddingVertical: 20, borderRadius: 8, fontSize: 16, color: Colors.placeholder }
 })
 
 

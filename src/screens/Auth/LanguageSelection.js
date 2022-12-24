@@ -1,24 +1,28 @@
-import React from 'react'
+import React,{useContext} from 'react'
 import { View, Text,StyleSheet, TouchableOpacity,Image} from 'react-native'
 import Colors from '../../constant/Colors'
+import { AuthContext } from '../../context/Context';
+import { english,spain,brazil } from '../../constant/language';
+
 
 
 const LanguageSelection = () => {
+    const {language, selectedlang, setSelectedlang,setLanguage} = useContext(AuthContext);
   return (
     <View style={styles.mainBox}>
-       <TouchableOpacity style={styles.flagBox}>
+       <TouchableOpacity style={styles.flagBox} onPress={()=>[setLanguage(spain),setSelectedlang('spain')]}>
        <Image
             source={require('../../assets/Images/spain-flag.png')}
             style={{width: '100%', height: '100%',borderRadius:100}}
         />
        </TouchableOpacity>
-       <TouchableOpacity style={styles.flagBox}>
+       <TouchableOpacity style={styles.flagBox} onPress={()=>[setLanguage(brazil),,setSelectedlang('brazil')]}>
        <Image
             source={require('../../assets/Images/brazil-flag.jpg')}
             style={{width: '100%', height: '100%',borderRadius:100}}
         />
        </TouchableOpacity>
-       <TouchableOpacity style={styles.flagBox}>
+       <TouchableOpacity style={styles.flagBox} onPress={()=>[setLanguage(english)]}>
        <Image
             source={require('../../assets/Images/uk-flag.png')}
             style={{width: '100%', height: '100%',borderRadius:100}}
