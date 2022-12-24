@@ -35,6 +35,7 @@ import UserData from '../screens/Auth/UserData';
 import ProfessionalDatas from '../screens/Auth/ProfessionalDatas';
 import SelectInterest from '../screens/Auth/SelectInterest';
 import { AuthContext } from '../context/Context';
+import VerifyPassword from '../screens/Auth/VerifyPassword';
 
 
 
@@ -112,6 +113,11 @@ const Tab = createBottomTabNavigator();
         <MainStack.Screen
           name="AccountDetails"
           component={AccountDetails}
+          options={{headerShown: false}}
+        />
+        <MainStack.Screen
+          name="VerifyPassword"
+          component={VerifyPassword}
           options={{headerShown: false}}
         />
 <MainStack.Screen

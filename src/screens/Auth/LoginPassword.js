@@ -11,6 +11,7 @@ import WhiteButton from "../../components/Buttons/WhiteButton";
 import Input from "../../components/Input/Input";
 import CommonButton from "../../components/Buttons/CommonButton";
 import { AuthContext } from '../../context/Context';
+
 import { useRoute } from '@react-navigation/native';
 
 const LoginPassword = () => {
@@ -43,6 +44,16 @@ const LoginPassword = () => {
     console.log(route.params.email,'FromEMAILE=')
  
     const [pass, setPass] = useState('');
+
+import {useForm} from 'react-hook-form';
+
+const LoginPassword = () => {
+    const {
+        control,
+        register,
+        handleSubmit,
+        formState: {errors, isValid},
+      } = useForm({mode: 'all'});
     const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
     return (
         <ScrollView style={styles.mainBox}>
@@ -54,15 +65,22 @@ const LoginPassword = () => {
                 title={'Login/Registration'}
             />
             <View style={{marginVertical:30}}>
-                {/* <Input placeholder ={language?.YourPassword} /> */}
-                <TextInput 
-                // placeholder ={language?.YourEmail}
-                style={styles.input}
-                placeholder ={language?.YourPassword}
-                // onChangeText={newText => setText(newText)}
-                onChangeText={(username) => setPass(username)}
+
+
+            <Input
+                name="password"
+                control={control}
+                rules={{
+                    required: 'Password is required',
+                }}
+                placeholder={language?.YourPassword}
+                  onChangeText={(username) => setPass(username)}
                 defaultValue={pass}
-                 />
+                />
+                {errors.password && (
+                <Text style={styles.errormessage}>* {errors.password.message}</Text>
+            )}
+
                 <View style={{marginVertical:30}}>
                     <CommonButton onPress={()=>{fetchData()}}  green={true} title={language?.Next} />
                 </View>
@@ -77,6 +95,10 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.primary,
         // paddingHorizontal: 20,
     },
+    errormessage: {
+        color: 'red',
+        marginLeft: '8%',
+      },
     edit: { backgroundColor: Colors.primary, borderWidth: 1, borderRadius: 100, padding: 5 },
     image: { width: 100, height: 100, borderRadius: 100, },
     welcome: { color: Colors.secondary, fontSize: 25, fontWeight: '800', marginTop: 20 },
