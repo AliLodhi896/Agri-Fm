@@ -19,19 +19,23 @@ import WhiteButton from '../../components/Buttons/WhiteButton';
 import Input from '../../components/Input/Input';
 import CommonButton from '../../components/Buttons/CommonButton';
 import {useNavigation} from '@react-navigation/native';
-import { AuthContext } from '../../context/Context';
-import { useRoute } from '@react-navigation/native';
+import {useRoute} from '@react-navigation/native';
 
 import {AuthContext} from '../../context/Context';
 import Dropdown from '../../components/Input/Dropdown';
 
 const UserData = () => {
-    const route = useRoute();
-    console.log(route.params.form,'CheckFromAbove')
+  const route = useRoute();
+  console.log(route.params.form, 'CheckFromAbove');
   const navigation = useNavigation();
   const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
-      const [registration, setRegistration] = useState({Job : '' , Activity:'', Language:'',County:''})
-    const combineObject ={...registration, ...route.params.form}
+  const [registration, setRegistration] = useState({
+    Job: '',
+    Activity: '',
+    Language: '',
+    County: '',
+  });
+  const combineObject = {...registration, ...route.params.form};
   const [items, setItems] = useState([
     {label: 'Male', value: 'male'},
     {label: 'Female', value: 'female'},
@@ -91,11 +95,7 @@ const UserData = () => {
           placeholder={language?.ChooseYourCountry}
         />
         <View style={{marginVertical: 30}}>
-          <CommonButton
-            green={true}
-            onPress={() => navigation.navigate('ProfessionalDatas')}
-            title={language?.Next}
-          />
+        <CommonButton  green={true} onPress={()=>navigation.navigate('ProfessionalDatas',{updatedform:combineObject})} title={language?.Next} />
         </View>
       </View>
     </ScrollView>

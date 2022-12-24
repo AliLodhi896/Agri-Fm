@@ -13,39 +13,8 @@ import CommonButton from "../../components/Buttons/CommonButton";
 import { AuthContext } from '../../context/Context';
 
 import { useRoute } from '@react-navigation/native';
-
-const LoginPassword = () => {
-    const fetchData = () => {
-        
-        return fetch(`https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/login-app.php?email=${route.params.email}&password=${pass}`)
-              
-        .then((response) => response.json())
-              .then((data) =>{ 
-                console.log(data[0].validation,'Login')
-                if(data[0].validation === 'ok'){
-                    alert('LoginSuccessfully')
-                }
-                else{
-                    alert(data[0])
-                }
-          
-            //   alert(data[0].validation);
-              })
-              .catch((err) => {
-                console.log(err,'API Failed');
-                alert('error')
-              });
-              
-      }
-
-
-
-    const route = useRoute();
-    console.log(route.params.email,'FromEMAILE=')
- 
-    const [pass, setPass] = useState('');
-
 import {useForm} from 'react-hook-form';
+
 
 const LoginPassword = () => {
     const {
@@ -55,6 +24,10 @@ const LoginPassword = () => {
         formState: {errors, isValid},
       } = useForm({mode: 'all'});
     const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
+    const route = useRoute();
+    console.log(route.params.email,'FromEMAILE=')
+ 
+    const [pass, setPass] = useState('');
     return (
         <ScrollView style={styles.mainBox}>
             <Header
