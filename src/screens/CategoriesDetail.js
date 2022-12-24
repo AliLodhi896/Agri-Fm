@@ -40,12 +40,12 @@ const CategoriesDetail = (props) => {
   }
   useEffect(() => {
     if(route.params.test == 1){
-      alert('1')
+      alert('1aa')
     api = "https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/animals-avicultura-app.php";
     
     }
     else if (route.params.test == 2){
-      alert('2u')
+      alert('2m')
       api ='https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/animals-porcino-app.php';
     }
     else if(route.params.test == 3){

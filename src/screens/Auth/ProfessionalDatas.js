@@ -4,6 +4,8 @@ import SocialModal from '../../components/Cards/Modals/SocialModal';
 import Header from '../../components/Header/Header';
 import Colors from '../../constant/Colors';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+import { useRoute } from '@react-navigation/native';
+
 
 // ====================== icons ====================
 
@@ -14,6 +16,10 @@ import {useNavigation} from '@react-navigation/native';
 import {AuthContext} from '../../context/Context';
 
 const ProfessionalDatas = () => {
+
+    const route = useRoute();
+    console.log(route.params.updatedform,'UpdatedOne')
+
   const navigation = useNavigation();
   const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
     const [selectSpecies, setSelectSpecies] = useState(false)
@@ -33,8 +39,6 @@ const ProfessionalDatas = () => {
           source={require('../../assets/Images/last.jpg')}
         />
       </View>
-
-
       <TouchableOpacity onPress={()=>setSelectSpecies(!selectSpecies)} style={{justifyContent:'space-between',borderWidth:1,borderColor:'white',textAlign: 'center',marginHorizontal:25,padding:15,flexDirection:'row',marginTop:20,borderRadius:10}}>
         <Text
             style={{

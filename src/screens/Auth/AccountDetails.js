@@ -26,6 +26,7 @@ import {useForm} from 'react-hook-form';
 const AccountDetails = () => {
   const navigation = useNavigation();
   const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
+  const [registration, setRegistration] = useState({Name : '' , Surname:'', Company:'',Phone:''})
   const {
     control,
     register,
@@ -54,6 +55,7 @@ const AccountDetails = () => {
           rules={{
             required: 'Name is required',
           }}
+          onChangeText={(username)=>{setRegistration(prev => ({...prev, Name: username})) }}
           placeholder={language?.Name}
         />
         {errors.name && (
@@ -62,6 +64,7 @@ const AccountDetails = () => {
         <Input
           name="surname"
           control={control}
+          onChangeText={(username)=>{setRegistration(prev => ({...prev, Surname: username})) }}
           rules={{
             required: 'Surname is required',
           }}
@@ -73,6 +76,7 @@ const AccountDetails = () => {
         <Input
           name="company"
           control={control}
+          onChangeText={(username)=>{setRegistration(prev => ({...prev, Company: username})) }}
           rules={{
             required: 'Company is required',
           }}
@@ -87,6 +91,7 @@ const AccountDetails = () => {
           rules={{
             required: 'Phone is required',
           }}
+          onChangeText={(username)=>{setRegistration(prev => ({...prev, Phone: username})) }}
           placeholder={language?.Phone}
         />
         {errors.phone && (
@@ -95,7 +100,7 @@ const AccountDetails = () => {
         <View style={{marginVertical: 30}}>
           <CommonButton
             green={true}
-            onPress={() => navigation.navigate('UserData')}
+            onPress={()=>navigation.navigate('UserData',{form:registration})} 
             title={language?.Next}
           />
         </View>
@@ -128,5 +133,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
 });
+
 
 export default AccountDetails;

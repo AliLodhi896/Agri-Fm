@@ -13,6 +13,7 @@ import { AuthContext } from '../../context/Context';
 
 const FeaturedCard = (props) => {
     const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
+    console.log(props.channelName,"YeCheckKR");
   return (
     <View style={styles.featuredCards}>
 
@@ -32,7 +33,7 @@ const FeaturedCard = (props) => {
     </View>
     <View styles={styles.detailBox}>
         <View style={styles.channelnameBox}>
-            <Text style={[styles.channelname,props.headingText]}>Channel Name</Text>
+            <Text style={[styles.channelname,props.headingText]}>{props.channelName}</Text>
             <TouchableOpacity style={{marginLeft:'30%'}}  onPress={props.onPressIcon}>
                 <Entypo
                     name="dots-three-horizontal"
@@ -42,7 +43,7 @@ const FeaturedCard = (props) => {
             </TouchableOpacity>
         </View>
         <View style={styles.descriptionBox}>
-            <Text style={[styles.description,props.textstyle]}>Testing: Dessxription of featured podcast</Text>
+            <Text style={[styles.description,props.textstyle]}>{props.podcastname}</Text>
         </View>
         <View style={styles.cardiconBox}>
             <View style={{flexDirection:'row',alignContent:'center',alignItems:'center'}}> 
