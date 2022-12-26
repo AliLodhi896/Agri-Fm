@@ -6,11 +6,17 @@ import Colors from '../../constant/Colors';
 // import components
 // import packages
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Entypo from 'react-native-vector-icons/Entypo';
+import ListModals from './Modals/ListModals';
+import { AuthContext } from '../../context/Context';
 
 
 const FeaturedCard = (props) => {
+    const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
+    console.log(props.channelName,"YeCheckKR");
   return (
     <View style={styles.featuredCards}>
+
     <View style={styles.imageBox}>
         <Image
             source={require('../../assets/Images/hen1.png')}
@@ -27,23 +33,35 @@ const FeaturedCard = (props) => {
     </View>
     <View styles={styles.detailBox}>
         <View style={styles.channelnameBox}>
-            <Text style={[styles.channelname,props.headingText]}>Channel Name</Text>
+            <Text style={[styles.channelname,props.headingText]}>{props.channelName}</Text>
+            <TouchableOpacity style={{marginLeft:'30%'}}  onPress={props.onPressIcon}>
+                <Entypo
+                    name="dots-three-horizontal"
+                    color={props.purpleIcon == true ? Colors.primary : 'white'}
+                    size={25}
+                />
+            </TouchableOpacity>
         </View>
         <View style={styles.descriptionBox}>
-            <Text style={[styles.description,props.textstyle]}>Testing: Dessxription of featured podcast</Text>
+            <Text style={[styles.description,props.textstyle]}>{props.podcastname}</Text>
         </View>
         <View style={styles.cardiconBox}>
             <View style={{flexDirection:'row',alignContent:'center',alignItems:'center'}}> 
-                <TouchableOpacity style={styles.playButton}>
-                    <Text style={{color:'white'}}>Play</Text>
+                <TouchableOpacity style={styles.playButton} onPress={props.onPress}>
+                    <Image
+                        source={require('../../assets/Images/playbtn.png')}
+                        style={{width: '20%', height: 15,marginLeft:10}}
+                    />
+                    <Text style={{color:'white',marginLeft:5}}>{language?.Play}</Text>
                 </TouchableOpacity>
                 <Text style={[styles.timeText,props.timeText]}>45:00</Text>
             </View>
             <View>
             <Ionicons
                 name="ios-cloud-download-outline"
-                color='white'
+                color={props.purpleIcon == true ? Colors.primary : 'white'}
                 size={25}
+                style={{marginLeft:'48%'}}
             />
             </View>
         </View>
@@ -75,7 +93,7 @@ const styles = StyleSheet.create({
        },
        channelnameBox:{
         marginHorizontal:10,
-        flexDirection:'row'
+        flexDirection:'row',
        },
        descriptionBox:{
         width:'85%',
@@ -100,7 +118,8 @@ const styles = StyleSheet.create({
         padding:5,
         borderRadius:50,
         width:80,
-        alignItems:'center'
+        alignItems:'center',
+        flexDirection:'row'
        },
        timeText:{
         marginLeft:10

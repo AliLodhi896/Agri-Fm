@@ -4,8 +4,7 @@ import Colors from "../../constant/Colors";
 const WhiteButton = (props) => {
     return (
         <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', }}>
-
-            <TouchableOpacity style={[styles.mainBox, props.style]}>
+            <TouchableOpacity style={[styles.mainBox, props.style]} onPress={props.onPress}>
                 <Text style={{ fontWeight: '900', fontSize: 18, textAlign: 'center', color: Colors.primary }}>{props.title}</Text>
             </TouchableOpacity>
         </View>

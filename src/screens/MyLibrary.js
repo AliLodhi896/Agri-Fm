@@ -1,4 +1,4 @@
-import React,{useState} from 'react'
+import React,{useState,useContext} from 'react'
 import { View, Text,StyleSheet,TouchableOpacity,Image,ScrollView} from 'react-native'
 import ChannelCard from '../components/Cards/ChannelCard';
 import Colors from '../constant/Colors'
@@ -7,20 +7,29 @@ import FeaturedCard from '../components/Cards/FeaturedCard';
 
 import Podcast from '../components/Sections/Podcast';
 import Channel from '../components/Sections/Channel';
+import Header from '../components/Header/Header';
+import { AuthContext } from '../context/Context';
 
 const MyLibrary = () => {
   const [podcast, setPodcast] = useState(true)
   const [channels, setChannels] = useState(false)
+  const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
 
 
   return (
     <ScrollView style={styles.mainBox}>
+            <Header
+                style={{ backgroundColor:Colors.lightBackground, paddingHorizontal: 20 }}
+                textStyle={{ color: Colors.primary, fontWeight: 'Bold' }}
+                icon={true}
+                title={'My Library'}
+            />
         <View style={styles.switchComponentsBox}>
           <TouchableOpacity style={podcast == true ? styles.playButtonActive : styles.playButton} onPress={()=>[setPodcast(true),setChannels(false)]}>
-            <Text style={podcast == true ? styles.buttonTextActive : styles.buttonText}>Podcasts</Text>
+            <Text style={podcast == true ? styles.buttonTextActive : styles.buttonText}>{language?.Podcasts}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={channels == true ? styles.playButtonActive : styles.playButton} onPress={()=>[setChannels(true),setPodcast(false)]}>
-            <Text style={channels == true ? styles.buttonTextActive : styles.buttonText}>Channels</Text>
+            <Text style={channels == true ? styles.buttonTextActive : styles.buttonText}>{language?.Channels}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.playButton}>
             <Ionicons
@@ -43,7 +52,6 @@ const styles = StyleSheet.create({
     mainBox:{
         flex:1,
         backgroundColor:Colors.secondary,
-        paddingHorizontal:10,
     },
     cardBox:{
       marginTop:20,
@@ -51,15 +59,15 @@ const styles = StyleSheet.create({
       marginHorizontal:10
     },
     switchComponentsBox:{
-      marginTop:80,
+      marginTop:30,
       flexDirection:"row",
       justifyContent:'space-between',
       marginHorizontal:20
     },
     playButton:{
-      padding:10,
+      padding:5,
       borderRadius:50,
-      width:100,
+      width:110,
       borderWidth:1,
       borderColor:Colors.primary,
       alignContent:'center',
@@ -67,9 +75,9 @@ const styles = StyleSheet.create({
       
      },
      playButtonActive:{
-      padding:10,
+      padding:5,
       borderRadius:50,
-      width:100,
+      width:110,
       backgroundColor:Colors.primary,
       alignContent:'center',
       alignItems:'center',

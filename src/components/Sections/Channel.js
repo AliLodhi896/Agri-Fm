@@ -30,9 +30,9 @@ const Channel = (props) => {
       ] ;
   return (
             <View style={styles.interestlList}>
-                {channelsList.map((item)=>{
+                {props.user.map((item)=>{
                     return(
-                        <ChannelCard mainStyle={{width:180}} title={item.name} titleStyle={{color:Colors.primary,textAlign:'center'}} />
+                        <ChannelCard descriptionStyle={{marginHorizontal:0}} mainStyle={{width:180}} style={{marginHorizontal:0}} title={item.nombrees} description={item.description} titleStyle={{color:Colors.primary,marginLeft:0}} />
                     );
                 })}
             </View>
@@ -41,10 +41,11 @@ const Channel = (props) => {
 const styles = StyleSheet.create({
 
       interestlList:{
-        marginTop:20,
+        marginTop:10,
         justifyContent:'space-between',
         flexDirection:'row',
-        flexWrap:'wrap'
+        flexWrap:'wrap',
+        marginHorizontal:10
     },
 });
 export default Channel

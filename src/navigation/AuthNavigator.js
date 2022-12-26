@@ -1,75 +1,69 @@
 import React from 'react';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import {Image, StyleSheet, View, Text} from 'react-native';
 ///***********Icon
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Entypo from 'react-native-vector-icons/Entypo';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+
+
+import Home from '../screens/Home';
+import Explore from '../screens/Explore';
+import MyLibrary from '../screens/MyLibrary';
 
 //Import Navigation
 import {createStackNavigator} from '@react-navigation/stack';
+import {TouchableOpacity} from 'react-native-gesture-handler';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+// import colors from '../constants/colors';
 import colors from '../constant/Colors';
-import SignIn from '../screens/Auth/SignIn';
-import SignUp from '../screens/Auth/SignUp';
-import Home from '../screens/Home';
-import Verification from '../screens/Auth/Verification';
-import VerifyEmail from '../screens/Auth/VerifyEmail';
-import ResetPassword from '../screens/Auth/ResetPassword';
+import LanguageSelection from '../screens/Auth/LanguageSelection';
 
 
-const AuthStack = createStackNavigator();
 
+const MainStack = createStackNavigator();
+const Tab = createBottomTabNavigator();
 
-export const AuthNavigator = () => {
-    return (
-      <AuthStack.Navigator
-        screenOptions={({navigation}) => ({
-          headerStyle: {
-            backgroundColor: colors.background,
-            elevation: 0,
-            shadowOpacity: 0,
-          },
   
-          headerTitleStyle: {
-            fontSize: 16,
-          },
-          headerBackTitleStyle: {
-          },
-          headerTintColor: 'white',
-          headerTitleAlign: 'center',
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <FontAwesome
-                name="angle-left"
-                style={{paddingLeft: 15}}
-                color="white"
-                size={38}
-              />
-            </TouchableOpacity>
-          ),
-        })}>
-        <AuthStack.Screen
-          name="SignIn"
-          component={SignIn}
+  export const Auth = ({navigation}) => {
+    const defaultStackNavOptions = {
+      headerStyle: {
+        backgroundColor: colors.primary,
+        elevation: 0,
+        shadowOpacity: 0,
+      },
+  
+      headerTitleStyle: {
+        fontSize: 18,
+      },
+      headerTintColor: 'white',
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons
+            style={{paddingLeft: 10}}
+            name="arrow-back"
+            color="white"
+            size={25}
+          />
+        </TouchableOpacity>
+      ),
+    };
+  
+    return (
+      <MainStack.Navigator screenOptions={defaultStackNavOptions}>
+        <MainStack.Screen
+          name="LanguageSelection"
+          component={LanguageSelection}
           options={{headerShown: false}}
         />
-        <AuthStack.Screen
-          name="SignUp"
-          component={SignUp}
-          options={{headerShown: false}}
-        />
-        <AuthStack.Screen
-          name="Verification"
-          component={Verification}
-          options={{headerShown: false}}
-        />
-        <AuthStack.Screen
-          name="VerifyEmail"
-          component={VerifyEmail}
-          options={{headerShown: false}}
-        />
-        <AuthStack.Screen
-          name="ResetPassword"
-          component={ResetPassword}
-          options={{headerShown: false}}
-        />
-      </AuthStack.Navigator>
+      </MainStack.Navigator>
     );
   };
+
+
+const styles = StyleSheet.create({
+
+  });

@@ -1,0 +1,83 @@
+{
+
+    "Poultry": "Aves de corral",
+    "Ruminant": "Rumiante",
+    "Swine": "Cerdo",
+    "Nutrition": "Nutrición",
+    "Aqua": "Agua",
+    "LastChannels": "Últimos Canales",
+    "FeaturedPodcasts": "Podcasts Destacados",
+    "GoToLibrary": "Ir a la Biblioteca",
+    "DownloadPodcast": "Descargar Podcast",
+    "Share": "Cuota",
+    "AddToLibrary": "Agregar a la Biblioteca",
+    "FeaturedChannels": "Canales Destacados",
+    "CreateChannel": "Crear Canal",
+    "CreateProfile": "Crear Perfil",
+    "TrendingInterest": "Tendencia de Interés",
+    "seeAll": "ver todo",
+
+    "ExploreOurPodcast": "Explora nuestro podcast",
+    "Interests": "Intereses",
+
+    "Podcasts": "Podcasts",
+    "Channels": "Canales",
+    "Play": "Jugar",
+
+    "Welcome": "Welcome",
+    "Mobile": "Móvil",
+    "Company": "Empresa",
+    "Job": "Trabajo",
+    "Activity": "Actividad",
+    "Production": "Producción",
+    "Details": "Detalles",
+    "EditProfile": "Editar Perfil",
+    "ChangeInterest": "Cambiar Interés",
+    "ChangeProducting": "Cambio de Producción",
+
+    "Download": "Descargar",
+    "AddToMyLibrary": "Añadir a mi librería",
+
+    "Name": "Nombre",
+    "Surname": "Apellido",
+    "Phone": "Teléfono",
+    "Next":  "Próximo",
+
+    "YourEmail": "Tu correo electrónico",
+    "YourPassword": "Tu Contraseña",
+
+    "ChooseYourJob": "Elige tu trabajo",
+    "ChooseYourActivity": "Elige tu actividad",
+    "ChooseYourLanguage": "Elige tu idioma",
+    "ChooseYourCountry": "Elige tu país",
+
+    "SelectYourSpecies": "Seleccione su Espécies",
+    "SelectYourSpeciesDetails": "Select Your Species Detalhes",
+
+    "Avicultura": "Avicultura",
+
+    "Select5Interests": "Seleccione 5 Intereses",
+    "GoBack": "Regresa",
+
+    "Register": "Registro",
+    "Login": "Acceso",
+    "Follow": "Seguir",
+
+    "ActualName": "Nombre Real",
+    "ActualSurname": "Apellido Real",
+    "ActualCompany": "Empresa Real",
+    "ActualMobilePhone": "Teléfono Móvil Real",
+    "NewJob": "Nuevo Trabajo",
+    "NewActivity": "Nueva actividad",
+    "NewLanguage": "Nuevo Idioma",
+    "NewCountry": "Nuevo País",
+    "Update": "actualizar",
+
+    
+
+    "Home": "Casa",
+    "Explore": "Explorar",
+    "Library": "Biblioteca",
+    "MyAgriFm": "MiagriFm"
+
+}

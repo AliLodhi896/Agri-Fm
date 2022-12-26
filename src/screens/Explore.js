@@ -1,11 +1,14 @@
-import React from 'react'
+import React, {useState,useContext} from 'react'
 import { View, Text,StyleSheet,TouchableOpacity,Image,ScrollView} from 'react-native'
 import Colors from '../constant/Colors'
 import SearchInput from '../components/Inputs/SearchInput';
 import InterestCard from '../components/Cards/InterestCard';
-
+import Header from '../components/Header/Header';
+import * as Animatable from 'react-native-animatable';
+import { AuthContext } from '../context/Context';
 
 const Explore = () => {
+const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
     const Interest = [
         {
             id:1,
@@ -18,21 +21,22 @@ const Explore = () => {
         },
     ];
   return (
-    <ScrollView style={styles.mainBox}>
+    <ScrollView style={styles.mainBox}  >
+        <Header icon={true}  />
         <View style={styles.searchBar}>
-            <SearchInput placeholder="Explore our podcast" />
+            <SearchInput placeholder={language?.ExploreOurPodcast} />
         </View>
         <View style={styles.cardBox}>
             <View style={styles.headingBox}>
-                <Text style={styles.mainHeading}>Interests</Text>
+                <Text style={styles.mainHeading}>{language?.Interests}</Text>
             </View>
-            <View style={styles.interestlList}>
+            <Animatable.View style={styles.interestlList}animation="fadeInUpBig" >
                 {Interest.map(()=>{
                     return(
                         <InterestCard />
                     );
                 })}
-            </View>
+            </Animatable.View>
         </View>
     </ScrollView>
   )
@@ -44,11 +48,8 @@ const styles = StyleSheet.create({
         backgroundColor:Colors.primary,
         paddingHorizontal:10,
     },
-    searchBar:{
-        marginTop:50
-    },
     cardBox:{
-        marginTop:40,
+        marginTop:20,
         marginBottom:20,
         marginHorizontal:25
     },
@@ -62,7 +63,7 @@ const styles = StyleSheet.create({
         color:Colors.secondary
     },
     interestlList:{
-        marginTop:20,
+        marginTop:10,
         justifyContent:'space-between',
         flexDirection:'row',
         flexWrap:'wrap'
