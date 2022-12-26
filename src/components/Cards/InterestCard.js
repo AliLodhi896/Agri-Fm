@@ -13,10 +13,6 @@ const InterestCard = (props) => {
     console.log(props.id, 'image')
     return (
         <TouchableOpacity style={[styles.mainBox1, props.mainStyle]}>
-            {/* <Image
-                        source={props.image}
-                        style={{width: '100%', height: '100%',borderRadius:10,opacity:0.5}}
-                    /> */}
             <Image
                 style={{ width: '100%', height: '100%', borderRadius: 10, opacity: 0.5 }}
                 source={{ uri: props.img_intereses }}

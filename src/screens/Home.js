@@ -168,12 +168,12 @@ useEffect(()=>{
         <TouchableOpacity
           style={styles.iconBox}
           onPress={() => navigation.navigate('Profile')}>
-            {selectedlang == 'spain' ?
+            {selectedlang == 'es' ?
               <Image
               source={require('../assets/Images/spain-flag.png')}
               style={{width: '100%', height: '100%', borderRadius: 100}}
             /> 
-            : selectedlang == 'brazil' ?
+            : selectedlang == 'pt' ?
             <Image
               source={require('../assets/Images/brazil-flag.jpg')}
               style={{width: '100%', height: '100%', borderRadius: 100}}
