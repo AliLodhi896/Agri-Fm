@@ -1,4 +1,4 @@
-import React, {useState,useContext} from 'react';
+import React, {useState,useContext,useEffect} from 'react';
 import { View, Text,StyleSheet,TouchableOpacity,Image,ScrollView} from 'react-native'
 import Colors from '../../constant/Colors'
 import SearchInput from '../../components/Inputs/SearchInput';
@@ -12,6 +12,8 @@ import { AuthContext } from '../../context/Context';
 
 const SelectInterest = () => {
     const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
+    const [interest,setInterest] = useState([])
+    const [check,setCheck] = useState('')
     const Interest = [
         {
             id:1,
@@ -24,6 +26,20 @@ const SelectInterest = () => {
         },
     ];
     const navigation = useNavigation();
+    useEffect(()=>{
+        fetch('https://socialagri.com/agriFM/wp-json/wp/v2/intereses/')
+        .then(res=>res.json())
+        
+        .then((data) =>{ 
+          console.log(data,'Channelllass'),
+          
+          setInterest(data.length == 0 ? undefined || null : (data));
+        
+        })
+      },[])
+      useEffect(()=>{
+        console.log(check);
+      },[check])
   return (
     <ScrollView style={styles.mainBox}  >
         <Header icon={true}  />
@@ -32,9 +48,9 @@ const SelectInterest = () => {
                 <Text style={styles.mainHeading}>{language?.Select5Interests}</Text>
             </View>
             <Animatable.View style={styles.interestlList} animation="fadeInUpBig" >
-                {Interest.map(()=>{
+                {interest.map((item)=>{
                     return(
-                        <InterestCard />
+                        <InterestCard mainStyle={{width: 170}} checkFunc ={setCheck} description ={item.name} img_intereses = {item.acf.img_intereses} id={item.id}/>
                     );
                 })}
             </Animatable.View>

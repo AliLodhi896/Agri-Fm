@@ -32,7 +32,7 @@ const VerifyPassword = () => {
 
   const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
   const navigation = useNavigation();
-
+  const [registration, setRegistration] = useState({Password : '' })
   return (
     <ScrollView style={styles.mainBox}>
       <Header
@@ -43,13 +43,15 @@ const VerifyPassword = () => {
         title={'Login/Registration'}
       />
       <View style={{marginVertical: 30}}>
-        <Input
+        <TextInput
+        style={[styles.input,styles.text]}
           name="password"
           control={control}
           rules={{
             required: 'Password is required',
           }}
           placeholder="Password"
+          onChangeText={(username)=>{setRegistration(prev => ({...prev, Password: username})) }}
         />
         {errors.password && (
           <Text style={styles.errormessage}>* {errors.password.message}</Text>
@@ -57,6 +59,7 @@ const VerifyPassword = () => {
         <Input
           name="verify_password"
           control={control}
+          
           rules={{
             required: 'Verify Password is required',
           }}
@@ -68,7 +71,7 @@ const VerifyPassword = () => {
           </Text>
         )}
         <View style={{marginVertical: 30}}>
-          <CommonButton  onPress={()=>navigation.navigate('AccountDetails')} green={true} title={language?.Next} />
+          <CommonButton  onPress={()=>navigation.navigate('AccountDetails',{password:registration})} green={true} title={language?.Next} />
         </View>
       </View>
     </ScrollView>
@@ -97,6 +100,13 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: '800',
     marginTop: 20,
+  },
+  input: { backgroundColor: 'white', marginTop: 20, marginHorizontal: 20, paddingHorizontal: 15, paddingVertical: 20, borderRadius: 8, fontSize: 16, color: Colors.placeholder },
+  text: {
+    fontSize: 18,
+    color: 'grey',
+    paddingHorizontal: 8,
+    letterSpacing: -0.575,
   },
 });
 

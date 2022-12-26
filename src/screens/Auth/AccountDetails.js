@@ -22,11 +22,15 @@ import {useNavigation} from '@react-navigation/native';
 import CommonBack from '../../components/CommonBack';
 import {AuthContext} from '../../context/Context';
 import {useForm} from 'react-hook-form';
+import {useRoute} from '@react-navigation/native';
 
 const AccountDetails = () => {
+  const route = useRoute();
+  console.log(route.params.password,'Psss')
   const navigation = useNavigation();
   const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
   const [registration, setRegistration] = useState({Name : '' , Surname:'', Company:'',Phone:''})
+  const combineObject = {...registration, ...route.params.password};
   const {
     control,
     register,
@@ -49,9 +53,10 @@ const AccountDetails = () => {
         />
       </View>
       <View style={{marginVertical: 30}}>
-        <Input
+        <TextInput
           name="name"
           control={control}
+          style={[styles.input,styles.text]}
           rules={{
             required: 'Name is required',
           }}
@@ -61,9 +66,11 @@ const AccountDetails = () => {
         {errors.name && (
           <Text style={styles.errormessage}>* {errors.name.message}</Text>
         )}
-        <Input
+        
+        <TextInput
           name="surname"
           control={control}
+          style={[styles.input,styles.text]}
           onChangeText={(username)=>{setRegistration(prev => ({...prev, Surname: username})) }}
           rules={{
             required: 'Surname is required',
@@ -73,9 +80,10 @@ const AccountDetails = () => {
         {errors.surname && (
           <Text style={styles.errormessage}>* {errors.surname.message}</Text>
         )}
-        <Input
+        <TextInput
           name="company"
           control={control}
+          style={[styles.input,styles.text]}
           onChangeText={(username)=>{setRegistration(prev => ({...prev, Company: username})) }}
           rules={{
             required: 'Company is required',
@@ -85,9 +93,10 @@ const AccountDetails = () => {
         {errors.company && (
           <Text style={styles.errormessage}>* {errors.company.message}</Text>
         )}
-        <Input
+        <TextInput
           name="phone"
           control={control}
+          style={[styles.input,styles.text]}
           rules={{
             required: 'Phone is required',
           }}
@@ -100,7 +109,7 @@ const AccountDetails = () => {
         <View style={{marginVertical: 30}}>
           <CommonButton
             green={true}
-            onPress={()=>navigation.navigate('UserData',{form:registration})} 
+            onPress={()=>navigation.navigate('UserData',{form:combineObject})} 
             title={language?.Next}
           />
         </View>
@@ -131,6 +140,13 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: '800',
     marginTop: 20,
+  },
+  input: { backgroundColor: 'white', marginTop: 20, marginHorizontal: 20, paddingHorizontal: 15, paddingVertical: 20, borderRadius: 8, fontSize: 16, color: Colors.placeholder },
+  text: {
+    fontSize: 18,
+    color: 'grey',
+    paddingHorizontal: 8,
+    letterSpacing: -0.575,
   },
 });
 

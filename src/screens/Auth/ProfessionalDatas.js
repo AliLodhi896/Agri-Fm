@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext,useEffect} from 'react';
 import {StyleSheet, View, Image, Text, TextInput,TouchableOpacity,ScrollView} from 'react-native';
 import SocialModal from '../../components/Cards/Modals/SocialModal';
 import Header from '../../components/Header/Header';
@@ -18,12 +18,44 @@ import {AuthContext} from '../../context/Context';
 const ProfessionalDatas = () => {
 
     const route = useRoute();
-    console.log(route.params.updatedform,'UpdatedOne')
+    console.log(route.params.value,route.params.updatedform,'UpdatedOneDaniyal')
 
   const navigation = useNavigation();
   const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
     const [selectSpecies, setSelectSpecies] = useState(false)
+    const [Species, setSpecies] = useState([{}])
+    const [DetailSpecies, setDetailSpecies] = useState([{}])
     const [selectDetailSpecies, setSelectDetailSpecies] = useState(false)
+    useEffect(()=>{
+      fetch('https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/especies-app.php')
+      .then(res=>res.json())
+      
+      .then((data) =>{ 
+        console.log(data,'Jobs'),
+        setSpecies(data);
+      })
+    },[])
+    useEffect(()=>{
+      fetch('https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/animals-app.php')
+      .then(res=>res.json())
+      
+      .then((data) =>{ 
+        console.log(data,'Jobs'),
+        setDetailSpecies(data);
+      })
+    },[])
+    const fetchData = () => {
+      
+      return fetch("https://socialagri.com/agriFM/wpcontent/themes/agriFM/laptop/ajax/registroapp.php")
+            .then((response) => response.json())
+            .then((data) =>{ 
+              console.log(data,'CheckResult')
+            })
+            .catch((err) => {
+              console.log(err,'API Failed');
+            });
+            
+    }
   return (
     <ScrollView style={styles.mainBox}>
       <Header
@@ -52,12 +84,13 @@ const ProfessionalDatas = () => {
         <SimpleLineIcons name="arrow-down" color={'white'} size={20} style={{fontWeight:'700'}} />
       </TouchableOpacity>
     {selectSpecies == true ?
-
+      
         <View style={{marginHorizontal: '10%', marginTop: '5%'}}>
-        <CheckBoxWithLable status={true} lable={'Avicultura'} />
-        <CheckBoxWithLable status={true} lable={'Swine'} />
-        <CheckBoxWithLable status={true} lable={'Ruminant'} />
-        <CheckBoxWithLable status={true} lable={'Avicultura'} />
+          {Species.map((item)=>{
+            return(<CheckBoxWithLable status={true} lable={item.nombrees} />)
+          })}
+        
+       
         </View>
     : 
     null
@@ -77,10 +110,9 @@ const ProfessionalDatas = () => {
       </TouchableOpacity>
     {selectDetailSpecies == true ?
         <View style={{marginHorizontal: '10%', marginTop: '5%'}}>
-        <CheckBoxWithLable status={true} lable={'Avicultura'} />
-        <CheckBoxWithLable status={true} lable={'Swine'} />
-        <CheckBoxWithLable status={true} lable={'Ruminant'} />
-        <CheckBoxWithLable status={true} lable={'Avicultura'} />
+        {DetailSpecies.map((item)=>{
+            return(<CheckBoxWithLable status={true} lable={item.nombrees} />)
+          })}
         </View>
     : 
     null
@@ -88,7 +120,9 @@ const ProfessionalDatas = () => {
       
       <CommonButton
         green={true}
-        onPress={() => navigation.navigate('SelectInterest')}
+        onPress={() => {
+          fetchData(),
+          navigation.navigate('SelectInterest')}}
         title={language?.Next}
       />
       <CommonBack title={language?.GoBack} />
