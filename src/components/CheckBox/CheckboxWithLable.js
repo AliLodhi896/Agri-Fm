@@ -10,10 +10,11 @@ const CheckBoxWithLable = props => {
     <View style={styles.mainView}>
       <View style={styles.iconView}>
         <Checkbox
-          status={checked ? 'checked' : 'unchecked'}
-          onPress={() => {
-            setChecked(!checked);
-          }}
+          status={props.status ? 'checked' : 'unchecked'}
+          // onPress={() => {
+          //   setChecked(!checked);
+          // }}
+          onPress={props.onPress}
         />
       </View>
       <Text style={styles.lable}>{props.lable}</Text>

@@ -1,4 +1,4 @@
-import React, {useState, useContext,useEffect} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import {
   StyleSheet,
   View,
@@ -36,10 +36,10 @@ const UserData = () => {
   //   County: '',
   // });
   const combineObject = {...UserdataObject, ...route.params.form};
-  const [Jobs, setJob] = useState([{}])
-  const [Activity, setActivity] = useState([{}])
-  const [Language, setLanguage] = useState([{}])
-  const [Countries, setCountries] = useState([{}])
+  const [Jobs, setJob] = useState([{}]);
+  const [Activity, setActivity] = useState([{}]);
+  const [Language, setLanguage] = useState([{}]);
+  const [Countries, setCountries] = useState([{}]);
   // const [items, setItems] = useState([
   //   {label: 'Male', value: 'male'},
   //   {label: 'Female', value: 'female'},
@@ -49,67 +49,118 @@ const UserData = () => {
   const [ivalueCountry, setIvalueCountry] = useState(null);
   const [ivalueActivity, setIvalueActivity] = useState(null);
   const [ivaluelanguage, setIvalueLanguage] = useState(null);
-  const UserdataObject={Job: ivalueJob,
-  Activity: ivalueActivity,
-  Language: ivaluelanguage,
-  County: ivalueCountry}
-  useEffect(()=>{
-    fetch('https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/cargo-app.php')
-    .then(res=>res.json())
-    
-    .then((data) =>{ 
-      console.log(data,'Jobs'),
-      setJob(data.map( el => ({label: el.nombrees,value: el.nombrept })));
-    })
-  },[])
-  useEffect(()=>{
-    fetch('https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/actividad-app.php')
-    .then(res=>res.json())
-    
-    .then((data) =>{ 
-      console.log(data,'Jobs'),
-      setActivity(data.map( el => ({label: el.nombrees,value: el.nombrept })));
-    })
-  },[])
-  useEffect(()=>{
-    fetch('https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/idioma-app.php')
-    .then(res=>res.json())
-    
-    .then((data) =>{ 
-      console.log(data,'Jobs'),
-      setLanguage(data.map( el => ({id: el.id,label: el.nombrees,value: el.nombrept })));
-    })
-  },[])
-  useEffect(()=>{
-    console.log(ivaluelanguage,'checkLanguage')
-    if(ivaluelanguage === 'Português'){
-      fetch('https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/country-app-pt.php')
-      .then(res=>res.json())
-      
-      .then((data) =>{ 
-        console.log(data,'Jobs'),
-        setCountries(data.map( el => ({id: el.id,label: el.nombrees,value: el.nombrept })));
-      })
-    }
-    else if(ivaluelanguage === 'Espanhol'){
-      fetch('https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/country-app.php')
-      .then(res=>res.json())
-      
-      .then((data) =>{ 
-        console.log(data,'Jobs'),
-        setCountries(data.map( el => ({id: el.id,label: el.nombrees,value: el.nombrept })));
-      })
-    }
-    else{
+  const UserdataObject = {
+    Job: ivalueJob,
+    Activity: ivalueActivity,
+    Language: ivaluelanguage,
+    County: ivalueCountry,
+  };
 
-      fetch('https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/country-app-es.php')
-      .then(res=>res.json())
-      
-      .then((data) =>{ 
-        console.log(data,'Jobs'),
-        setCountries(data.map( el => ({id: el.id,label: el.nombrees,value: el.nombrept })));
-      })    }
-  },[ivaluelanguage],[]) 
+  const onSubmit = () => {
+    combineObject.jobValue = ivalueJob;
+    combineObject.country = ivalueCountry;
+    combineObject.activity = ivalueActivity;
+    combineObject.lang = ivaluelanguage;
+    navigation.navigate('ProfessionalDatas', {
+      updatedform: combineObject,
+    });
+  };
+
+  useEffect(() => {
+    fetch(
+      'https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/cargo-app.php',
+    )
+      .then(res => res.json())
+
+      .then(data => {
+        console.log(data, 'Jobs'),
+          setJob(data.map(el => ({label: el.nombrees, value: el.z})));
+      });
+  }, []);
+  useEffect(() => {
+    fetch(
+      'https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/actividad-app.php',
+    )
+      .then(res => res.json())
+
+      .then(data => {
+        console.log(data, 'Jobs'),
+          setActivity(data.map(el => ({label: el.nombrees, value: el.id})));
+      });
+  }, []);
+  useEffect(() => {
+    fetch(
+      'https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/idioma-app.php',
+    )
+      .then(res => res.json())
+
+      .then(data => {
+        console.log(data, 'Jobs'),
+          setLanguage(
+            data.map(el => ({
+              id: el.id,
+              label: el.nombrees,
+              value: el.id,
+            })),
+          );
+      });
+  }, []);
+  useEffect(
+    () => {
+      console.log(ivaluelanguage, 'checkLanguage');
+      if (ivaluelanguage === 'Português') {
+        fetch(
+          'https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/country-app-pt.php',
+        )
+          .then(res => res.json())
+
+          .then(data => {
+            console.log(data, 'Jobs'),
+              setCountries(
+                data.map(el => ({
+                  id: el.id,
+                  label: el.nombrees,
+                  value: el.id,
+                })),
+              );
+          });
+      } else if (ivaluelanguage === 'Espanhol') {
+        fetch(
+          'https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/country-app.php',
+        )
+          .then(res => res.json())
+
+          .then(data => {
+            console.log(data, 'Jobs'),
+              setCountries(
+                data.map(el => ({
+                  id: el.id,
+                  label: el.nombrees,
+                  value: el.id,
+                })),
+              );
+          });
+      } else {
+        fetch(
+          'https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/country-app-es.php',
+        )
+          .then(res => res.json())
+
+          .then(data => {
+            console.log(data, 'Jobs'),
+              setCountries(
+                data.map(el => ({
+                  id: el.id,
+                  label: el.nombrees,
+                  value: el.id,
+                })),
+              );
+          });
+      }
+    },
+    [ivaluelanguage],
+    [],
+  );
   return (
     <ScrollView style={styles.mainBox}>
       <Header
@@ -128,7 +179,7 @@ const UserData = () => {
       <View style={{marginVertical: 30, marginHorizontal: 20}}>
         <Dropdown
           searchable={true}
-          items={Jobs}  
+          items={Jobs}
           setItems={setJob}
           value={ivalueJob}
           setValue={setIvalueJob}
@@ -163,7 +214,11 @@ const UserData = () => {
           placeholder={language?.ChooseYourCountry}
         />
         <View style={{marginVertical: 30}}>
-        <CommonButton  green={true} onPress={()=>navigation.navigate('ProfessionalDatas',{updatedform:combineObject,value:[ivaluelanguage,ivalueActivity,ivalueCountry,ivalueJob]})} title={language?.Next} />
+          <CommonButton
+            green={true}
+            onPress={() => onSubmit()}
+            title={language?.Next}
+          />
         </View>
       </View>
     </ScrollView>

@@ -26,10 +26,15 @@ import {useRoute} from '@react-navigation/native';
 
 const AccountDetails = () => {
   const route = useRoute();
-  console.log(route.params.password,'Psss')
+  console.log(route.params.password, 'Psss');
   const navigation = useNavigation();
   const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
-  const [registration, setRegistration] = useState({Name : '' , Surname:'', Company:'',Phone:''})
+  const [registration, setRegistration] = useState({
+    Name: '',
+    Surname: '',
+    Company: '',
+    Phone: '',
+  });
   const combineObject = {...registration, ...route.params.password};
   const {
     control,
@@ -37,6 +42,11 @@ const AccountDetails = () => {
     handleSubmit,
     formState: {errors, isValid},
   } = useForm({mode: 'all'});
+
+  const onSubmit = data => {
+    navigation.navigate('UserData', {form: data});
+  };
+
   return (
     <ScrollView style={styles.mainBox}>
       <Header
@@ -53,63 +63,67 @@ const AccountDetails = () => {
         />
       </View>
       <View style={{marginVertical: 30}}>
-        <TextInput
-          name="name"
+        <Input
+          name="Name"
           control={control}
-          style={[styles.input,styles.text]}
+          // style={[styles.input, styles.text]}
           rules={{
             required: 'Name is required',
           }}
-          onChangeText={(username)=>{setRegistration(prev => ({...prev, Name: username})) }}
+          // onChangeText={(username)=>{setRegistration(prev => ({...prev, Name: username})) }}
           placeholder={language?.Name}
         />
-        {errors.name && (
-          <Text style={styles.errormessage}>* {errors.name.message}</Text>
+        {errors.Name && (
+          <Text style={styles.errormessage}>* {errors.Name.message}</Text>
         )}
-        
-        <TextInput
-          name="surname"
+
+        <Input
+          name="Surname"
           control={control}
-          style={[styles.input,styles.text]}
-          onChangeText={(username)=>{setRegistration(prev => ({...prev, Surname: username})) }}
+          // style={[styles.input, styles.text]}
+          // onChangeText={(username)=>{setRegistration(prev => ({...prev, Surname: username})) }}
           rules={{
             required: 'Surname is required',
           }}
           placeholder={language?.Surname}
         />
-        {errors.surname && (
-          <Text style={styles.errormessage}>* {errors.surname.message}</Text>
+        {errors.Surname && (
+          <Text style={styles.errormessage}>* {errors.Surname.message}</Text>
         )}
-        <TextInput
-          name="company"
+        <Input
+          name="Company"
           control={control}
-          style={[styles.input,styles.text]}
-          onChangeText={(username)=>{setRegistration(prev => ({...prev, Company: username})) }}
+          // style={[styles.input, styles.text]}
+          // onChangeText={username => {
+          //   setRegistration(prev => ({...prev, Company: username}));
+          // }}
           rules={{
             required: 'Company is required',
           }}
           placeholder={language?.Company}
         />
-        {errors.company && (
-          <Text style={styles.errormessage}>* {errors.company.message}</Text>
+        {errors.Company && (
+          <Text style={styles.errormessage}>* {errors.Company.message}</Text>
         )}
-        <TextInput
-          name="phone"
+        <Input
+          name="Phone"
           control={control}
-          style={[styles.input,styles.text]}
+          // style={[styles.input, styles.text]}
           rules={{
             required: 'Phone is required',
           }}
-          onChangeText={(username)=>{setRegistration(prev => ({...prev, Phone: username})) }}
+          // onChangeText={username => {
+          //   setRegistration(prev => ({...prev, Phone: username}));
+          // }}
           placeholder={language?.Phone}
         />
-        {errors.phone && (
-          <Text style={styles.errormessage}>* {errors.phone.message}</Text>
+        {errors.Phone && (
+          <Text style={styles.errormessage}>* {errors.Phone.message}</Text>
         )}
         <View style={{marginVertical: 30}}>
           <CommonButton
             green={true}
-            onPress={()=>navigation.navigate('UserData',{form:combineObject})} 
+            onPress={handleSubmit(onSubmit)}
             title={language?.Next}
           />
         </View>
@@ -141,7 +155,16 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     marginTop: 20,
   },
-  input: { backgroundColor: 'white', marginTop: 20, marginHorizontal: 20, paddingHorizontal: 15, paddingVertical: 20, borderRadius: 8, fontSize: 16, color: Colors.placeholder },
+  input: {
+    backgroundColor: 'white',
+    marginTop: 20,
+    marginHorizontal: 20,
+    paddingHorizontal: 15,
+    paddingVertical: 20,
+    borderRadius: 8,
+    fontSize: 16,
+    color: Colors.placeholder,
+  },
   text: {
     fontSize: 18,
     color: 'grey',
@@ -149,6 +172,5 @@ const styles = StyleSheet.create({
     letterSpacing: -0.575,
   },
 });
-
 
 export default AccountDetails;
