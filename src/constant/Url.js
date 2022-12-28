@@ -1,2 +1,2 @@
 export const base_url =
-  'https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax';
+  'https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop';

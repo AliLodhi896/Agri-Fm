@@ -21,6 +21,7 @@ import CommonButton from '../../components/Buttons/CommonButton';
 import CommonBack from '../../components/CommonBack';
 import {useNavigation} from '@react-navigation/native';
 import {AuthContext} from '../../context/Context';
+import {base_url} from '../../constant/Url';
 
 const ProfessionalDatas = () => {
   const route = useRoute();
@@ -32,6 +33,7 @@ const ProfessionalDatas = () => {
   const [Species, setSpecies] = useState([{}]);
   const [DetailSpecies, setDetailSpecies] = useState([{}]);
   const [selectDetailSpecies, setSelectDetailSpecies] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [selectedSpecies, setSelectedSpecies] = useState([]);
   const [selectedSpeciesDetail, setSelectedSpeciesDetail] = useState([]);
@@ -69,6 +71,59 @@ const ProfessionalDatas = () => {
       });
   };
 
+  const onSubmit = async data => {
+    const {
+      Company,
+      Name,
+      Phone,
+      Surname,
+      activity,
+      country,
+      jobValue,
+      lang,
+      password,
+      Email,
+    } = route.params.updatedform;
+    setLoading(true);
+    try {
+      let baseUrl = `${base_url}/ajax/registroapp.php`;
+
+      const response = await fetch(baseUrl, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          name: Name,
+          lastname: Surname,
+          codltf: '34',
+          telefono: Phone,
+          password: password,
+          email: Email,
+          country: country,
+          NombreEmpresa: Company,
+          actividad: activity,
+          cargo: jobValue,
+          espescies: selectedSpecies.toString(),
+          detalles: selectedSpeciesDetail.toString(),
+          idioma: lang,
+        }),
+      });
+
+      const responseData = await response.json();
+
+      setLoading(false);
+      //   navigation.navigate('Home');
+    } catch (error) {
+      console.log('error => ', error);
+      setLoading(false);
+      //
+      //
+    }
+  };
+
+  console.log('tsting 123 => ', route.params.updatedform);
+
   const object = {
     name: 'Ayan',
     lastname: 'Ahmed',
@@ -84,8 +139,6 @@ const ProfessionalDatas = () => {
     detalles: '8,9',
     idioma: '1',
   };
-
-  console.log(JSON.stringify(object));
 
   const _selectSpecies = id => {
     const _input = [...selectedSpecies];
@@ -213,7 +266,7 @@ const ProfessionalDatas = () => {
       <CommonButton
         green={true}
         onPress={() => {
-          fetchData(), navigation.navigate('SelectInterest');
+          onSubmit(), navigation.navigate('SelectInterest');
         }}
         title={language?.Next}
       />

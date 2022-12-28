@@ -23,16 +23,22 @@ import {useForm} from 'react-hook-form';
 import {useNavigation} from '@react-navigation/native';
 
 const VerifyPassword = () => {
-    const {
-        control,
-        register,
-        handleSubmit,
-        formState: {errors, isValid},
-      } = useForm({mode: 'all'});
+  const {
+    control,
+    register,
+    handleSubmit,
+    watch,
+    formState: {errors, isValid},
+  } = useForm({mode: 'all'});
 
   const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
   const navigation = useNavigation();
-  const [registration, setRegistration] = useState({Password : '' })
+  const [registration, setRegistration] = useState({Password: ''});
+
+  const onSubmit = data => {
+    navigation.navigate('AccountDetails', {password: data});
+  };
+
   return (
     <ScrollView style={styles.mainBox}>
       <Header
@@ -43,15 +49,25 @@ const VerifyPassword = () => {
         title={'Login/Registration'}
       />
       <View style={{marginVertical: 30}}>
-        <TextInput
-        style={[styles.input,styles.text]}
+        <Input
+          // style={[styles.input, styles.text]}
           name="password"
           control={control}
           rules={{
             required: 'Password is required',
+            minLength: {
+              value: 8,
+              message: 'Too short min length is 8',
+            },
+            maxLength: {
+              value: 16,
+              message: 'Password maximum length is 16',
+            },
           }}
           placeholder="Password"
-          onChangeText={(username)=>{setRegistration(prev => ({...prev, Password: username})) }}
+          onChangeText={username => {
+            setRegistration(prev => ({...prev, Password: username}));
+          }}
         />
         {errors.password && (
           <Text style={styles.errormessage}>* {errors.password.message}</Text>
@@ -59,9 +75,20 @@ const VerifyPassword = () => {
         <Input
           name="verify_password"
           control={control}
-          
           rules={{
-            required: 'Verify Password is required',
+            required: 'passsword is required',
+            validate: {
+              positive: value =>
+                value === watch('password') || 'The passwords do not match',
+            },
+            minLength: {
+              value: 8,
+              message: 'Too short min length is 8',
+            },
+            maxLength: {
+              value: 16,
+              message: 'Password maximum length is 16',
+            },
           }}
           placeholder="Verify Password"
         />
@@ -71,7 +98,11 @@ const VerifyPassword = () => {
           </Text>
         )}
         <View style={{marginVertical: 30}}>
-          <CommonButton  onPress={()=>navigation.navigate('AccountDetails',{password:registration})} green={true} title={language?.Next} />
+          <CommonButton
+            onPress={handleSubmit(onSubmit)}
+            green={true}
+            title={language?.Next}
+          />
         </View>
       </View>
     </ScrollView>
@@ -101,7 +132,16 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     marginTop: 20,
   },
-  input: { backgroundColor: 'white', marginTop: 20, marginHorizontal: 20, paddingHorizontal: 15, paddingVertical: 20, borderRadius: 8, fontSize: 16, color: Colors.placeholder },
+  input: {
+    backgroundColor: 'white',
+    marginTop: 20,
+    marginHorizontal: 20,
+    paddingHorizontal: 15,
+    paddingVertical: 20,
+    borderRadius: 8,
+    fontSize: 16,
+    color: Colors.placeholder,
+  },
   text: {
     fontSize: 18,
     color: 'grey',

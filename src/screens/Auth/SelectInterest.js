@@ -60,18 +60,15 @@ const SelectInterest = () => {
   const onSubmit = async data => {
     setLoading(true);
     try {
-      let base_url = `${base_url}/intereses-app.php`;
-      let form_data = new FormData();
-      form_data.append('id_user', 22301);
-      form_data.append('interest', selectedIntrest.toString());
-      const response = await fetch(base_url, {
-        method: 'POST',
-        body: form_data,
+      let baseUrl = `${base_url}/ajax/intereses-app.php?id_user=22301&intereses=${selectedIntrest.toString()}`;
+      const response = await fetch(baseUrl, {
+        method: 'GET',
         headers: {
           Accept: 'application/json',
         },
       });
       const responseData = await response.json();
+      console.log('responseData', responseData);
 
       setLoading(false);
       //   navigation.navigate('Home');

@@ -26,7 +26,8 @@ import Dropdown from '../../components/Input/Dropdown';
 
 const UserData = () => {
   const route = useRoute();
-  console.log(route.params.form, 'CheckFromAboveFinal');
+  console.log('AccountDetails', route.params);
+  // console.log(route.params.form, 'CheckFromAboveFinal');
   const navigation = useNavigation();
   const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
   // const [registration, setRegistration] = useState({
@@ -161,6 +162,7 @@ const UserData = () => {
     [ivaluelanguage],
     [],
   );
+
   return (
     <ScrollView style={styles.mainBox}>
       <Header

@@ -26,7 +26,6 @@ import {useRoute} from '@react-navigation/native';
 
 const AccountDetails = () => {
   const route = useRoute();
-  console.log(route.params.password, 'Psss');
   const navigation = useNavigation();
   const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
   const [registration, setRegistration] = useState({
@@ -44,6 +43,7 @@ const AccountDetails = () => {
   } = useForm({mode: 'all'});
 
   const onSubmit = data => {
+    data.password = route.params.password.password;
     navigation.navigate('UserData', {form: data});
   };
 
@@ -89,6 +89,20 @@ const AccountDetails = () => {
         />
         {errors.Surname && (
           <Text style={styles.errormessage}>* {errors.Surname.message}</Text>
+        )}
+
+        <Input
+          name="Email"
+          control={control}
+          // style={[styles.input, styles.text]}
+          // onChangeText={(username)=>{setRegistration(prev => ({...prev, Surname: username})) }}
+          rules={{
+            required: 'Surname is required',
+          }}
+          placeholder={language?.YourEmail}
+        />
+        {errors.Email && (
+          <Text style={styles.errormessage}>* {errors.Email.message}</Text>
         )}
         <Input
           name="Company"
