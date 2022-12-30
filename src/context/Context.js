@@ -4,20 +4,22 @@ import Colors from '../constant/Colors';
 export const AuthContext = createContext({});
 
 export const AuthProvider = props => {
-
-  const [isSignin, setIsSignin] = useState(false)
-  const [language, setLanguage] = useState(null)
-  const [selectedlang, setSelectedlang] = useState('')
+  const [isSignin, setIsSignin] = useState(false);
+  const [language, setLanguage] = useState(null);
+  const [selectedlang, setSelectedlang] = useState('');
+  const [UserData, setUserData] = useState({});
 
   return (
     <AuthContext.Provider
       value={{
-        isSignin, 
+        isSignin,
         setIsSignin,
         setLanguage,
         language,
         selectedlang,
-        setSelectedlang
+        setSelectedlang,
+        UserData,
+        setUserData,
       }}>
       {props.children}
     </AuthContext.Provider>
