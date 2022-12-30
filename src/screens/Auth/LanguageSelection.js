@@ -9,28 +9,24 @@ const LanguageSelection = () => {
     useContext(AuthContext);
   return (
     <View style={styles.mainBox}>
-      <TouchableOpacity
-        style={styles.flagBox}
-        onPress={() => [setLanguage(spain), setSelectedlang('spain')]}>
-        <Image
-          source={require('../../assets/Images/spain-flag.png')}
-          style={{width: '100%', height: '100%', borderRadius: 100}}
+
+       <TouchableOpacity style={styles.flagBox} onPress={()=>[setLanguage(spain),setSelectedlang('es')]}>
+       <Image
+            source={require('../../assets/Images/spain-flag.png')}
+            style={{width: '100%', height: '100%',borderRadius:100}}
         />
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.flagBox}
-        onPress={() => [setLanguage(brazil), , setSelectedlang('brazil')]}>
-        <Image
-          source={require('../../assets/Images/brazil-flag.jpg')}
-          style={{width: '100%', height: '100%', borderRadius: 100}}
+       </TouchableOpacity>
+       <TouchableOpacity style={styles.flagBox} onPress={()=>[setLanguage(brazil),,setSelectedlang('pt')]}>
+       <Image
+            source={require('../../assets/Images/brazil-flag.jpg')}
+            style={{width: '100%', height: '100%',borderRadius:100}}
         />
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.flagBox}
-        onPress={() => [setLanguage(english)]}>
-        <Image
-          source={require('../../assets/Images/uk-flag.png')}
-          style={{width: '100%', height: '100%', borderRadius: 100}}
+       </TouchableOpacity>
+       <TouchableOpacity style={styles.flagBox} onPress={()=>[setLanguage('en')]}>
+       <Image
+            source={require('../../assets/Images/uk-flag.png')}
+            style={{width: '100%', height: '100%',borderRadius:100}}
+
         />
       </TouchableOpacity>
     </View>

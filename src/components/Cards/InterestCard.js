@@ -15,6 +15,7 @@ import Colors from '../../constant/Colors';
 // import packages
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
+
 const InterestCard = props => {
   console.log(props.img_intereses);
   // props.checkFunc('"HellowWorld');
@@ -46,7 +47,7 @@ const InterestCard = props => {
       </View>
     </TouchableOpacity>
   );
-};
+
 const styles = StyleSheet.create({
   mainBox1: {
     aspectRatio: 1 / 1,
