@@ -5799,6 +5799,11 @@ react-native-screens@^3.18.2:
     react-freeze "^1.0.0"
     warn-once "^0.1.0"
 
+react-native-track-player@^2.2.0-rc3:
+  version "2.2.0-rc3"
+  resolved "https://registry.yarnpkg.com/react-native-track-player/-/react-native-track-player-2.2.0-rc3.tgz#4f1d809b5c3fc1726465a9ff4acf10b1483bbff5"
+  integrity sha512-Pvmum3MQ5PE8/yOIIPsk00zZk3EzdocUuVUwuBKSCmdKK/3O9YhnZRC3EuT59XCDm23pZZJZDSR44VeXN6Gamg==
+
 react-native-vector-icons@^9.2.0:
   version "9.2.0"
   resolved "https://registry.yarnpkg.com/react-native-vector-icons/-/react-native-vector-icons-9.2.0.tgz#3c0c82e95defd274d56363cbe8fead8d53167ebd"
