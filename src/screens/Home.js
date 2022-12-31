@@ -26,14 +26,14 @@ const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
   const[id, setId] = useState();
   const [interest,setInterest] = useState([])
 
+  console.log('podCastData',podCastData)
+
   const fetchData = () => {
-    return fetch("https://socialagri.com/agriFM/podcastlist-app.php")
+    return fetch("https://socialagri.com/agriFM/wp-json/wp/v2/podcast")
           .then((response) => response.json())
           .then((data) =>{ 
-            console.log(data,'podcastData'),
             
             setPodcastData(data);
-          
           })
           .catch((err) => {
             console.log(err,'API Failed');
@@ -44,29 +44,20 @@ const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
 
   useEffect(() => {
     fetchData();
-    
-    
   },[])
+
   useEffect(()=>{
     fetch('https://socialagri.com/agriFM/wp-json/wp/v2/canales')
     .then(res=>res.json())
-    
     .then((data) =>{ 
-      console.log(data,'Channelllass'),
-      
       setId(data.length == 0 ? undefined || null : (data));
-    
     })
 },[])
 useEffect(()=>{
   fetch('https://socialagri.com/agriFM/wp-json/wp/v2/intereses/')
   .then(res=>res.json())
-  
   .then((data) =>{ 
-    console.log(data,'Channelllass'),
-    
     setInterest(data.length == 0 ? undefined || null : (data));
-  
   })
 },[])
   const categories = [
@@ -112,15 +103,6 @@ useEffect(()=>{
       name: 'Less is more',
       description: 'CEVA',
     },
-  ];
-  const podcasts = [
-    {
-      id: 1,
-    },
-    {
-      id: 2,
-    },
-
   ];
   const featuredchannels = [
     {
@@ -236,9 +218,9 @@ useEffect(()=>{
           return (
             <FeaturedCard
               onPressIcon={() => setModalVisible(true)}
-              onPress={() => navigation.navigate('Music')}
-              channelName={item.channel}
-              podcastname = {item.podcastname}
+              onPress={() => navigation.navigate('Music',{podcastDetails:item})}
+              channelName='Channel Name'
+              podcastname = {item.title?.rendered}
 
             />
           );

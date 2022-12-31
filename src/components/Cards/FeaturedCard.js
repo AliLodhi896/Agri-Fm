@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
         flexDirection:'row',
        },
        descriptionBox:{
-        width:'85%',
+        width:'50%',
         marginHorizontal:10,
        },
        description:{
