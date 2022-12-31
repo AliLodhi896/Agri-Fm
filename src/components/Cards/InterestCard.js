@@ -47,7 +47,7 @@ const InterestCard = props => {
       </View>
     </TouchableOpacity>
   );
-
+}
 const styles = StyleSheet.create({
   mainBox1: {
     aspectRatio: 1 / 1,
