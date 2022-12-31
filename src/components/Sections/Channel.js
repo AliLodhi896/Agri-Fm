@@ -30,9 +30,9 @@ const Channel = (props) => {
       ] ;
   return (
             <View style={styles.interestlList}>
-                {channelsList.map((item)=>{
+                {props.user.map((item)=>{
                     return(
-                        <ChannelCard descriptionStyle={{marginHorizontal:0}} mainStyle={{width:180}} style={{marginHorizontal:0}} title={item.name} description={item.description} titleStyle={{color:Colors.primary,marginLeft:0}} />
+                        <ChannelCard descriptionStyle={{marginHorizontal:0}} mainStyle={{width:180}} style={{marginHorizontal:0}} title={item.nombrees} description={item.description} titleStyle={{color:Colors.primary,marginLeft:0}} />
                     );
                 })}
             </View>

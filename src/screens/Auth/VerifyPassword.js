@@ -19,56 +19,24 @@ import WhiteButton from '../../components/Buttons/WhiteButton';
 import Input from '../../components/Input/Input';
 import CommonButton from '../../components/Buttons/CommonButton';
 import {AuthContext} from '../../context/Context';
-
-import {useRoute, useNavigation} from '@react-navigation/native';
 import {useForm} from 'react-hook-form';
-import {base_url} from '../../constant/Url';
+import {useNavigation} from '@react-navigation/native';
 
-const LoginPassword = () => {
-  const navigation = useNavigation();
+const VerifyPassword = () => {
   const {
     control,
     register,
     handleSubmit,
+    watch,
     formState: {errors, isValid},
   } = useForm({mode: 'all'});
-  const {language, selectedlang, setSelectedlang, setUserData} =
-    useContext(AuthContext);
-  const route = useRoute();
-  const [loading, setLoading] = useState(false);
-  console.log(route.params.email, 'FromEMAILE=');
 
-  const [pass, setPass] = useState('');
-  const onSubmit = async data => {
-    setLoading(true);
-    try {
-      let baseUrl = `${base_url}/ajax/login-app.php?email=${route.params.email}&password=${data.password}`;
+  const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
+  const navigation = useNavigation();
+  const [registration, setRegistration] = useState({Password: ''});
 
-      const response = await fetch(baseUrl, {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-        },
-      });
-      console.log('language?.MyAgriFm', language?.MyAgriFm);
-      const responseData = await response.json();
-      console.log('onSubmit', responseData);
-      if (responseData[0].validation == 'ok') {
-        navigation.navigate(language?.MyAgriFm);
-        alert(responseData[0].validation);
-        setUserData(responseData[0]);
-      } else {
-        alert(responseData[0].validation);
-      }
-
-      setLoading(false);
-      //   navigation.navigate('Home');
-    } catch (error) {
-      console.log('error => ', error);
-      setLoading(false);
-      //
-      //
-    }
+  const onSubmit = data => {
+    navigation.navigate('AccountDetails', {password: data});
   };
 
   return (
@@ -82,25 +50,58 @@ const LoginPassword = () => {
       />
       <View style={{marginVertical: 30}}>
         <Input
+          // style={[styles.input, styles.text]}
           name="password"
           control={control}
           rules={{
             required: 'Password is required',
+            minLength: {
+              value: 8,
+              message: 'Too short min length is 8',
+            },
+            maxLength: {
+              value: 16,
+              message: 'Password maximum length is 16',
+            },
           }}
-          placeholder={language?.YourPassword}
-          //   onChangeText={(username) => setPass(username)}
-          defaultValue={pass}
+          placeholder="Password"
+          onChangeText={username => {
+            setRegistration(prev => ({...prev, Password: username}));
+          }}
         />
         {errors.password && (
           <Text style={styles.errormessage}>* {errors.password.message}</Text>
         )}
-
+        <Input
+          name="verify_password"
+          control={control}
+          rules={{
+            required: 'passsword is required',
+            validate: {
+              positive: value =>
+                value === watch('password') || 'The passwords do not match',
+            },
+            minLength: {
+              value: 8,
+              message: 'Too short min length is 8',
+            },
+            maxLength: {
+              value: 16,
+              message: 'Password maximum length is 16',
+            },
+          }}
+          placeholder="Verify Password"
+        />
+        {errors.verify_password && (
+          <Text style={styles.errormessage}>
+            * {errors.verify_password.message}
+          </Text>
+        )}
         <View style={{marginVertical: 30}}>
           <CommonButton
             onPress={handleSubmit(onSubmit)}
             green={true}
             title={language?.Next}
-            loading={loading}
           />
         </View>
       </View>
@@ -141,6 +142,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: Colors.placeholder,
   },
+  text: {
+    fontSize: 18,
+    color: 'grey',
+    paddingHorizontal: 8,
+    letterSpacing: -0.575,
+  },
 });
 
-export default LoginPassword;
+export default VerifyPassword;

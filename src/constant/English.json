@@ -52,8 +52,11 @@
     "ChooseYourActivity": "Choose your activity",
     "ChooseYourLanguage": "Choose your language",
     "ChooseYourCountry": "Choose your country",
+    
+    "SelectYourSpecies": "Select Your Species",
+    "SelectYourSpeciesDetails": "Select Your Species Details",
 
-    "SelectYourProduction": "Select Your Production",
+    
     "Avicultura": "Avicultura",
 
     "Select5Interests": "Select 5 Interests",
@@ -70,8 +73,12 @@
     "NewJob": "New Job",
     "NewActivity": "New Activity",
     "NewLanguage": "New Language",
-    "NewCountry": "New Country"
+    "NewCountry": "New Country",
 
+    "Home": "Home",
+    "Explore": "Explore",
+    "Library": "Library",
+    "MyAgriFm": "MyAgriFm"
 
 
 

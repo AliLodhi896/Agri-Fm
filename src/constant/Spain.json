@@ -51,7 +51,9 @@
     "ChooseYourLanguage": "Elige tu idioma",
     "ChooseYourCountry": "Elige tu país",
 
-    "SelectYourProduction": "Seleccione su Producción",
+    "SelectYourSpecies": "Seleccione su Espécies",
+    "SelectYourSpeciesDetails": "Select Your Species Detalhes",
+
     "Avicultura": "Avicultura",
 
     "Select5Interests": "Seleccione 5 Intereses",
@@ -68,9 +70,14 @@
     "NewJob": "Nuevo Trabajo",
     "NewActivity": "Nueva actividad",
     "NewLanguage": "Nuevo Idioma",
-    "NewCountry": "Nuevo País"
+    "NewCountry": "Nuevo País",
+    "Update": "actualizar",
 
+    
 
-
+    "Home": "Casa",
+    "Explore": "Explorar",
+    "Library": "Biblioteca",
+    "MyAgriFm": "MiagriFm"
 
 }
