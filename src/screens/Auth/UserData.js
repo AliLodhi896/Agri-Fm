@@ -26,7 +26,7 @@ import Dropdown from '../../components/Input/Dropdown';
 
 const UserData = () => {
   const route = useRoute();
-  console.log('AccountDetails', route.params);
+  console.log('AccountDetails========>', route.params);
   // console.log(route.params.form, 'CheckFromAboveFinal');
   const navigation = useNavigation();
   const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
@@ -74,7 +74,6 @@ const UserData = () => {
       .then(res => res.json())
 
       .then(data => {
-        console.log(data, 'Jobs'),
           setJob(data.map(el => ({label: el.nombrees, value: el.z})));
       });
   }, []);
@@ -85,7 +84,6 @@ const UserData = () => {
       .then(res => res.json())
 
       .then(data => {
-        console.log(data, 'Jobs'),
           setActivity(data.map(el => ({label: el.nombrees, value: el.id})));
       });
   }, []);
@@ -96,7 +94,6 @@ const UserData = () => {
       .then(res => res.json())
 
       .then(data => {
-        console.log(data, 'Jobs'),
           setLanguage(
             data.map(el => ({
               id: el.id,
@@ -108,7 +105,6 @@ const UserData = () => {
   }, []);
   useEffect(
     () => {
-      console.log(ivaluelanguage, 'checkLanguage');
       if (ivaluelanguage === 'Português') {
         fetch(
           'https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/country-app-pt.php',
@@ -116,7 +112,6 @@ const UserData = () => {
           .then(res => res.json())
 
           .then(data => {
-            console.log(data, 'Jobs'),
               setCountries(
                 data.map(el => ({
                   id: el.id,
@@ -132,7 +127,6 @@ const UserData = () => {
           .then(res => res.json())
 
           .then(data => {
-            console.log(data, 'Jobs'),
               setCountries(
                 data.map(el => ({
                   id: el.id,
@@ -148,7 +142,6 @@ const UserData = () => {
           .then(res => res.json())
 
           .then(data => {
-            console.log(data, 'Jobs'),
               setCountries(
                 data.map(el => ({
                   id: el.id,

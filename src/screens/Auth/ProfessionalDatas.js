@@ -8,12 +8,12 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import SocialModal from '../../components/Cards/Modals/SocialModal';
 import Header from '../../components/Header/Header';
 import Colors from '../../constant/Colors';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import {useRoute} from '@react-navigation/native';
 
+import Toast from 'react-native-simple-toast';
 // ====================== icons ====================
 
 import CheckBoxWithLable from '../../components/CheckBox/CheckboxWithLable';
@@ -25,10 +25,9 @@ import {base_url} from '../../constant/Url';
 
 const ProfessionalDatas = () => {
   const route = useRoute();
-  console.log(route.params.value, route.params.updatedform, 'testing <');
 
   const navigation = useNavigation();
-  const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
+  const {language, selectedlang, setSelectedlang,setUserData,UserData} = useContext(AuthContext);
   const [selectSpecies, setSelectSpecies] = useState(false);
   const [Species, setSpecies] = useState([{}]);
   const [DetailSpecies, setDetailSpecies] = useState([{}]);
@@ -82,47 +81,57 @@ const ProfessionalDatas = () => {
       jobValue,
       lang,
       password,
-      Email,
+      email,
     } = route.params.updatedform;
     setLoading(true);
-    try {
-      let baseUrl = `${base_url}/ajax/registroapp.php`;
+    var myHeaders = new Headers();
+    myHeaders.append("USPTO-API-KEY", "i5P2hLSjYRREYNt7NO3rzZJYCrqZDIcH");
+    myHeaders.append("Content-Type", "application/json");
+    
+    var raw = JSON.stringify({
+          'name': Name,
+          'lastname': Surname,
+          'codltf': '34',
+          'telefono': Phone,
+          'password': password,
+          'email': email,
+          'country': country,
+          'NombreEspresa': Company,
+          'actividad': activity,
+          'cargo': jobValue,
+          'especies': selectedSpecies.toString(),
+          'detalles': selectedSpeciesDetail.toString(),
+          'idioma': lang,
+    });
+    
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+    
+    fetch("https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/registroapp-end.php", requestOptions)
+      .then(response => response.text())
+      .then(result => 
+        {if(result == 'Email ya registrado'){
+          // console.log('result=================>',result)
+          Toast.show('Email already registered', Toast.LONG);
+          navigation.navigate('LoginEmail');
+        }else{
+          setUserData(result);
+          Toast.show('Registered successfully', Toast.LONG);
 
-      const response = await fetch(baseUrl, {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-        },
-        body: JSON.stringify({
-          name: Name,
-          lastname: Surname,
-          codltf: '34',
-          telefono: Phone,
-          password: password,
-          email: Email,
-          country: country,
-          NombreEmpresa: Company,
-          actividad: activity,
-          cargo: jobValue,
-          espescies: selectedSpecies.toString(),
-          detalles: selectedSpeciesDetail.toString(),
-          idioma: lang,
-        }),
-      });
+          navigation.navigate('SelectInterest');
+        }}
+        )
+      .catch(error => console.log('error', error));
+    setLoading(false);
 
-      const responseData = await response.json();
 
-      setLoading(false);
-      //   navigation.navigate('Home');
-    } catch (error) {
-      console.log('error => ', error);
-      setLoading(false);
-      //
-      //
-    }
+
   };
 
-  console.log('tsting 123 => ', route.params.updatedform);
 
   const object = {
     name: 'Ayan',
@@ -169,7 +178,7 @@ const ProfessionalDatas = () => {
         textStyle={{color: Colors.primary, fontWeight: 'Bold'}}
         backgroundColor={'white'}
         icon={true}
-        title={'Change Production'}
+        title={'Select Interest'}
       />
       <View style={{height: 100, marginHorizontal: 20, marginTop: 30}}>
         <Image
@@ -265,10 +274,9 @@ const ProfessionalDatas = () => {
 
       <CommonButton
         green={true}
-        onPress={() => {
-          onSubmit(), navigation.navigate('SelectInterest');
-        }}
+        onPress={() =>onSubmit()}
         title={language?.Next}
+        loading={loading}
       />
       <CommonBack title={language?.GoBack} />
     </ScrollView>

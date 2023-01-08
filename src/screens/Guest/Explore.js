@@ -1,33 +1,25 @@
 import React, {useState,useContext,useEffect} from 'react'
-import { View, Text,StyleSheet,TouchableOpacity,Image,ScrollView} from 'react-native'
-import Colors from '../constant/Colors'
-import SearchInput from '../components/Inputs/SearchInput';
-import InterestCard from '../components/Cards/InterestCard';
-import Header from '../components/Header/Header';
+import { View, Text,StyleSheet,TouchableOpacity,Image,ScrollView,ActivityIndicator} from 'react-native'
+import Colors from '../../constant/Colors'
+import SearchInput from '../../components/Inputs/SearchInput';
+import InterestCard from '../../components/Cards/InterestCard';
+import Header from '../../components/Header/Header';
 import * as Animatable from 'react-native-animatable';
-import { AuthContext } from '../context/Context';
+import { AuthContext } from '../../context/Context';
 
 const Explore = () => {
 const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
-    const Interest = [
-        {
-            id:1,
-        },
-        {
-            id:2,
-        },
-        {
-            id:3,
-        },
-    ];
+
   const [interest,setInterest] = useState([])
-    console.log('interest',interest)
+  const [loading, setLoading] = useState(false)
 
     useEffect(()=>{
+        setLoading(true)
         fetch('https://socialagri.com/agriFM/wp-json/wp/v2/intereses/')
         .then(res=>res.json())
         .then((data) =>{ 
           setInterest(data.length == 0 ? undefined || null : (data));
+            setLoading(false)
         })
       },[])
 
@@ -41,6 +33,13 @@ const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
             <View style={styles.headingBox}>
                 <Text style={styles.mainHeading}>{language?.Interests}</Text>
             </View>
+            {loading == true ? 
+  <View style={{marginTop:'50%'}}> 
+<ActivityIndicator size="large" color="white" /> 
+
+  </View>
+  :
+  
             <Animatable.View style={styles.interestlList}animation="fadeInUpBig" >
                 {interest.map((item)=>{
                     return(
@@ -48,6 +47,7 @@ const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
                     );
                 })}
             </Animatable.View>
+}
         </View>
     </ScrollView>
   )

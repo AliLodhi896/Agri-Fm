@@ -1,4 +1,4 @@
-import React,{useContext,useState} from 'react'
+import React,{useContext,useState,useEffect} from 'react'
 import {View,Text,ScrollView,StyleSheet,Image, TouchableOpacity,SafeAreaView} from 'react-native'
 
 // import Constants
@@ -11,6 +11,26 @@ import ChannelCard from '../Cards/ChannelCard';
 
 
 const Channel = (props) => {
+    const [user, setUser] = useState([]);
+  const fetchData = () => {
+    return fetch("https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/animals-otros-app.php")
+          .then((response) => response.json())
+          .then((data) =>{ 
+            console.log(data,'CheckPoultry'),
+            
+            setUser(data);
+          
+          })
+          .catch((err) => {
+            console.log(err,'API Failed');
+          });
+          
+  }
+  useEffect(() => {
+    fetchData();
+    
+    
+  },[])
     const channelsList = [
         {
             id:1,
@@ -30,7 +50,7 @@ const Channel = (props) => {
       ] ;
   return (
             <View style={styles.interestlList}>
-                {props.user.map((item)=>{
+                {props?.user?.map((item)=>{
                     return(
                         <ChannelCard descriptionStyle={{marginHorizontal:0}} mainStyle={{width:180}} style={{marginHorizontal:0}} title={item.nombrees} description={item.description} titleStyle={{color:Colors.primary,marginLeft:0}} />
                     );

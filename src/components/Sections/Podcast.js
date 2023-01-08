@@ -13,26 +13,27 @@ import {useNavigation} from '@react-navigation/native';
 
 const Podcast = (props) => {
   console.log(props.user,'check1234')
-  // const [user, setUser] = useState([]);
-  // const fetchData = () => {
-  //   return fetch("https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/animals-otros-app.php")
-  //         .then((response) => response.json())
-  //         .then((data) =>{ 
-  //           console.log(data,'CheckPoultry'),
+  const [podCastData, setPodcastData] = useState([]);
+  const [user, setUser] = useState([]);
+  const fetchData = () => {
+    return fetch("https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/animals-otros-app.php")
+          .then((response) => response.json())
+          .then((data) =>{ 
+            console.log(data,'CheckPoultry'),
             
-  //           setUser(data);
+            setUser(data);
           
-  //         })
-  //         .catch((err) => {
-  //           console.log(err,'API Failed');
-  //         });
+          })
+          .catch((err) => {
+            console.log(err,'API Failed');
+          });
           
-  // }
-  // useEffect(() => {
-  //   fetchData();
+  }
+  useEffect(() => {
+    fetchData();
     
     
-  // },[])
+  },[])
     const navigation = useNavigation();
     const channelsList = [
         {
@@ -68,11 +69,26 @@ const Podcast = (props) => {
             id:5,
         },
       ];
+      const fetchPodcast = () => {
+        return fetch("https://socialagri.com/agriFM/wp-json/wp/v2/podcast")
+              .then((response) => response.json())
+              .then((data) =>{ 
+                
+                setPodcastData(data);
+              })
+              .catch((err) => {
+                console.log(err,'API Failed');
+              });
+              
+      }
+      useEffect(() => {
+        fetchPodcast();
+      },[])
   return (
     <View>
           <View style={styles.cardBox}>
                   <ScrollView style={styles.categoryBox} horizontal>
-                      {props.user.map((item)=>{
+                      {props?.user?.map((item)=>{
                           return(
                             <ChannelCard descriptionStyle={{marginHorizontal:0}} mainStyle={{width:180}} style={{marginHorizontal:10}} title={item.nombrees} description={item.description} titleStyle={{color:Colors.primary,marginLeft:0}} />
                           );
@@ -81,14 +97,17 @@ const Podcast = (props) => {
                   </ScrollView>
           </View> 
           <View style={styles.featuredBox}>
-                {podcasts.map(()=>{
+                {podCastData.map((item)=>{
                     return(
                         <FeaturedCard 
                           textstyle={{color:Colors.primary}} 
                           headingText={{color:'grey'}} 
                           timeText={{color:'grey'}} 
-                          onPress={()=>navigation.navigate('Music')}
+                          onPress={()=>navigation.navigate('Music',{podcastDetails:item})}
                           purpleIcon={true}
+                          channelName='Channel Name'
+              podcastname = {item.title?.rendered}
+              image = {item?.acf?.imagen_podcast1}
                         />
                     );
                 })}

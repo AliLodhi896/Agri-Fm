@@ -21,6 +21,7 @@ import CommonButton from '../../components/Buttons/CommonButton';
 import {AuthContext} from '../../context/Context';
 import {useForm} from 'react-hook-form';
 import {useNavigation} from '@react-navigation/native';
+import {base_url} from '../../constant/Url';
 
 const VerifyPassword = () => {
   const {
@@ -31,12 +32,34 @@ const VerifyPassword = () => {
     formState: {errors, isValid},
   } = useForm({mode: 'all'});
 
-  const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
+  const {language, selectedlang, setSelectedlang,setUserData} = useContext(AuthContext);
   const navigation = useNavigation();
   const [registration, setRegistration] = useState({Password: ''});
 
-  const onSubmit = data => {
-    navigation.navigate('AccountDetails', {password: data});
+  const [loading, setLoading] = useState(false)
+
+  const onSubmit = async data => {
+    setLoading(true);
+    try {
+      let baseUrl = `${base_url}/ajax/login-app.php?email=${data.email}&password=${data.verify_password}`;
+      const response = await fetch(baseUrl, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+      const responseData = await response.json();
+      if (responseData[0].validation == 'ok') {
+        navigation.navigate(language?.MyAgriFm);
+        setUserData(responseData[0]);
+        console.log('ok')
+      } else {
+        navigation.navigate('AccountDetails', {password: data.verify_password,email:data.email});
+      }
+    } catch (error) {
+      console.log('error => ', error);
+    }
+    setLoading(false);
   };
 
   return (
@@ -51,23 +74,16 @@ const VerifyPassword = () => {
       <View style={{marginVertical: 30}}>
         <Input
           // style={[styles.input, styles.text]}
-          name="password"
+          name="email"
           control={control}
           rules={{
-            required: 'Password is required',
-            minLength: {
-              value: 8,
-              message: 'Too short min length is 8',
-            },
-            maxLength: {
-              value: 16,
-              message: 'Password maximum length is 16',
-            },
+            required: 'Email is required',
+
           }}
-          placeholder="Password"
-          onChangeText={username => {
-            setRegistration(prev => ({...prev, Password: username}));
-          }}
+          placeholder="Email"
+          // onChangeText={username => {
+          //   setRegistration(prev => ({...prev, Password: username}));
+          // }}
         />
         {errors.password && (
           <Text style={styles.errormessage}>* {errors.password.message}</Text>
@@ -77,10 +93,10 @@ const VerifyPassword = () => {
           control={control}
           rules={{
             required: 'passsword is required',
-            validate: {
-              positive: value =>
-                value === watch('password') || 'The passwords do not match',
-            },
+            // validate: {
+            //   positive: value =>
+            //     value === watch('password') || 'The passwords do not match',
+            // },
             minLength: {
               value: 8,
               message: 'Too short min length is 8',
@@ -102,6 +118,7 @@ const VerifyPassword = () => {
             onPress={handleSubmit(onSubmit)}
             green={true}
             title={language?.Next}
+            loading={loading}
           />
         </View>
       </View>

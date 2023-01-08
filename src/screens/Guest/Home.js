@@ -8,17 +8,17 @@ import {
   ScrollView,
   ActivityIndicator
 } from 'react-native';
-import ChannelCard from '../components/Cards/ChannelCard';
-import Colors from '../constant/Colors';
-import FeaturedCard from '../components/Cards/FeaturedCard';
+import ChannelCard from '../../components/Cards/ChannelCard';
+import Colors from '../../constant/Colors';
+import FeaturedCard from '../../components/Cards/FeaturedCard';
 import {useNavigation} from '@react-navigation/native';
 import * as Animatable from 'react-native-animatable';
-import ListModals from '../components/Cards/Modals/ListModals';
-import InterestCard from '../components/Cards/InterestCard';
+import ListModals from '../../components/Cards/Modals/ListModals';
+import InterestCard from '../../components/Cards/InterestCard';
 import AntDesign from 'react-native-vector-icons/AntDesign'
-import { AuthContext } from '../context/Context';
-import ErrorModal from '../components/Cards/Modals/ErrorModal';
-import LangModal from '../components/Cards/Modals/LangModal';
+import { AuthContext } from '../../context/Context';
+import ErrorModal from '../../components/Cards/Modals/ErrorModal';
+import LangModal from '../../components/Cards/Modals/LangModal';
 
 const Home = () => {
 const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
@@ -28,7 +28,6 @@ const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
   const[id, setId] = useState();
   const [interest,setInterest] = useState([])
   const [loading, setLoading] = useState(false)
-
 
   const fetchData = () => {
     setLoading(true)
@@ -42,8 +41,6 @@ const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
             console.log(err,'API Failed');
           });      
   }
-  
-
   useEffect(() => {
     fetchData();
   },[])
@@ -66,27 +63,27 @@ useEffect(()=>{
     {
       id: 1,
       name: language?.Poultry,
-      image: require('../assets/Images/poultry.png'),
+      image: require('../../assets/Images/poultry.png'),
     },
     {
       id: 2,
       name: language?.Ruminant,
-      image: require('../assets/Images/ruminant.png'),
+      image: require('../../assets/Images/ruminant.png'),
     },
     {
       id: 3,
       name: language?.Swine,
-      image: require('../assets/Images/swine.png'),
+      image: require('../../assets/Images/swine.png'),
     },
     {
       id: 4,
       name: language?.Nutrition,
-      image: require('../assets/Images/aqua.png'),
+      image: require('../../assets/Images/aqua.png'),
     },
     {
       id: 5,
       name: language?.Aqua,
-      image: require('../assets/Images/nutrition.png'),
+      image: require('../../assets/Images/nutrition.png'),
     },
   ];
   const channels = [
@@ -153,7 +150,7 @@ useEffect(()=>{
         <View></View>
         <View style={styles.logoBox}>
           <Image
-            source={require('../assets/Images/logo.png')}
+            source={require('../../assets/Images/logo.png')}
             style={{width: '60%', height: '65%'}}
           />
         </View>
@@ -162,17 +159,17 @@ useEffect(()=>{
           onPress={() => setModalVisible2(true)}>
             {selectedlang == 'es' ?
               <Image
-              source={require('../assets/Images/spain-flag.png')}
+              source={require('../../assets/Images/spain-flag.png')}
               style={{width: '100%', height: '100%', borderRadius: 100}}
             /> 
             : selectedlang == 'pt' ?
             <Image
-              source={require('../assets/Images/brazil-flag.jpg')}
+              source={require('../../assets/Images/brazil-flag.jpg')}
               style={{width: '100%', height: '100%', borderRadius: 100}}
             />
             :
             <Image
-              source={require('../assets/Images/uk-flag.png')}
+              source={require('../../assets/Images/uk-flag.png')}
               style={{width: '100%', height: '100%', borderRadius: 100}}
             />
             }
@@ -276,7 +273,7 @@ useEffect(()=>{
         }}></View>
         <View style={{justifyContent:'space-between',flexDirection:'row',marginHorizontal:30,marginVertical:30}}>
             <View style={{ alignSelf: 'center' }}>
-                <Image style={styles.image} source={require('../assets/Images/pp.png')} />
+                <Image style={styles.image} source={require('../../assets/Images/pp.png')} />
                 <TouchableOpacity onPress={()=>navigation.navigate('EditProfile')} style={{ borderRadius: 100, alignItems: 'flex-end', marginTop: -20 }}>
                     <AntDesign style={styles.edit} name="plus" color={'white'} size={18} />
                 </TouchableOpacity>
@@ -284,7 +281,7 @@ useEffect(()=>{
 
             </View>
             <View style={{ alignSelf: 'center' }}>
-                <Image style={styles.image} source={require('../assets/Images/mic.png')} />
+                <Image style={styles.image} source={require('../../assets/Images/mic.png')} />
                 <TouchableOpacity onPress={()=>navigation.navigate('EditProfile')} style={{ borderRadius: 100, alignItems: 'flex-end', marginTop: -20 }}>
                     <AntDesign style={styles.edit} name="plus" color={'white'} size={18} />
                 </TouchableOpacity>

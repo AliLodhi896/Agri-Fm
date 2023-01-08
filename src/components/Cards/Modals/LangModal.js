@@ -5,14 +5,10 @@ import Colors from '../../../constant/Colors';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import CommonButton from '../../Buttons/CommonButton';
 import { AuthContext } from '../../../context/Context';
-import Toast from 'react-native-simple-toast';
+import {english, spain, brazil} from '../../../constant/language';
 
-const ListModals = ({ isVisible,onClose, error,onPressLogin }) => {
-    const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
-    const addtoliabrary = () =>{
-        onClose;
-    Toast.show('Podcast added to liabrary sucessfully', Toast.LONG);
-    }
+const LangModal = ({ isVisible,onClose, error,onPressLogin }) => {
+    const {language, selectedlang, setSelectedlang,setLanguage} = useContext(AuthContext);
     return (
         <Modal
             animationType="slide"
@@ -23,37 +19,29 @@ const ListModals = ({ isVisible,onClose, error,onPressLogin }) => {
             >
             <View style={styles.centeredView}>
                 <View style={styles.modalView}>
-                    <TouchableOpacity style={styles.second_view} onPress={onClose}>
+                    <TouchableOpacity style={styles.second_view}  onPress={()=>{setLanguage(spain),setSelectedlang('es')}}>
                         <MaterialIcons name='close' color={Colors.primary} size={27} />
                     </TouchableOpacity>
                     <View style={{ alignSelf: 'center', marginHorizontal: 30,   width: '100%' }}>
-                        <TouchableOpacity style={styles.second_view} onPress={onClose}>
+                        <TouchableOpacity style={styles.second_view}  onPress={()=>{setLanguage(spain),setSelectedlang('es'),onClose}}>
                             <Text style={{color:Colors.primary,fontSize:16}}>
-                            {language?.GoToLibrary}
+                            Spanish
                             </Text>
-                            <Image style={{width: '12%', height: 25}} source={require('../../../assets/Images/asdsa.png')} />
+                            <Image style={{width: '12%', height: 25}} source={require('../../../assets/Images/spain-flag.png')} />
                         </TouchableOpacity>
                         <View style={{height:1,backgroundColor:Colors.primary,opacity:0.5,marginTop:15}}></View>
-                        <TouchableOpacity style={styles.second_view} onPress={onClose}>
+                        <TouchableOpacity style={styles.second_view} onPress={()=>{setLanguage(brazil),setSelectedlang('pt'),onClose}}>
                             <Text style={{color:Colors.primary,fontSize:16}}>
-                            {language?.DownloadPodcast}
+                            Brazil
                             </Text>
-                            <Image  style={{width: '12%', height: 27}} source={require('../../../assets/Images/downlaod.png')} />
+                            <Image  style={{width: '12%', height: 27}} source={require('../../../assets/Images/brazil-flag.jpg')} />
                         </TouchableOpacity>
                         <View style={{height:1,backgroundColor:Colors.primary,opacity:0.5,marginTop:15}}></View>
-                        <TouchableOpacity style={styles.second_view} onPress={onClose}>
+                        <TouchableOpacity style={styles.second_view} onPress={()=>{setLanguage(english),setSelectedlang('en'),onClose}} >
                             <Text style={{color:Colors.primary,fontSize:16}}>
-                            {language?.Share}
+                            English
                             </Text>
-                            <Image  style={{width: '12%', height: 20}} source={require('../../../assets/Images/shares.png')} />
-                        </TouchableOpacity>
-                        <View style={{height:1,backgroundColor:Colors.primary,opacity:0.5,marginTop:15}}></View>
-
-                        <TouchableOpacity style={styles.second_view} onPress={addtoliabrary}  >
-                            <Text style={{color:Colors.primary,fontSize:16}}>
-                            {language?.AddToLibrary}
-                            </Text>
-                            <Image style={{width: '12%', height: 25}} source={require('../../../assets/Images/fav.png')} />
+                            <Image  style={{width: '12%', height: 20}} source={require('../../../assets/Images/uk-flag.png')} />
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -108,4 +96,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default ListModals;
+export default LangModal;

@@ -12,16 +12,42 @@ import { AuthContext } from '../context/Context';
 const Profile = () => {
     const [modalVisible, setModalVisible] = useState(true);
     const navigation = useNavigation();
-    const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
-
-
+    const {language, selectedlang, setSelectedlang,UserData} = useContext(AuthContext);
+console.log('language',selectedlang)
+    const data = [
+        {
+            key: 'Mobile',
+            value: UserData?.movil
+        },
+        {
+            key: 'Company',
+            value: UserData?.NombreEspresa
+        },
+        {
+            key: 'Job',
+            value: UserData?.cargo
+        },
+        {
+            key: 'Activity',
+            value: UserData?.actividad
+        },
+        {
+            key: 'Production',
+            value: 'Avicultura'
+        },
+        {
+            key: 'Details',
+            value: UserData?.Detallesotros
+        },
+        
+    ]
     return (
         <ScrollView style={styles.mainBox}>
-            <SocialModal
+            {/* <SocialModal
                 isVisible={modalVisible}
                 onClose={() => setModalVisible(false)}
                 onPress={() => setModalVisible(false)}
-            />
+            /> */}
             <Header icon={true} />
             <View style={{ alignSelf: 'center' }}>
                 <Image style={styles.image} source={require('../assets/Images/swine.png')} />
@@ -41,8 +67,8 @@ const Profile = () => {
                     <Text style={{ color: Colors.secondary, fontWeight: 'bold', paddingLeft: 5 }}>{language?.EditProfile}</Text>
                 </TouchableOpacity>
             </View>
-            <WhiteButton onPress={()=>navigation.navigate('ChangeProduction')} title={language?.ChangeInterest} />
-            <WhiteButton onPress={()=>navigation.navigate('ChangeProduction')} title={language?.ChangeProducting} />
+            {/* <WhiteButton onPress={()=>navigation.navigate('ChangeProduction')} title={language?.ChangeInterest} /> */}
+            {/* <WhiteButton onPress={()=>navigation.navigate('ChangeProduction')} title={language?.ChangeProducting} /> */}
             <View style={{marginHorizontal:20,justifyContent:'center',marginVertical:30}}>
             <View style={{ alignSelf: 'center' }}>
                 <Image style={styles.image} source={require('../assets/Images/mic.png')} />
@@ -74,44 +100,3 @@ export default Profile;
 
 
 
-const data = [
-    {
-        key: 'Mobile',
-        value: '+44444'
-    },
-    {
-        key: 'Company',
-        value: 'Testing'
-    },
-    {
-        key: 'Job',
-        value: 'Full time'
-    },
-    {
-        key: 'Activity',
-        value: 'Media'
-    },
-    {
-        key: 'Production',
-        value: 'Avicultura'
-    },
-    {
-        key: 'Details',
-        value: 'list of intrestList of intrests'
-    },
-    {
-        key: 'List of intrests',
-    },
-    {
-        key: 'List of intrests',
-    },
-    {
-        key: 'List of intrests',
-    },
-    {
-        key: 'List of intrests',
-    },
-    {
-        key: 'List of intrests',
-    },
-]

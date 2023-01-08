@@ -13,13 +13,12 @@ import { AuthContext } from '../../context/Context';
 
 const FeaturedCard = (props) => {
     const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
-    console.log(props.channelName,"YeCheckKR");
   return (
     <View style={styles.featuredCards}>
 
     <View style={styles.imageBox}>
         <Image
-            source={require('../../assets/Images/hen1.png')}
+            source={{uri: props.image}}
             style={{width: '100%', height: '100%',borderRadius:10,
             shadowColor: "#000000",
             shadowOffset: {

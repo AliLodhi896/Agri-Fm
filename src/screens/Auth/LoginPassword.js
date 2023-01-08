@@ -23,7 +23,7 @@ import {AuthContext} from '../../context/Context';
 import {useRoute, useNavigation} from '@react-navigation/native';
 import {useForm} from 'react-hook-form';
 import {base_url} from '../../constant/Url';
-
+import Toast from 'react-native-simple-toast';
 const LoginPassword = () => {
   const navigation = useNavigation();
   const {
@@ -32,7 +32,7 @@ const LoginPassword = () => {
     handleSubmit,
     formState: {errors, isValid},
   } = useForm({mode: 'all'});
-  const {language, selectedlang, setSelectedlang, setUserData} =
+  const {language, selectedlang, setSelectedlang, setUserData,setIsSignin} =
     useContext(AuthContext);
   const route = useRoute();
   const [loading, setLoading] = useState(false);
@@ -55,7 +55,9 @@ const LoginPassword = () => {
       console.log('onSubmit', responseData);
       if (responseData[0].validation == 'ok') {
         navigation.navigate(language?.MyAgriFm);
-        alert(responseData[0].validation);
+        // alert(responseData[0].validation);
+        Toast.show('Logged in successfully', Toast.LONG);
+        setIsSignin(true)
         setUserData(responseData[0]);
       } else {
         alert(responseData[0].validation);

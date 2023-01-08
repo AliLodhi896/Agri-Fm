@@ -1,8 +1,8 @@
 import React,{useState,useContext,useEffect} from 'react'
 import { StyleSheet, View, Image, Text,ScrollView } from "react-native"
-import SocialModal from "../components/Cards/Modals/SocialModal";
-import Header from "../components/Header/Header";
-import Colors from "../constant/Colors";
+import SocialModal from "../../components/Cards/Modals/SocialModal";
+import Header from "../../components/Header/Header";
+import Colors from "../../constant/Colors";
 
 // ====================== icons ==================== 
 import AntDesign from 'react-native-vector-icons/AntDesign'
@@ -10,10 +10,10 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 
-import WhiteButton from "../components/Buttons/WhiteButton";
-import FeaturedCard from "../components/Cards/FeaturedCard";
-import ListModals from '../components/Cards/Modals/ListModals';
-import { AuthContext } from '../context/Context';
+import WhiteButton from "../../components/Buttons/WhiteButton";
+import FeaturedCard from "../../components/Cards/FeaturedCard";
+import ListModals from '../../components/Cards/Modals/ListModals';
+import { AuthContext } from '../../context/Context';
 import TrackPlayer,{
     Capability,
     Event,
@@ -161,11 +161,11 @@ TrackPlayer.addEventListener('remote-jump-backward', () => {
                     <View style={{ flexDirection: 'row' }}>
 
                         <View style={{ marginTop: '5%', justifyContent: 'center', width: 50, justifyContent: 'center', alignItems: 'center' }}>
-                        <Image style={{ height: 22, width: 30 }} source={require('../assets/Images/whiteshare.png')} />
+                        <Image style={{ height: 22, width: 30 }} source={require('../../assets/Images/whiteshare.png')} />
                             <Text style={{ fontSize: 12, color: 'white' }}>{language?.Share}</Text>
                         </View>
                         <View style={{ marginTop: '5%', justifyContent: 'center', marginLeft: '15%', width: 80, justifyContent: 'center', alignItems: 'center' }}>
-                        <Image style={{ height: 27, width: 30 }} source={require('../assets/Images/downloadwhite.png')} />
+                        <Image style={{ height: 27, width: 30 }} source={require('../../assets/Images/downloadwhite.png')} />
                             <Text style={{ fontSize: 12, color: 'white' }}>{language?.Download}</Text>
                         </View>
                     </View>
@@ -177,13 +177,13 @@ TrackPlayer.addEventListener('remote-jump-backward', () => {
             </View>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '60%', alignSelf: 'center', marginTop: '10%' }}>
                 <TouchableOpacity onPress={()=> backward()}> 
-                    <Image style={{ height: 32, width: 30 }} source={require('../assets/Images/replay.png')} />
+                    <Image style={{ height: 32, width: 30 }} source={require('../../assets/Images/replay.png')} />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={()=> toogle()}>
                     <AntDesign name={sate == 2  || sate == 0 ? "play" : "pause"} size={80} color={'white'} />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={()=> forward()}>
-                    <Image style={{ height: 32, width: 30 }} source={require('../assets/Images/replay1.png')} />
+                    <Image style={{ height: 32, width: 30 }} source={require('../../assets/Images/replay1.png')} />
                 </TouchableOpacity>
             </View>
         <View style={{ marginHorizontal: 10, marginTop: 20 }}>
