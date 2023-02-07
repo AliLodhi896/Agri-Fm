@@ -78,6 +78,9 @@
     "Home": "Casa",
     "Explore": "Explorar",
     "Library": "Biblioteca",
-    "MyAgriFm": "MiagriFm"
+    "MyAgriFm": "MiagriFm",
+    "UnFollow": "dejar de seguir",
+    "RemoveFromLibrary":"Eliminar de la biblioteca",
+    "removeDownload" : "Quitar de Descargas"
 
 }

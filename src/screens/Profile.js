@@ -12,8 +12,7 @@ import { AuthContext } from '../context/Context';
 const Profile = () => {
     const [modalVisible, setModalVisible] = useState(true);
     const navigation = useNavigation();
-    const {language, selectedlang, setSelectedlang,UserData} = useContext(AuthContext);
-console.log('language',selectedlang)
+    const {language, selectedlang, setSelectedlang,UserData,setIsSignin} = useContext(AuthContext);
     const data = [
         {
             key: 'Mobile',
@@ -67,7 +66,6 @@ console.log('language',selectedlang)
                     <Text style={{ color: Colors.secondary, fontWeight: 'bold', paddingLeft: 5 }}>{language?.EditProfile}</Text>
                 </TouchableOpacity>
             </View>
-            {/* <WhiteButton onPress={()=>navigation.navigate('ChangeProduction')} title={language?.ChangeInterest} /> */}
             {/* <WhiteButton onPress={()=>navigation.navigate('ChangeProduction')} title={language?.ChangeProducting} /> */}
             <View style={{marginHorizontal:20,justifyContent:'center',marginVertical:30}}>
             <View style={{ alignSelf: 'center' }}>
@@ -78,6 +76,8 @@ console.log('language',selectedlang)
                 <Text style={{color:Colors.secondary,fontSize:12,marginTop:10,textAlign:'center'}}>{language?.CreateChannel}</Text>
 
             </View>
+            <WhiteButton onPress={()=>setIsSignin(false)} title={'Logout'} />
+
       </View>
         </ScrollView>
     )

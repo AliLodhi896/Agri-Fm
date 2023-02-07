@@ -1,6 +1,5 @@
-import React,{useState,useContext,useEffect} from 'react'
+import React,{useState,useContext,useEffect,useCallback} from 'react'
 import { StyleSheet, View, Image, Text,ScrollView } from "react-native"
-import SocialModal from "../../components/Cards/Modals/SocialModal";
 import Header from "../../components/Header/Header";
 import Colors from "../../constant/Colors";
 
@@ -29,25 +28,16 @@ import Slider from '@react-native-community/slider';
 import {useNavigation,useFocusEffect} from '@react-navigation/native';
 
 const Music = ({route}) => {
-    const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
+    const {language,tracks,setTracks,setSate,sate} = useContext(AuthContext);
+    
+    
     const {podcastDetails}= route.params
-
-    const podcasts = [
-        {
-            id: 1,
-        },
-        {
-            id: 2,
-        },
-        {
-            id: 3,
-        },
-    ];
     const [modalVisible, setModalVisible] = useState(false);
     const [podCastData, setPodcastData] = useState([]);
     const navigation = useNavigation();
 
     const track = {
+        id: podcastDetails?.id,
         url: podcastDetails?.acf?.link_podcast1, // Load media from the app bundle
         title: podcastDetails?.title?.rendered,
         artist: 'deadmau5',
@@ -56,34 +46,29 @@ const Music = ({route}) => {
     };
 
 
-// Add an event listener for the 'remote-play' event
 TrackPlayer.addEventListener('remote-pause', () => {
-    // Handle the 'remote-play' event
     TrackPlayer.pause();
-  });
-  // Add an event listener for the 'remote-play' event
+});
 TrackPlayer.addEventListener('remote-play', () => {
-    // Handle the 'remote-play' event
     TrackPlayer.play();
-  });
-
-    // Add an event listener for the 'remote-play' event
+});
 TrackPlayer.addEventListener('remote-jump-forward', () => {
-    // Handle the 'remote-play' event
     forward();
-  });
-    // Add an event listener for the 'remote-play' event
+});
 TrackPlayer.addEventListener('remote-jump-backward', () => {
-    // Handle the 'remote-play' event
     backward();
+});
 
-  });
-
-
+useFocusEffect(
+    useCallback(() => {
+        setTracks(track)
+         TrackPlayer.add([track])
+    }, []),
+  );
     const setupPlayermusic = async()=> {
-        await TrackPlayer.setupPlayer()
-        await TrackPlayer.add(track)
-        await TrackPlayer.updateOptions({
+    await TrackPlayer.setupPlayer()
+    await TrackPlayer.add([track])
+    await TrackPlayer.updateOptions({
       stopWithApp: true, 
       jumpInterval: 5,
       alwaysPauseOnInterruption: true,
@@ -110,15 +95,14 @@ TrackPlayer.addEventListener('remote-jump-backward', () => {
       color: 99410543
     });
     }
+
     useEffect(() => {
         setupPlayermusic();
-    },[])
-    const [sate, setSate] = useState(0)
+    },[podcastDetails])
+
     const toogle = async() => {
-        // setupPlayermusic();
         const state = await TrackPlayer.getState();
         setSate(state)
-        console.log('state',state)
         if (state == State.Playing) {
             TrackPlayer.pause();
         }else{
@@ -138,13 +122,18 @@ TrackPlayer.addEventListener('remote-jump-backward', () => {
       useEffect(() => {
         fetchData();
       },[])
+      
     const { position, buffered, duration } = useProgress()
+    let position_minutes = Math.floor(position / 60);
+    let duration_minutes = Math.floor(duration / 60);
+
     const forward = () => {
         TrackPlayer.seekTo(position + 15);
     }
     const backward = () => {
         TrackPlayer.seekTo(position - 15);
     }
+
     return (
         <ScrollView style={styles.mainBox}>
              <ListModals
@@ -187,6 +176,15 @@ TrackPlayer.addEventListener('remote-jump-backward', () => {
                 </TouchableOpacity>
             </View>
         <View style={{ marginHorizontal: 10, marginTop: 20 }}>
+            <View style={{flexDirection:'row',justifyContent:"space-between",marginHorizontal:10}}>
+                <Text style={{color: 'white', fontWeight: 'bold'}}>
+                    {position_minutes} minutes
+                </Text>
+
+                <Text style={{color: 'white', fontWeight: 'bold'}}>
+                    {duration_minutes} minutes
+                </Text>
+            </View>
                 <Slider
                 style={{width: '100%', height: 40}}
                 minimumValue={0}
@@ -196,10 +194,10 @@ TrackPlayer.addEventListener('remote-jump-backward', () => {
                 value={position}
                 thumbTintColor={Colors.button}
                 onSlidingComplete={async(value)=>{
-await TrackPlayer.seekTo(value);
+                await TrackPlayer.seekTo(value);
                 }}
                 />
-                <Text style={{}} numberOfLines={5}>{podcastDetails?.yoast_head_json?.description}</Text>
+                <Text style={{color: 'white', fontWeight: 'bold'}} numberOfLines={5}>{podcastDetails?.yoast_head_json?.description}</Text>
                 <View style={styles.cardBox}>
                     <View style={styles.headingBox}>
                         <Text style={styles.mainHeading}>{language?.FeaturedPodcasts}</Text>

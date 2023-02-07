@@ -10,7 +10,7 @@ const AppNavigationContainer = () => {
 const {language,setIsSignin,isSignin,selectedlang} = useContext(AuthContext);
   return (
     <NavigationContainer>
-      {selectedlang == ''  ? <Auth /> : isSignin == true ? <AppNavigation /> : <GuestNavigation /> }
+      {selectedlang == '' && isSignin == false ? <Auth /> : isSignin == true ? <AppNavigation /> : <GuestNavigation /> }
     </NavigationContainer>
   );
 };

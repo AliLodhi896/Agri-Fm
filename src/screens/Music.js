@@ -1,6 +1,5 @@
-import React,{useState,useContext,useEffect} from 'react'
+import React,{useState,useContext,useEffect,useCallback} from 'react'
 import { StyleSheet, View, Image, Text,ScrollView } from "react-native"
-import SocialModal from "../components/Cards/Modals/SocialModal";
 import Header from "../components/Header/Header";
 import Colors from "../constant/Colors";
 
@@ -27,62 +26,47 @@ import TrackPlayer,{
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Slider from '@react-native-community/slider';
 import {useNavigation,useFocusEffect} from '@react-navigation/native';
+import Toast from 'react-native-simple-toast';
 
 const Music = ({route}) => {
-    const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
-    const {podcastDetails}= route.params
+    const {language,tracks,setTracks,setSate,sate,podcast_id,isSignin,favoritePodcat_id,UserData} = useContext(AuthContext);
+    const {podcastDetails,Fromlibrary}= route.params
+    console.log('favoritePodcat_id',podcast_id);
 
-    const podcasts = [
-        {
-            id: 1,
-        },
-        {
-            id: 2,
-        },
-        {
-            id: 3,
-        },
-    ];
     const [modalVisible, setModalVisible] = useState(false);
     const [podCastData, setPodcastData] = useState([]);
     const navigation = useNavigation();
-
     const track = {
-        url: podcastDetails?.acf?.link_podcast1, // Load media from the app bundle
-        title: podcastDetails?.title?.rendered,
+        id: podcastDetails?.id,
+        url: Fromlibrary == false ? podcastDetails?.acf?.link_podcast1 : podcastDetails?.LINK, // Load media from the app bundle
+        title:Fromlibrary == false ? podcastDetails?.title?.rendered : podcastDetails?.TITLE,
         artist: 'deadmau5',
-        artwork: podcastDetails?.acf?.imagen_podcast1, // Load artwork from the app bundle
+        artwork:Fromlibrary == false ? podcastDetails?.acf?.imagen_podcast1 : podcastDetails?.image, // Load artwork from the app bundle
         duration: 166
     };
-
-
-// Add an event listener for the 'remote-play' event
 TrackPlayer.addEventListener('remote-pause', () => {
-    // Handle the 'remote-play' event
     TrackPlayer.pause();
   });
-  // Add an event listener for the 'remote-play' event
 TrackPlayer.addEventListener('remote-play', () => {
-    // Handle the 'remote-play' event
     TrackPlayer.play();
   });
-
-    // Add an event listener for the 'remote-play' event
 TrackPlayer.addEventListener('remote-jump-forward', () => {
-    // Handle the 'remote-play' event
     forward();
   });
-    // Add an event listener for the 'remote-play' event
 TrackPlayer.addEventListener('remote-jump-backward', () => {
-    // Handle the 'remote-play' event
     backward();
+});
 
-  });
-
-
+useFocusEffect(
+    useCallback(() => {
+        setTracks(track)
+         TrackPlayer.add([track])
+    }, []),
+  );
     const setupPlayermusic = async()=> {
         await TrackPlayer.setupPlayer()
-        await TrackPlayer.add(track)
+        await TrackPlayer.add([track])
+
         await TrackPlayer.updateOptions({
       stopWithApp: true, 
       jumpInterval: 5,
@@ -112,10 +96,8 @@ TrackPlayer.addEventListener('remote-jump-backward', () => {
     }
     useEffect(() => {
         setupPlayermusic();
-    },[])
-    const [sate, setSate] = useState(0)
+    },[podcastDetails])
     const toogle = async() => {
-        // setupPlayermusic();
         const state = await TrackPlayer.getState();
         setSate(state)
         console.log('state',state)
@@ -145,6 +127,51 @@ TrackPlayer.addEventListener('remote-jump-backward', () => {
     const backward = () => {
         TrackPlayer.seekTo(position - 15);
     }
+
+    const AddPodcastToLiabrary =async () =>{
+        try {
+          let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/add-favp-app.php?id_user=${UserData?.user}&id_podcast=${Fromlibrary == false ? podcastDetails?.id : podcastDetails?.ID}`;
+          const response = await fetch(baseUrl, {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+            },
+          });
+          const responseData = await response.json();
+          if (responseData[0].favoritos_podcast ) {
+            Toast.show('Podcast Added to liabrary', Toast.LONG);
+            navigation.navigate('MyLibrary')
+          } else {
+            alert('Failed to add to liabrary !');
+          }
+        } catch (error) {
+          console.log('error => ', error);
+        }
+      }
+      
+    const RemovePodcastFromLiabrary =async () =>{
+        try {
+          let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/remove-libraryp.php?id_user=${UserData?.user}&id_podcast=${Fromlibrary == false ? podcastDetails?.id : podcastDetails?.ID}`;
+          const response = await fetch(baseUrl, {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+            },
+          });
+          const responseData = await response.json();
+          if (responseData[0].favoritos_podcast ) {
+            Toast.show('Podcast removed from liabrary', Toast.LONG);
+            navigation.navigate('MyLibrary')
+          } else {
+            alert('Failed to remove from liabrary !');
+          }
+        } catch (error) {
+          console.log('error => ', error);
+        }
+    }
+
+    let stringID = Fromlibrary == false ?  JSON.stringify(podcastDetails?.id) : podcastDetails?.ID
+    let numberID =  podcastDetails?.ID
     return (
         <ScrollView style={styles.mainBox}>
              <ListModals
@@ -154,27 +181,33 @@ TrackPlayer.addEventListener('remote-jump-backward', () => {
             />
             <Header icon={true} rightIcon={true} />
             <View style={{ flexDirection: 'row' }}>
-                <Image style={{ height: 170, width: 170, borderRadius: 10 }} source={{uri: podcastDetails?.acf?.imagen_podcast1}} />
+                <Image style={{ height: 170, width: 170, borderRadius: 10 }} source={{uri: Fromlibrary == false ? podcastDetails?.acf?.imagen_podcast1 : podcastDetails?.image}} />
                 <View style={{ padding: 10 }}>
                     {/* <Text>50 min</Text> */}
-                    <Text style={{ width: '45%', color: 'white', fontWeight: 'bold' }}>{podcastDetails?.title?.rendered} </Text>
+                    <Text style={{ width: '45%', color: 'white', fontWeight: 'bold' }}>{Fromlibrary == false ? podcastDetails?.title?.rendered : podcastDetails?.TITLE} </Text>
                     <View style={{ flexDirection: 'row' }}>
-
                         <View style={{ marginTop: '5%', justifyContent: 'center', width: 50, justifyContent: 'center', alignItems: 'center' }}>
                         <Image style={{ height: 22, width: 30 }} source={require('../assets/Images/whiteshare.png')} />
                             <Text style={{ fontSize: 12, color: 'white' }}>{language?.Share}</Text>
                         </View>
-                        <View style={{ marginTop: '5%', justifyContent: 'center', marginLeft: '15%', width: 80, justifyContent: 'center', alignItems: 'center' }}>
+                        <View style={{ marginTop: '5%', justifyContent: 'center',width: 80, justifyContent: 'center', alignItems: 'center' }}>
                         <Image style={{ height: 27, width: 30 }} source={require('../assets/Images/downloadwhite.png')} />
                             <Text style={{ fontSize: 12, color: 'white' }}>{language?.Download}</Text>
                         </View>
                     </View>
                 </View>
             </View>
-            <View style={{ backgroundColor: Colors.button, padding: 10, marginHorizontal: '20%', flexDirection: 'row', borderRadius: 10, alignItems: 'center', marginTop: '10%',justifyContent:'center' }}>
+            {favoritePodcat_id.includes(stringID) && stringID === stringID ?
+            <TouchableOpacity onPress={()=>RemovePodcastFromLiabrary()} style={{ backgroundColor: Colors.button, padding: 10, marginHorizontal: '20%', flexDirection: 'row', borderRadius: 10, alignItems: 'center', marginTop: '10%',justifyContent:'center' }}>
+                <AntDesign name="hearto" size={25} color={'white'} />
+                <Text style={{ fontSize: 15, color: 'white', marginLeft: 10, fontWeight: '900' }}>{language?.RemoveFromLibrary}</Text>
+            </TouchableOpacity>
+            :
+            <TouchableOpacity onPress={()=>AddPodcastToLiabrary()} style={{ backgroundColor: Colors.button, padding: 10, marginHorizontal: '20%', flexDirection: 'row', borderRadius: 10, alignItems: 'center', marginTop: '10%',justifyContent:'center' }}>
                 <AntDesign name="hearto" size={25} color={'white'} />
                 <Text style={{ fontSize: 15, color: 'white', marginLeft: 10, fontWeight: '900' }}>{language?.AddToMyLibrary}</Text>
-            </View>
+            </TouchableOpacity>
+            }
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '60%', alignSelf: 'center', marginTop: '10%' }}>
                 <TouchableOpacity onPress={()=> backward()}> 
                     <Image style={{ height: 32, width: 30 }} source={require('../assets/Images/replay.png')} />
@@ -196,7 +229,7 @@ TrackPlayer.addEventListener('remote-jump-backward', () => {
                 value={position}
                 thumbTintColor={Colors.button}
                 onSlidingComplete={async(value)=>{
-await TrackPlayer.seekTo(value);
+                await TrackPlayer.seekTo(value);
                 }}
                 />
                 <Text style={{}} numberOfLines={5}>{podcastDetails?.yoast_head_json?.description}</Text>
@@ -209,7 +242,7 @@ await TrackPlayer.seekTo(value);
                             <FeaturedCard
                             
                             onPressIcon={()=>setModalVisible(true)}
-                            onPress={()=>navigation.navigate('Music',{podcastDetails:item})}
+                            onPress={()=>navigation.navigate('Music',{podcastDetails:item,Fromlibrary:false})}
                             channelName='Channel Name'
               podcastname = {item.title?.rendered}
               image = {item?.acf?.imagen_podcast1}

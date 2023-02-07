@@ -74,7 +74,7 @@ const UserData = () => {
       .then(res => res.json())
 
       .then(data => {
-          setJob(data.map(el => ({label: el.nombrees, value: el.z})));
+          setJob(data.map(el => ({label: el.nombrees, value: el.nombrees})));
       });
   }, []);
   useEffect(() => {
@@ -84,7 +84,7 @@ const UserData = () => {
       .then(res => res.json())
 
       .then(data => {
-          setActivity(data.map(el => ({label: el.nombrees, value: el.id})));
+          setActivity(data.map(el => ({label: el.nombrees, value: el.nombrees})));
       });
   }, []);
   useEffect(() => {
@@ -98,7 +98,7 @@ const UserData = () => {
             data.map(el => ({
               id: el.id,
               label: el.nombrees,
-              value: el.id,
+              value: el.nombrees,
             })),
           );
       });
@@ -116,7 +116,7 @@ const UserData = () => {
                 data.map(el => ({
                   id: el.id,
                   label: el.nombrees,
-                  value: el.id,
+                  value: el.nombrees,
                 })),
               );
           });
@@ -146,7 +146,7 @@ const UserData = () => {
                 data.map(el => ({
                   id: el.id,
                   label: el.nombrees,
-                  value: el.id,
+                  value: el.nombrees,
                 })),
               );
           });
@@ -172,6 +172,7 @@ const UserData = () => {
         />
       </View>
       <View style={{marginVertical: 30, marginHorizontal: 20}}>
+        <Text style={{fontSize:16,fontWeight:'bold',marginLeft:30,marginBottom:-20}}>Select Job : {ivalueJob}</Text>
         <Dropdown
           searchable={true}
           items={Jobs}
@@ -181,6 +182,7 @@ const UserData = () => {
           zIndex={998}
           placeholder={language?.ChooseYourJob}
         />
+        <Text style={{fontSize:16,fontWeight:'bold',marginLeft:30,marginBottom:-20}}>Select Activity : {ivalueActivity}</Text>
         <Dropdown
           // searchable={true}
           items={Activity}
@@ -190,6 +192,8 @@ const UserData = () => {
           zIndex={998}
           placeholder={language?.ChooseYourActivity}
         />
+        <Text style={{fontSize:16,fontWeight:'bold',marginLeft:30,marginBottom:-20}}>Select Language : {ivaluelanguage}</Text>
+
         <Dropdown
           searchable={true}
           items={Language}
@@ -199,6 +203,8 @@ const UserData = () => {
           zIndex={998}
           placeholder={language?.ChooseYourLanguage}
         />
+        <Text style={{fontSize:16,fontWeight:'bold',marginLeft:30,marginBottom:-20}}>Select Countries : {ivalueCountry}</Text>
+
         <Dropdown
           searchable={true}
           items={Countries}

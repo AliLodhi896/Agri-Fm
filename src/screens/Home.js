@@ -1,4 +1,4 @@
-import React, {useState,useEffect,useContext} from 'react';
+import React, {useState,useEffect,useContext,useCallback} from 'react';
 import {
   View,
   Text,
@@ -6,62 +6,54 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
-  ActivityIndicator
+  ActivityIndicator,
+    Linking,
+    Share,
+    PermissionsAndroid
 } from 'react-native';
 import ChannelCard from '../components/Cards/ChannelCard';
 import Colors from '../constant/Colors';
 import FeaturedCard from '../components/Cards/FeaturedCard';
-import {useNavigation} from '@react-navigation/native';
-import * as Animatable from 'react-native-animatable';
+import {useNavigation,useFocusEffect} from '@react-navigation/native';
 import ListModals from '../components/Cards/Modals/ListModals';
 import InterestCard from '../components/Cards/InterestCard';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import { AuthContext } from '../context/Context';
-import ErrorModal from '../components/Cards/Modals/ErrorModal';
 import LangModal from '../components/Cards/Modals/LangModal';
+import Toast from 'react-native-simple-toast';
+import RNFS from 'react-native-fs';
+import MiniPlayerCard from '../components/Cards/MiniPlayerCard';
+import TrackPlayer,{
+  Capability,
+  Event,
+  RepeatMode,
+  State,
+  usePlaybackState,
+  useProgress,
+  useTrackPlayerEvents,
+  AppKilledPlaybackBehavior 
+} from 'react-native-track-player';
+import RNFetchBlob from 'rn-fetch-blob';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Home = () => {
-const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
-
+  const {downloadedPodcast,downloadedPodcastID,language,selectedlang,sate,setSate,UserData,setpodcast_id,podcast_id,setfavoritePodcat_id,setdownloadedPodcastID,setdownloadedPodcast} = useContext(AuthContext);
   const navigation = useNavigation();
   const [podCastData, setPodcastData] = useState([]);
-  const[id, setId] = useState();
   const [interest,setInterest] = useState([])
   const [loading, setLoading] = useState(false)
-
-
-  const fetchData = () => {
-    setLoading(true)
-    return fetch("https://socialagri.com/agriFM/wp-json/wp/v2/podcast")
-          .then((response) => response.json())
-          .then((data) =>{ 
-            setPodcastData(data);
-            setLoading(false)
-          })
-          .catch((err) => {
-            console.log(err,'API Failed');
-          });      
-  }
+  const [channelsdata, setchannelsdata] = useState([])
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible2, setModalVisible2] = useState(false);
+  const [muusicUrl, setmuusicUrl] = useState(null)
+  const [favoritePodcast, setfavoritePodcast] = useState()
+  const [musicdatafordownload, setmusicdatafordownload] = useState()
+  
+  
   
 
-  useEffect(() => {
-    fetchData();
-  },[])
 
-  useEffect(()=>{
-    fetch('https://socialagri.com/agriFM/wp-json/wp/v2/canales')
-    .then(res=>res.json())
-    .then((data) =>{ 
-      setId(data.length == 0 ? undefined || null : (data));
-    })
-},[])
-useEffect(()=>{
-  fetch('https://socialagri.com/agriFM/wp-json/wp/v2/intereses/')
-  .then(res=>res.json())
-  .then((data) =>{ 
-    setInterest(data.length == 0 ? undefined || null : (data));
-  })
-},[])
+
   const categories = [
     {
       id: 1,
@@ -88,67 +80,258 @@ useEffect(()=>{
       name: language?.Aqua,
       image: require('../assets/Images/nutrition.png'),
     },
-  ];
-  const channels = [
     {
-      id: 1,
-      name: 'Less is more',
-      description: 'CEVA',
-    },
-    {
-      id: 2,
-      name: 'Less is more',
-      description: 'CEVA',
-    },
-    {
-      id: 3,
-      name: 'Less is more',
-      description: 'CEVA',
+      id: 6,
+      name: selectedlang == 'en' ?  'Others' :  'Otras' ,
+      image: require('../assets/Images/aqua.png'),
     },
   ];
-  const featuredchannels = [
-    {
-      id: 1,
-      name: 'Hablando de nutrición animal - Es uncanal ',
-    },
-    {
-      id: 2,
-      name: 'Hablando de nutrición animal - Es uncanal ',
-    },
-  ];
-  const [modalVisible, setModalVisible] = useState(false);
-  const [modalVisible2, setModalVisible2] = useState(false);
 
-  const Interest = [
-    {
-      id: 1,
+  const fetchData = () => {
+    setLoading(true)
+    return fetch("https://socialagri.com/agriFM/wp-json/wp/v2/podcast")
+          .then((response) => response.json())
+          .then((data) =>{ 
+            setPodcastData(data);
+            setLoading(false)
+          })
+          .catch((err) => {
+            console.log(err,'API Failed');
+          });      
+  }
+
+  const getChannels = () => {
+    setLoading(true)
+    return fetch("https://socialagri.com/agriFM/wp-json/wp/v2/canales")
+          .then((response) => response.json())
+          .then((data) =>{ 
+            setchannelsdata(data);
+            setLoading(false)
+          })
+          .catch((err) => {
+            console.log(err,'API Failed');
+          });   
+  }
+
+  useEffect(()=>{
+
+      fetchData();
+      fetch('https://socialagri.com/agriFM/wp-json/wp/v2/intereses/')
+      .then(res=>res.json())
+      .then((data) =>{ 
+        setInterest(data.length == 0 ? undefined || null : (data));
+      })
+  },[])
+
+  useFocusEffect(
+    useCallback(() => {
+      getChannels();
+    }, []),
+  );
+
+  const onShare = async () => {
+    try {
+      const result = await Share.share({
+        message:
+        muusicUrl + 'This Podcast has been share form AgriFM app',
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+  
+  const trackResetAndNavgate = (item) => {
+    TrackPlayer.reset();
+    setSate(0)
+    navigation.navigate('Music',{podcastDetails:item,Fromlibrary:false});
+  }
+  
+  const AddPodcastToLiabrary =async () =>{
+    setModalVisible(false);
+    setLoading(true)
+    try {
+      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/add-favp-app.php?id_user=${UserData?.user}&id_podcast=${podcast_id}`;
+      const response = await fetch(baseUrl, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+      const responseData = await response.json();
+      if (responseData[0].favoritos_podcast ) {
+        Toast.show('Podcast Added to liabrary', Toast.LONG);
+        navigation.navigate('MyLibrary')
+      } else {
+        alert('Failed to add to liabrary !');
+      }
+    } catch (error) {
+      console.log('error => ', error);
+    }
+    setLoading(false)
+  }
+  
+  const RemovePodcastFromLiabrary =async () =>{
+    setModalVisible(false);
+    setLoading(true)
+    try {
+      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/remove-libraryp.php?id_user=${UserData?.user}&id_podcast=${podcast_id}`;
+      const response = await fetch(baseUrl, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+      const responseData = await response.json();
+      if (responseData[0].favoritos_podcast ) {
+        Toast.show('Podcast removed from liabrary', Toast.LONG);
+        navigation.navigate('MyLibrary')
+      } else {
+        alert('Failed to remove from liabrary !');
+      }
+    } catch (error) {
+      console.log('error => ', error);
+    }
+    setLoading(false)
+  }
+  
+  const fetchFavoritePodcast =async () =>{
+    try {
+      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/misintereses-app.php?id_user=${UserData?.user}`;
+      const response = await fetch(baseUrl, {
+        method: 'Get',
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+      const responseData = await response.json();
+      if (responseData) {
+         console.log('responseData',responseData?.map(itemxx => {
+            return itemxx?.ID
+         }))
+        setfavoritePodcast(responseData)
+        let courseName = responseData?.map(itemxx => {
+          return  itemxx.ID
+        })
+        setfavoritePodcat_id(courseName)
+      } else {
+        // alert('failed to get fav fav');
+      }
+    } catch (error) {
+      console.log('error => ', error);
+    }
+  }
+
+  useEffect(() => {
+    fetchFavoritePodcast();
+  },[podcast_id])
+
+const download = (item) => {
+  setModalVisible(true);
+  setmuusicUrl(item?.acf?.link_podcast1)
+  setpodcast_id(item?.id)
+  setmusicdatafordownload(item)
+}
+
+const requestpermissionforDownlaod = async () => {
+  try {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+      {
+        title: 'Music', 
+        message:
+          'App needs access to your Files... ',
+        buttonNeutral: 'Ask Me Later',
+        buttonNegative: 'Cancel',
+        buttonPositive: 'OK',
+      },
+    );
+    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      console.log('startDownload...');
+      this.startDownload();
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const downloadPodcast = async (item) => {
+  
+  await requestpermissionforDownlaod();
+  let url = item?.acf?.link_podcast1;
+  let name = item?.title?.rendered;
+  const path = RNFetchBlob.fs.dirs.DownloadDir+`/${name}.mp3`;
+  
+  const newObject = {
+    ID: item?.id,
+    TITLE: item?.title?.rendered,
+    image: item?.acf?.imagen_podcast1,
+    LINK: path
+  }
+  const previousData = await AsyncStorage.getItem('musics');
+  let data = [];
+  if (previousData !== null) {
+    data = JSON.parse(previousData);
+  }
+  data.push(newObject);
+  const dataString = JSON.stringify(data);
+  await AsyncStorage.setItem('musics', dataString);
+  RNFetchBlob.config({
+    fileCache: true,
+    appendExt: 'mp3',
+    addAndroidDownloads: {
+      useDownloadManager: true,
+      notification: true,
+      title: name,
+      path: path, // Android platform
+      description: 'Downloading the file',
     },
-    {
-      id: 2,
-    },
-    {
-      id: 3,
-    },
-  ];
+  })
+    .fetch('GET', url)
+    .then(res => {
+      console.log('res', res);
+      Toast.show('Successfully Downloaded at ' + res.path(), Toast.LONG);
+    });
+}
+
+const RemoveDownload = async() => {
+  let newItems = downloadedPodcast.filter(e => e?.ID !== podcast_id);
+
+  setdownloadedPodcast(newItems)
+  const dataString = JSON.stringify(downloadedPodcast);
+  await AsyncStorage.setItem('musics', dataString);
+  let newItemsID = downloadedPodcastID.filter(e => e !== podcast_id);
+  setdownloadedPodcastID(newItemsID)
+  // downloadedPodcastID
+  // setdownloadedPodcastID()
+}
+
   return (
-    <ScrollView style={styles.mainBox}>
+    <View style={{height:'100%',backgroundColor:Colors.primary}}>
+       <View style={{height: sate !== 0 ? '85%' : '100%'}}>
+       <ScrollView style={styles.mainBox}>
       <ListModals
         isVisible={modalVisible}
+        onPressClose={() => setModalVisible(false)}
+        onPressaddTo={()=> AddPodcastToLiabrary()}
         onClose={() => setModalVisible(false)}
-        onPress={() => setModalVisible(false)}
+        onPressDownload={()=>downloadPodcast()}
+        onPressShare={()=>onShare()}
+        onPressRemoveDownload={()=>RemoveDownload()}
+        onPressRemove={()=>RemovePodcastFromLiabrary()}
       />
       <LangModal
         isVisible={modalVisible2}
         onClose={() => setModalVisible2(false)}
         onPress={() => setModalVisible2(false)}
       />
-      
-      {/* <ErrorModal
-        isVisible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        onPress={() => setModalVisible(false)}
-        message='Invalid Password !'
-      /> */}
       <View style={styles.headerBox}>
         <View></View>
         <View style={styles.logoBox}>
@@ -202,11 +385,17 @@ useEffect(()=>{
           <Text style={styles.subHeading}>See All</Text>
         </View>
         <ScrollView style={styles.categoryBox} horizontal  >
-          {(id !== undefined ? id : channels).map(item => {
+          {loading == true ?
+            <View style={{padding:100,marginLeft:70}}>
+              <ActivityIndicator size="large" color="white" /> 
+            </View>
+          :
+          channelsdata.map(item => {
             return (
               <ChannelCard
-                onPress={() => navigation.navigate('ChannelDetails')}
+                onPress={() => navigation.navigate('ChannelDetails',{details:item})}
                 title={item.name}
+                image = {item?.acf?.imagen_perfil}
                 // description={item.description}
               />
             );
@@ -232,13 +421,13 @@ useEffect(()=>{
         podCastData.slice(0, 5).map((item) => {
           return (
             <FeaturedCard
-              onPressIcon={() => setModalVisible(true)}
-              onPress={() => navigation.navigate('Music',{podcastDetails:item})}
+              onPressDownload={()=>downloadPodcast(item)}
+              onPressIcon={()=>download(item)}
+              onPress={() => trackResetAndNavgate(item)}
               channelName='Channel Name'
               podcastname = {item.title?.rendered}
               image = {item?.acf?.imagen_podcast1}
-
-
+              id = {item?.id}
             />
           );
         })}
@@ -254,14 +443,19 @@ useEffect(()=>{
           <Text style={styles.mainHeading}>{language?.FeaturedChannels}</Text>
           <Text style={styles.subHeading}>See All</Text>
         </View>
-        <ScrollView style={styles.categoryBox} horizontal>
-          {featuredchannels.map(item => {
+        <ScrollView style={styles.categoryBox} horizontal  >
+          {loading == true ?
+            <View style={{padding:100,marginLeft:70}}>
+              <ActivityIndicator size="large" color="white" /> 
+            </View>
+          :
+          channelsdata.map(item => {
             return (
               <ChannelCard
-                title={item.nombrees}
-                mainStyle={{width: 220}}
-                titleStyle={{color: Colors.primary, marginBottom: 10}}
-                style={{backgroundColor: 'white', borderRadius: 10}}
+                onPress={() => navigation.navigate('ChannelDetails',{details:item})}
+                title={item.name}
+                image = {item?.acf?.imagen_perfil}
+                // description={item.description}
               />
             );
           })}
@@ -277,7 +471,9 @@ useEffect(()=>{
         <View style={{justifyContent:'space-between',flexDirection:'row',marginHorizontal:30,marginVertical:30}}>
             <View style={{ alignSelf: 'center' }}>
                 <Image style={styles.image} source={require('../assets/Images/pp.png')} />
-                <TouchableOpacity onPress={()=>navigation.navigate('EditProfile')} style={{ borderRadius: 100, alignItems: 'flex-end', marginTop: -20 }}>
+                <TouchableOpacity onPress={() => {
+              Linking.openURL('https://socialagri.com/agriFM/login/?pa=2');
+            }} style={{ borderRadius: 100, alignItems: 'flex-end', marginTop: -20 }}>
                     <AntDesign style={styles.edit} name="plus" color={'white'} size={18} />
                 </TouchableOpacity>
                 <Text style={{color:Colors.secondary,fontSize:12,marginTop:10,textAlign:'center'}}>{language?.CreateChannel}</Text>
@@ -285,7 +481,7 @@ useEffect(()=>{
             </View>
             <View style={{ alignSelf: 'center' }}>
                 <Image style={styles.image} source={require('../assets/Images/mic.png')} />
-                <TouchableOpacity onPress={()=>navigation.navigate('EditProfile')} style={{ borderRadius: 100, alignItems: 'flex-end', marginTop: -20 }}>
+                <TouchableOpacity onPress={()=>navigation.navigate('LoginEmail')} style={{ borderRadius: 100, alignItems: 'flex-end', marginTop: -20 }}>
                     <AntDesign style={styles.edit} name="plus" color={'white'} size={18} />
                 </TouchableOpacity>
                 <Text style={{color:Colors.secondary,fontSize:12,marginTop:10,textAlign:'center'}}>{language?.CreateProfile}</Text>
@@ -300,6 +496,16 @@ useEffect(()=>{
         })}
       </View>
     </ScrollView>
+       </View>
+       <View style={{marginVertical:20,marginHorizontal:10}}>
+      {sate !== 0  ?
+              <MiniPlayerCard />
+              : 
+              null
+            }
+      </View>
+    </View>
+
   );
 };
 

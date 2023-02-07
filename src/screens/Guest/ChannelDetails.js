@@ -1,5 +1,5 @@
 import React, {useState,useContext,useEffect} from 'react';
-import { StyleSheet, View, Image, Text,ScrollView } from "react-native"
+import { StyleSheet, View, Image, Text,ScrollView, TouchableOpacity ,Share,ActivityIndicator} from "react-native"
 import SocialModal from "../../components/Cards/Modals/SocialModal";
 import Header from "../../components/Header/Header";
 import Colors from "../../constant/Colors";
@@ -15,36 +15,22 @@ import FeaturedCard from "../../components/Cards/FeaturedCard";
 import ChannelCard from "../../components/Cards/ChannelCard";
 import {useNavigation} from '@react-navigation/native';
 import { AuthContext } from '../../context/Context';
+import Toast from 'react-native-simple-toast';
 
-const ChannelDetails = () => {
+const ChannelDetails = ({route}) => {
   const navigation = useNavigation();
   const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
   const [podCastData, setPodcastData] = useState([]);
+  const {details} = route.params
+  const [loading, setLoading] = useState(false)
 
-    const podcasts = [
-        {
-            id: 1,
-        },
-        {
-            id: 2,
-        },
-        {
-            id: 3,
-        },
-    ];
-    const channels = [
-        {
-            id:1,
-            name:'Less is more',
-            description:'CEVA'
-        },
-    ];
     const fetchData = () => {
+        setLoading(true)
         return fetch("https://socialagri.com/agriFM/wp-json/wp/v2/podcast")
               .then((response) => response.json())
               .then((data) =>{ 
-                
                 setPodcastData(data);
+                setLoading(false)
               })
               .catch((err) => {
                 console.log(err,'API Failed');
@@ -53,36 +39,70 @@ const ChannelDetails = () => {
     useEffect(() => {
         fetchData();
       },[])
-    return (
+
+      const onShare = async () => {
+        try {
+          const result = await Share.share({
+            message:
+            details?.link + 'This Channel has been share form AgriFM app',
+          });
+          if (result.action === Share.sharedAction) {
+            if (result.activityType) {
+            } else {
+              // shared
+            }
+          } else if (result.action === Share.dismissedAction) {
+            // dismissed
+          }
+        } catch (error) {
+          alert(error.message);
+        }
+      };
+
+      const followChannel = () =>{
+        Toast.show('Please first login to follow', Toast.LONG);
+      }
+
+      return (
         <ScrollView style={styles.mainBox}>
             <Header icon={true} />
             <View style={{ flexDirection: 'row', justifyContent:'flex-end',marginTop:-20 }}>
-                {channels.map((item)=>{
-                        return(
-                            <ChannelCard style={{height:280}} titleStyle={{textAlign:'center',marginRight:15}}   title={item.name}  />
-                        );
-                })
-                }
+                <ChannelCard 
+                style={{height:280}} 
+                titleStyle={{textAlign:'center',marginRight:15}}   
+                title={details.name} 
+                image = {details?.acf?.imagen_perfil}
+                />
                 <View style={{ flexDirection: 'column',marginTop:30}}>
-                        <View style={{ marginTop: '5%', justifyContent: 'center', width: 80, justifyContent: 'center', alignItems: 'center' }}>
-                        <Image style={{ height: 22, width: 31 }} source={require('../../assets/Images/whiteshare.png')} />
-                            <Text style={{ fontSize: 12, color: 'white' }}>{language?.Share}</Text>
-                        </View>
-                        <View style={{ marginTop: '20%',  width: 80, justifyContent: 'center', alignItems: 'center' }}>
-                        <Image style={{ height: 26, width: 28 }} source={require('../../assets/Images/with.png')} />
-                            <Text style={{ fontSize: 12, color: 'white' }}>123</Text>
-                        </View>
+                        <TouchableOpacity onPress={()=>onShare()}>
+                            <View style={{ marginTop: '5%', justifyContent: 'center', width: 80, justifyContent: 'center', alignItems: 'center' }}>
+                                <Image style={{ height: 22, width: 31 }} source={require('../../assets/Images/whiteshare.png')} />
+                                <Text style={{ fontSize: 12, color: 'white' }}>{language?.Share}</Text>
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={()=>onShare()}>
+                            <View style={{ marginTop: '20%',  width: 80, justifyContent: 'center', alignItems: 'center' }}>
+                                <Image style={{ height: 26, width: 28 }} source={require('../../assets/Images/with.png')} />
+                                <Text style={{ fontSize: 12, color: 'white' }}>123</Text>
+                            </View>
+                        </TouchableOpacity>
+                        
                 </View>
             </View>
 
-            <View style={{ marginTop:-60,backgroundColor: Colors.button, padding: 10, marginHorizontal: '30%', flexDirection: 'row', borderRadius: 10, alignItems: 'center',justifyContent:'center' }}>
+            <TouchableOpacity onPress={()=>followChannel()} style={{ marginTop:-50,backgroundColor: Colors.button, padding: 10, marginHorizontal: '30%', flexDirection: 'row', borderRadius: 10, alignItems: 'center',justifyContent:'center' }}>
                 <Text style={{ fontSize: 15, color: 'white', marginLeft: 10, fontWeight: '900',textAlign:'center' }}>{language?.Follow}</Text>
-            </View>
+            </TouchableOpacity>
             <View style={{ marginHorizontal: 10, marginTop: 20 }}>
-                <Text style={{}} numberOfLines={5}>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</Text>
+                <Text style={{}} numberOfLines={5}>{details?.yoast_head_json?.description}</Text>
 
                 <View style={styles.cardBox}>
-                    {podCastData.map((item) => {
+                    {loading == true ?
+                        <View style={{padding:100}}>
+                            <ActivityIndicator size="large" color="white" /> 
+                        </View>
+                    :
+                    podCastData.map((item) => {
                         return (
                             <FeaturedCard 
                             onPress={()=>navigation.navigate('Music',{podcastDetails:item})}

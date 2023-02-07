@@ -10,10 +10,17 @@ const ChannelCard = (props) => {
   return (
                 <View style={[styles.mainBox,props.mainStyle]}>
                     <TouchableOpacity style={[styles.subBox,props.style]} onPress={props.onPress}>
-                    <Image
-                        source={require('../../assets/Images/wheat.png')}
-                        style={{width: '100%', height: '63%',borderRadius:10}}
-                    />
+                    {props.staticimg == true ?
+                        <Image
+                            source={{uri: 'https://images.socialagri.com/agriFM/wp-content/uploads/2022/10/20155206/agriBusiness-500x500-1.jpg'}}
+                            style={{width: '100%', height: '63%',borderRadius:10}}
+                        />
+                        :
+                        <Image
+                            source={{uri: props.image}}
+                            style={{width: '100%', height: '63%',borderRadius:10}}
+                        />
+                    }
                     <Text style={[styles.channelName,props.titleStyle]}>{props.title}</Text>
                     <Text style={[styles.channelDescription,props.descriptionStyle]}>{props.description}</Text>
                 </TouchableOpacity>

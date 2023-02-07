@@ -135,6 +135,11 @@ const Tab = createBottomTabNavigator();
           component={SelectInterest}
           options={{headerShown: false}}
         />
+        <MainStack.Screen
+          name="MyLibrary"
+          component={MyLibrary}
+          options={{headerShown: false}}
+        />
       </MainStack.Navigator>
     );
   };

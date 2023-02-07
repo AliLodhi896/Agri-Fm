@@ -1,5 +1,5 @@
 import React, {useState,useContext,useEffect} from 'react';
-import { StyleSheet, View, Image, Text,ScrollView } from "react-native"
+import { StyleSheet, View, Image, Text,ScrollView, TouchableOpacity ,Share,ActivityIndicator} from "react-native"
 import SocialModal from "../components/Cards/Modals/SocialModal";
 import Header from "../components/Header/Header";
 import Colors from "../constant/Colors";
@@ -15,77 +15,187 @@ import FeaturedCard from "../components/Cards/FeaturedCard";
 import ChannelCard from "../components/Cards/ChannelCard";
 import {useNavigation} from '@react-navigation/native';
 import { AuthContext } from '../context/Context';
+import Toast from 'react-native-simple-toast';
 
-const ChannelDetails = () => {
+const ChannelDetails = ({route}) => {
   const navigation = useNavigation();
-  const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
+  const {language, selectedlang, setSelectedlang,UserData} = useContext(AuthContext);
   const [podCastData, setPodcastData] = useState([]);
+  const {details} = route.params
+  const [loading, setLoading] = useState(false)
+  const [followedchannels, setfollowedchannels] = useState()
+  const [followedID, setfollowedID] = useState([])
 
-    const podcasts = [
-        {
-            id: 1,
-        },
-        {
-            id: 2,
-        },
-        {
-            id: 3,
-        },
-    ];
-    const channels = [
-        {
-            id:1,
-            name:'Less is more',
-            description:'CEVA'
-        },
-    ];
-    const fetchData = () => {
-        return fetch("https://socialagri.com/agriFM/wp-json/wp/v2/podcast")
-              .then((response) => response.json())
-              .then((data) =>{ 
-                
-                setPodcastData(data);
+
+        const fetchFollowedChannels =async () =>{
+          setLoading(true)
+          try {
+            let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/miscanales-app.php?id_user=${UserData?.user}`;
+            const response = await fetch(baseUrl, {
+              method: 'Get',
+              headers: {
+                Accept: 'application/json',
+              },
+            });
+            const responseData = await response.json();
+            if (responseData) {
+              setfollowedchannels(responseData)
+              let courseName = responseData?.map(itemxx => {
+                return  itemxx.ID
               })
-              .catch((err) => {
-                console.log(err,'API Failed');
-              });
-      }
-    useEffect(() => {
+              setfollowedID(courseName)
+            } else {
+              alert('failed to add to fav');
+            }
+          } catch (error) {
+            console.log('error => ', error);
+          }
+          setLoading(false)
+        }
+
+      const fetchData = () => {
+          setLoading(true)
+          return fetch("https://socialagri.com/agriFM/wp-json/wp/v2/podcast")
+                .then((response) => response.json())
+                .then((data) =>{ 
+                  setPodcastData(data);
+                  setLoading(false)
+                })
+                .catch((err) => {
+                  console.log(err,'API Failed');
+                });
+        }
+      useEffect(() => {
         fetchData();
+        fetchFollowedChannels();
       },[])
-    return (
+
+      const onShare = async () => {
+        try {
+          const result = await Share.share({
+            message:
+            details?.link + 'This Channel has been share form AgriFM app',
+          });
+          if (result.action === Share.sharedAction) {
+            if (result.activityType) {
+            } else {
+              // shared
+            }
+          } else if (result.action === Share.dismissedAction) {
+            // dismissed
+          }
+        } catch (error) {
+          alert(error.message);
+        }
+      };
+
+      const followChannel =async () =>{
+        setLoading(true)
+        try {
+          let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/add-favc-app.php?id_user=${UserData?.user}&id_canal=${details?.id}`;
+          const response = await fetch(baseUrl, {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+            },
+          });
+          const responseData = await response.json();
+          if (responseData[0].favoritos_canales ) {
+            Toast.show('Channel Followed', Toast.LONG);
+            navigation.navigate('Home')
+            fetchFollowedChannels()
+          } else {
+            alert(responseData[0].validation);
+          }
+        } catch (error) {
+          console.log('error => ', error);
+        }
+        setLoading(false)
+      }
+
+      const UnfollowChannel =async () =>{
+        setLoading(true)
+        try {
+          let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/remove-libraryp.php?id_user=${UserData?.user}&id_podcast=${details?.id}`;
+          const response = await fetch(baseUrl, {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+            },
+          });
+          const responseData = await response.json();
+          if (responseData[0].favoritos_canales ) {
+            Toast.show('Channel Unfollowed', Toast.LONG);
+            navigation.navigate('Home')
+            fetchFollowedChannels()
+          } else {
+            alert(responseData[0].validation);
+          }
+        } catch (error) {
+          console.log('error => ', error);
+        }
+        setLoading(false)
+      }
+
+      const trackResetAndNavgate = (item) => {
+        TrackPlayer.reset();
+        setSate(0)
+        navigation.navigate('Music',{podcastDetails:item,Fromlibrary:false})
+      }
+
+    return loading ? (
+      <View style={{backgroundColor: Colors.primary,flex:1,justifyContent:'center'}}>
+        <ActivityIndicator size="large" color="white" /> 
+      </View>
+    ) : (
         <ScrollView style={styles.mainBox}>
             <Header icon={true} />
             <View style={{ flexDirection: 'row', justifyContent:'flex-end',marginTop:-20 }}>
-                {channels.map((item)=>{
-                        return(
-                            <ChannelCard style={{height:280}} titleStyle={{textAlign:'center',marginRight:15}}   title={item.name}  />
-                        );
-                })
-                }
+                <ChannelCard 
+                style={{height:280}} 
+                titleStyle={{textAlign:'center',marginRight:15}}   
+                title={details.name} 
+                image = {details?.acf?.imagen_perfil}
+                />
                 <View style={{ flexDirection: 'column',marginTop:30}}>
-                        <View style={{ marginTop: '5%', justifyContent: 'center', width: 80, justifyContent: 'center', alignItems: 'center' }}>
-                        <Image style={{ height: 22, width: 31 }} source={require('../assets/Images/whiteshare.png')} />
-                            <Text style={{ fontSize: 12, color: 'white' }}>{language?.Share}</Text>
-                        </View>
-                        <View style={{ marginTop: '20%',  width: 80, justifyContent: 'center', alignItems: 'center' }}>
-                        <Image style={{ height: 26, width: 28 }} source={require('../assets/Images/with.png')} />
-                            <Text style={{ fontSize: 12, color: 'white' }}>123</Text>
-                        </View>
+                        <TouchableOpacity onPress={()=>onShare()}>
+                            <View style={{ marginTop: '5%', justifyContent: 'center', width: 80, justifyContent: 'center', alignItems: 'center' }}>
+                                <Image style={{ height: 22, width: 31 }} source={require('../assets/Images/whiteshare.png')} />
+                                <Text style={{ fontSize: 12, color: 'white' }}>{language?.Share}</Text>
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={()=>onShare()}>
+                            <View style={{ marginTop: '20%',  width: 80, justifyContent: 'center', alignItems: 'center' }}>
+                                <Image style={{ height: 26, width: 28 }} source={require('../assets/Images/with.png')} />
+                                <Text style={{ fontSize: 12, color: 'white' }}>123</Text>
+                            </View>
+                        </TouchableOpacity>
                 </View>
             </View>
-
-            <View style={{ marginTop:-60,backgroundColor: Colors.button, padding: 10, marginHorizontal: '30%', flexDirection: 'row', borderRadius: 10, alignItems: 'center',justifyContent:'center' }}>
+            {followedID?.includes(JSON.stringify(details?.id)) ?
+            <TouchableOpacity onPress={()=>UnfollowChannel()} style={{ marginTop:-50,backgroundColor: Colors.button, padding: 10, marginHorizontal: '30%', flexDirection: 'row', borderRadius: 10, alignItems: 'center',justifyContent:'center' }}>
+              <Text style={{ fontSize: 15, color: 'white', marginLeft: 10, fontWeight: '900',textAlign:'center' }}>{language?.UnFollow}</Text>
+            </TouchableOpacity> 
+            :
+            <TouchableOpacity onPress={()=>followChannel()} style={{ marginTop:-50,backgroundColor: Colors.button, padding: 10, marginHorizontal: '30%', flexDirection: 'row', borderRadius: 10, alignItems: 'center',justifyContent:'center' }}>
                 <Text style={{ fontSize: 15, color: 'white', marginLeft: 10, fontWeight: '900',textAlign:'center' }}>{language?.Follow}</Text>
-            </View>
+            </TouchableOpacity>
+
+            }
+            
             <View style={{ marginHorizontal: 10, marginTop: 20 }}>
-                <Text style={{}} numberOfLines={5}>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</Text>
+                <Text style={{}} numberOfLines={5}>{details?.yoast_head_json?.description}</Text>
 
                 <View style={styles.cardBox}>
-                    {podCastData.map((item) => {
+                    {loading == true ?
+                        <View style={{padding:100}}>
+                            <ActivityIndicator size="large" color="white" /> 
+                        </View>
+                    :
+                    podCastData.map((item) => {
                         return (
                             <FeaturedCard 
-                            onPress={()=>navigation.navigate('Music',{podcastDetails:item})}
+                            onPress={()=>trackResetAndNavgate()}
                             channelName='Channel Name'
               podcastname = {item.title?.rendered}
               image = {item?.acf?.imagen_podcast1}

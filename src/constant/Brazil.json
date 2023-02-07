@@ -5,7 +5,7 @@
     "Swine": "Suíno",
     "Nutrition": "Nutrição",
     "Aqua": "Aqua",
-    "LastChannels": "últimos canais",
+    "LastChannels": "Ultimos canais",
     "FeaturedPodcasts": "Podcasts em Destaque",
     "GoToLibrary": "Ir para a Biblioteca",
     "DownloadPodcast": "Baixar Podcast",
@@ -80,6 +80,9 @@
 
 
     
-    "Update": "actualizar"
+    "Update": "actualizar",
+    "UnFollow": "deixar de seguir",
+    "RemoveFromLibrary":"Remover da Biblioteca",
+    "removeDownload" : "Remover dos downloads"
 
 }

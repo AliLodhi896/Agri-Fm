@@ -1,5 +1,5 @@
 import React, {useState,useContext,useEffect} from 'react'
-import { View, Text,StyleSheet,TouchableOpacity,Image,ScrollView} from 'react-native'
+import { View, Text,StyleSheet,TouchableOpacity,Image,ScrollView,ActivityIndicator} from 'react-native'
 import Colors from '../constant/Colors'
 import SearchInput from '../components/Inputs/SearchInput';
 import InterestCard from '../components/Cards/InterestCard';
@@ -9,38 +9,54 @@ import { AuthContext } from '../context/Context';
 
 const Explore = () => {
 const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
-    const Interest = [
-        {
-            id:1,
-        },
-        {
-            id:2,
-        },
-        {
-            id:3,
-        },
-    ];
-  const [interest,setInterest] = useState([])
-    console.log('interest',interest)
 
-    useEffect(()=>{
-        fetch('https://socialagri.com/agriFM/wp-json/wp/v2/intereses/')
-        .then(res=>res.json())
-        .then((data) =>{ 
-          setInterest(data.length == 0 ? undefined || null : (data));
-        })
-      },[])
+  const [interest,setInterest] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [searchProduct, setSearchProduct] = useState([]);
+
+    
+  useEffect(()=>{
+    setLoading(true)
+    fetch('https://socialagri.com/agriFM/wp-json/wp/v2/intereses/')
+    .then(res=>res.json())
+    .then((data) =>{ 
+      setInterest(data.length == 0 ? undefined || null : (data));
+      setSearchProduct(data.length == 0 ? undefined || null : (data))
+        setLoading(false)
+    })
+  },[])
+
+  const setProducts = text => {
+    setSearchProduct(interest);
+    if (text) {
+        setSearchProduct(
+        interest.filter(item =>
+          item?.name.toLowerCase().includes(text.toLowerCase()),
+        ),
+      );
+    } else {
+        setSearchProduct(interest);
+    }
+  };
+
 
   return (
     <ScrollView style={styles.mainBox}  >
         <Header icon={true}  />
         <View style={styles.searchBar}>
-            <SearchInput placeholder={language?.ExploreOurPodcast} />
+            <SearchInput placeholder={language?.ExploreOurPodcast} value={searchProduct} onChangeText={setProducts} />
         </View>
         <View style={styles.cardBox}>
             <View style={styles.headingBox}>
                 <Text style={styles.mainHeading}>{language?.Interests}</Text>
             </View>
+            {loading == true ? 
+  <View style={{marginTop:'50%'}}> 
+<ActivityIndicator size="large" color="white" /> 
+
+  </View>
+  :
+  
             <Animatable.View style={styles.interestlList}animation="fadeInUpBig" >
                 {interest.map((item)=>{
                     return(
@@ -48,6 +64,7 @@ const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
                     );
                 })}
             </Animatable.View>
+}
         </View>
     </ScrollView>
   )

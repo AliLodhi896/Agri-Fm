@@ -15,55 +15,27 @@ let api = '';
 import { AuthContext } from '../../context/Context';
 
 
-const CategoriesDetail = (props) => {
-  const route = useRoute();
+const CategoriesDetail = ({props,route}) => {
+const {details} = route.params
  
   const [user, setUser] = useState([]);
-  // const [api , setApi] = useState('')
-  console.log(props,'czcz');
-  const params ={lang : 'es'};
-  const fetchData = () => {
-    console.log(`${api}?lang:es`,'checkkkk');
-    debugger;
-    return fetch(`${api}?lang:es`)
-    
-          .then((response) => response.json())
-          .then((data) =>{ 
-            console.log(data),
-            setUser(data.length == 0 ? null : (data));
-          
-          })
-          .catch((err) => {
-            console.log(err,'API Failed');
-          });
-          
-  }
-  useEffect(() => {
-    if(route.params.test == 1){
-      alert('1aa')
-    api = "https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/animals-avicultura-app.php";
-    
-    }
-    else if (route.params.test == 2){
-      alert('2m')
-      api ='https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/animals-porcino-app.php';
-    }
-    else if(route.params.test == 3){
-      alert('3')
-      api = 'https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/animals-rumiantes-app.php';
-    }
-    else{
-      alert('4')
-      api = 'https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/animals-otros-app.php';
-    }
-    fetchData();
-  },[route.params.test])
-  
   const [podcast, setPodcast] = useState(true)
   const [channels, setChannels] = useState(false)
   const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
 
-
+  const fetchData = () => {
+    console.log(`${api}?lang:es`,'checkkkk');
+    return fetch(`${api}?lang:es`)
+          .then((response) => response.json())
+          .then((data) =>{ 
+            console.log(data),
+            setUser(data.length == 0 ? null : (data));
+          })
+          .catch((err) => {
+            console.log(err,'API Failed');
+          });
+  }
+  
   return (
     <ScrollView style={styles.mainBox}>
         <View style={styles.imageBox}>

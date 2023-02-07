@@ -7,7 +7,7 @@ import CommonButton from '../../Buttons/CommonButton';
 import { AuthContext } from '../../../context/Context';
 import {english, spain, brazil} from '../../../constant/language';
 
-const LangModal = ({ isVisible,onClose, error,onPressLogin }) => {
+const LangModal = ({ isVisible,onClose, error,onPress }) => {
     const {language, selectedlang, setSelectedlang,setLanguage} = useContext(AuthContext);
     return (
         <Modal
@@ -19,7 +19,7 @@ const LangModal = ({ isVisible,onClose, error,onPressLogin }) => {
             >
             <View style={styles.centeredView}>
                 <View style={styles.modalView}>
-                    <TouchableOpacity style={styles.second_view}  onPress={()=>{setLanguage(spain),setSelectedlang('es')}}>
+                    <TouchableOpacity style={styles.second_view}  onPress={onClose}>
                         <MaterialIcons name='close' color={Colors.primary} size={27} />
                     </TouchableOpacity>
                     <View style={{ alignSelf: 'center', marginHorizontal: 30,   width: '100%' }}>

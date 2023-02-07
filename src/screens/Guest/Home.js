@@ -1,4 +1,4 @@
-import React, {useState,useEffect,useContext} from 'react';
+import React, {useState,useEffect,useContext,useCallback,PermissionsAndroid} from 'react';
 import {
   View,
   Text,
@@ -6,29 +6,40 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
-  ActivityIndicator
+  ActivityIndicator,
+    Linking,
+    Share
 } from 'react-native';
 import ChannelCard from '../../components/Cards/ChannelCard';
 import Colors from '../../constant/Colors';
 import FeaturedCard from '../../components/Cards/FeaturedCard';
-import {useNavigation} from '@react-navigation/native';
-import * as Animatable from 'react-native-animatable';
+import {useNavigation,useFocusEffect} from '@react-navigation/native';
 import ListModals from '../../components/Cards/Modals/ListModals';
 import InterestCard from '../../components/Cards/InterestCard';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import { AuthContext } from '../../context/Context';
-import ErrorModal from '../../components/Cards/Modals/ErrorModal';
 import LangModal from '../../components/Cards/Modals/LangModal';
+import Toast from 'react-native-simple-toast';
+import MiniPlayerCard from '../../components/Cards/MiniPlayerCard';
+import TrackPlayer,{
+  Capability,
+  Event,
+  RepeatMode,
+  State,
+  usePlaybackState,
+  useProgress,
+  useTrackPlayerEvents,
+  AppKilledPlaybackBehavior 
+} from 'react-native-track-player';
 
 const Home = () => {
-const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
+const {language, selectedlang,isSignin,sate,setSate} = useContext(AuthContext);
 
   const navigation = useNavigation();
   const [podCastData, setPodcastData] = useState([]);
-  const[id, setId] = useState();
   const [interest,setInterest] = useState([])
   const [loading, setLoading] = useState(false)
-
+  const [channelsdata, setchannelsdata] = useState([])
   const fetchData = () => {
     setLoading(true)
     return fetch("https://socialagri.com/agriFM/wp-json/wp/v2/podcast")
@@ -41,24 +52,36 @@ const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
             console.log(err,'API Failed');
           });      
   }
-  useEffect(() => {
-    fetchData();
-  },[])
 
+  const getChannels = () => {
+    setLoading(true)
+    return fetch("https://socialagri.com/agriFM/wp-json/wp/v2/canales")
+          .then((response) => response.json())
+          .then((data) =>{ 
+            setchannelsdata(data);
+            setLoading(false)
+          })
+          .catch((err) => {
+            console.log(err,'API Failed');
+          });   
+  }
   useEffect(()=>{
-    fetch('https://socialagri.com/agriFM/wp-json/wp/v2/canales')
+    fetchData();
+    fetch('https://socialagri.com/agriFM/wp-json/wp/v2/intereses/')
     .then(res=>res.json())
     .then((data) =>{ 
-      setId(data.length == 0 ? undefined || null : (data));
+      setInterest(data.length == 0 ? undefined || null : (data));
     })
 },[])
-useEffect(()=>{
-  fetch('https://socialagri.com/agriFM/wp-json/wp/v2/intereses/')
-  .then(res=>res.json())
-  .then((data) =>{ 
-    setInterest(data.length == 0 ? undefined || null : (data));
-  })
-},[])
+
+useFocusEffect(
+  useCallback(() => {
+    getChannels();
+    requestToPermissions();
+  }, []),
+);
+
+
   const categories = [
     {
       id: 1,
@@ -78,74 +101,104 @@ useEffect(()=>{
     {
       id: 4,
       name: language?.Nutrition,
-      image: require('../../assets/Images/aqua.png'),
+      image: require('../../assets/Images/nutrition.png'),
     },
     {
       id: 5,
       name: language?.Aqua,
-      image: require('../../assets/Images/nutrition.png'),
+      image: require('../../assets/Images/aqua.png'),
+    },
+    {
+      id: 6,
+      name: selectedlang == 'en' ?  'Others' :  'Otras' ,
+      image: require('../../assets/Images/aqua.png'),
     },
   ];
-  const channels = [
-    {
-      id: 1,
-      name: 'Less is more',
-      description: 'CEVA',
-    },
-    {
-      id: 2,
-      name: 'Less is more',
-      description: 'CEVA',
-    },
-    {
-      id: 3,
-      name: 'Less is more',
-      description: 'CEVA',
-    },
-  ];
-  const featuredchannels = [
-    {
-      id: 1,
-      name: 'Hablando de nutrición animal - Es uncanal ',
-    },
-    {
-      id: 2,
-      name: 'Hablando de nutrición animal - Es uncanal ',
-    },
-  ];
+
+
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
+  const [muusicUrl, setmuusicUrl] = useState(null)
 
-  const Interest = [
-    {
-      id: 1,
-    },
-    {
-      id: 2,
-    },
-    {
-      id: 3,
-    },
-  ];
+  const addtoliabrary = () =>{
+    setModalVisible(false);
+    Toast.show('Please first login to add to library', Toast.LONG);
+  
+}
+
+const download = (item) => {
+  setModalVisible(true);
+  setmuusicUrl(item?.acf?.link_podcast1)
+}
+const downloadPodcast = (item) => {
+  Toast.show('Please first login to download', Toast.LONG);
+}
+
+const requestToPermissions = async () => {
+  try {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+      {
+        title: "Cool Photo App Camera Permission",
+        message:
+          "Cool Photo App needs access to your camera " +
+          "so you can take awesome pictures.",
+        buttonNeutral: "Ask Me Later",
+        buttonNegative: "Cancel",
+        buttonPositive: "OK"
+      }
+    );
+    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      console.log("You can use the camera");
+    } else {
+      console.log("Camera permission denied");
+    }
+  } catch (err) {
+    console.warn(err);
+  }
+
+};
+
+
+const onShare = async () => {
+  try {
+    const result = await Share.share({
+      message:
+      muusicUrl + 'This Podcast has been share form AgriFM app',
+    });
+    if (result.action === Share.sharedAction) {
+      if (result.activityType) {
+      } else {
+        // shared
+      }
+    } else if (result.action === Share.dismissedAction) {
+      // dismissed
+    }
+  } catch (error) {
+    alert(error.message);
+  }
+};
+const trackResetAndNavgate = (item) => {
+  TrackPlayer.reset();
+  setSate(0)
+  navigation.navigate('Music',{podcastDetails:item});
+}
   return (
-    <ScrollView style={styles.mainBox}>
+    <View style={{height:'100%',backgroundColor:Colors.primary}}>
+      <ScrollView style={styles.mainBox}>
       <ListModals
         isVisible={modalVisible}
+        onPressClose={() => setModalVisible(false)}
+        onPressaddTo={()=> addtoliabrary()}
         onClose={() => setModalVisible(false)}
-        onPress={() => setModalVisible(false)}
+        onPressDownload={()=>downloadPodcast()}
+        onPressShare={()=>onShare()}
       />
       <LangModal
         isVisible={modalVisible2}
         onClose={() => setModalVisible2(false)}
         onPress={() => setModalVisible2(false)}
       />
-      
-      {/* <ErrorModal
-        isVisible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        onPress={() => setModalVisible(false)}
-        message='Invalid Password !'
-      /> */}
       <View style={styles.headerBox}>
         <View></View>
         <View style={styles.logoBox}>
@@ -175,15 +228,13 @@ useEffect(()=>{
             }
         </TouchableOpacity>
       </View>
+
       <ScrollView style={styles.categoryBox} horizontal>
         {categories.map(item => {
           return (
             <TouchableOpacity
               style={styles.categories}
-              onPress={() => {
-                navigation.navigate('CategoriesDetail',{test: item.id})
-                
-                }}>
+              onPress={() => {navigation.navigate('CategoriesDetail',{test: item.id})}}>
               <Image
                 source={item.image}
                 style={{width: '80%', height: '75%', borderRadius: 100}}
@@ -199,11 +250,17 @@ useEffect(()=>{
           <Text style={styles.subHeading}>See All</Text>
         </View>
         <ScrollView style={styles.categoryBox} horizontal  >
-          {(id !== undefined ? id : channels).map(item => {
+          {loading == true ?
+            <View style={{padding:100,marginLeft:70}}>
+              <ActivityIndicator size="large" color="white" /> 
+            </View>
+          :
+          channelsdata.map(item => {
             return (
               <ChannelCard
-                onPress={() => navigation.navigate('ChannelDetails')}
+                onPress={() => navigation.navigate('ChannelDetails',{details:item})}
                 title={item.name}
+                image = {item?.acf?.imagen_perfil}
                 // description={item.description}
               />
             );
@@ -229,12 +286,13 @@ useEffect(()=>{
         podCastData.slice(0, 5).map((item) => {
           return (
             <FeaturedCard
-              onPressIcon={() => setModalVisible(true)}
-              onPress={() => navigation.navigate('Music',{podcastDetails:item})}
+              onPressIcon={()=>download(item)}
+              onPressDownload={()=>downloadPodcast()}
+              onPress={() => trackResetAndNavgate(item)}
               channelName='Channel Name'
               podcastname = {item.title?.rendered}
               image = {item?.acf?.imagen_podcast1}
-
+              time = {Object.values(item?.yoast_head_json?.twitter_misc)[0]}
 
             />
           );
@@ -252,13 +310,18 @@ useEffect(()=>{
           <Text style={styles.subHeading}>See All</Text>
         </View>
         <ScrollView style={styles.categoryBox} horizontal>
-          {featuredchannels.map(item => {
+        {loading == true ?
+            <View style={{padding:100,marginLeft:70}}>
+              <ActivityIndicator size="large" color="white" /> 
+            </View>
+          :
+          channelsdata.map(item => {
             return (
               <ChannelCard
-                title={item.nombrees}
-                mainStyle={{width: 220}}
-                titleStyle={{color: Colors.primary, marginBottom: 10}}
-                style={{backgroundColor: 'white', borderRadius: 10}}
+                onPress={() => navigation.navigate('ChannelDetails',{details:item})}
+                title={item.name}
+                image = {item?.acf?.imagen_perfil}
+                // description={item.description}
               />
             );
           })}
@@ -274,7 +337,9 @@ useEffect(()=>{
         <View style={{justifyContent:'space-between',flexDirection:'row',marginHorizontal:30,marginVertical:30}}>
             <View style={{ alignSelf: 'center' }}>
                 <Image style={styles.image} source={require('../../assets/Images/pp.png')} />
-                <TouchableOpacity onPress={()=>navigation.navigate('EditProfile')} style={{ borderRadius: 100, alignItems: 'flex-end', marginTop: -20 }}>
+                <TouchableOpacity onPress={() => {
+              Linking.openURL('https://socialagri.com/agriFM/login/?pa=2');
+            }} style={{ borderRadius: 100, alignItems: 'flex-end', marginTop: -20 }}>
                     <AntDesign style={styles.edit} name="plus" color={'white'} size={18} />
                 </TouchableOpacity>
                 <Text style={{color:Colors.secondary,fontSize:12,marginTop:10,textAlign:'center'}}>{language?.CreateChannel}</Text>
@@ -282,7 +347,7 @@ useEffect(()=>{
             </View>
             <View style={{ alignSelf: 'center' }}>
                 <Image style={styles.image} source={require('../../assets/Images/mic.png')} />
-                <TouchableOpacity onPress={()=>navigation.navigate('EditProfile')} style={{ borderRadius: 100, alignItems: 'flex-end', marginTop: -20 }}>
+                <TouchableOpacity onPress={()=>navigation.navigate('LoginEmail')} style={{ borderRadius: 100, alignItems: 'flex-end', marginTop: -20 }}>
                     <AntDesign style={styles.edit} name="plus" color={'white'} size={18} />
                 </TouchableOpacity>
                 <Text style={{color:Colors.secondary,fontSize:12,marginTop:10,textAlign:'center'}}>{language?.CreateProfile}</Text>
@@ -297,6 +362,14 @@ useEffect(()=>{
         })}
       </View>
     </ScrollView>
+    <View style={{marginVertical:20,marginHorizontal:10}}>
+      {sate !== 0  ?
+              <MiniPlayerCard />
+              : 
+              null
+            }
+      </View>
+    </View>
   );
 };
 
@@ -356,6 +429,20 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   edit: { backgroundColor: Colors.button, borderRadius: 100, padding: 5 },
+  imageBox:{
+    height:60,
+    width:'20%',
+    backgroundColor:'white',
+    shadowColor: "#000000",
+    shadowOffset: {
+        width: 0,
+        height: 4,
+    },
+    shadowOpacity:  0.19,
+    shadowRadius: 5.62,
+    elevation: 6,
+    borderRadius:10
+   },
 });
 
 export default Home;

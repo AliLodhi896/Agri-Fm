@@ -19,6 +19,7 @@ import WhiteButton from '../../components/Buttons/WhiteButton';
 import Input from '../../components/Input/Input';
 import CommonButton from '../../components/Buttons/CommonButton';
 import {AuthContext} from '../../context/Context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {useRoute, useNavigation} from '@react-navigation/native';
 import {useForm} from 'react-hook-form';
@@ -36,7 +37,6 @@ const LoginPassword = () => {
     useContext(AuthContext);
   const route = useRoute();
   const [loading, setLoading] = useState(false);
-  console.log(route.params.email, 'FromEMAILE=');
 
   const [pass, setPass] = useState('');
   const onSubmit = async data => {
@@ -56,9 +56,12 @@ const LoginPassword = () => {
       if (responseData[0].validation == 'ok') {
         navigation.navigate(language?.MyAgriFm);
         // alert(responseData[0].validation);
-        Toast.show('Logged in successfully', Toast.LONG);
+        // const jsonValue = JSON.stringify(responseData[0]);
+        // await AsyncStorage.setItem('userDetails', jsonValue);
+        // Toast.show('Logged in successfully', Toast.LONG);
         setIsSignin(true)
         setUserData(responseData[0]);
+        
       } else {
         alert(responseData[0].validation);
       }

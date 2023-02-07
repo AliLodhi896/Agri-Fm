@@ -32,7 +32,7 @@ const VerifyPassword = () => {
     formState: {errors, isValid},
   } = useForm({mode: 'all'});
 
-  const {language, selectedlang, setSelectedlang,setUserData} = useContext(AuthContext);
+  const {language, selectedlang, setSelectedlang,setUserData,setIsSignin} = useContext(AuthContext);
   const navigation = useNavigation();
   const [registration, setRegistration] = useState({Password: ''});
 
@@ -49,10 +49,13 @@ const VerifyPassword = () => {
         },
       });
       const responseData = await response.json();
+      console.log('responseData',responseData);
       if (responseData[0].validation == 'ok') {
-        navigation.navigate(language?.MyAgriFm);
         setUserData(responseData[0]);
         console.log('ok')
+        setIsSignin(true)
+        navigation.navigate(language?.MyAgriFm);
+        
       } else {
         navigation.navigate('AccountDetails', {password: data.verify_password,email:data.email});
       }

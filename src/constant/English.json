@@ -78,7 +78,10 @@
     "Home": "Home",
     "Explore": "Explore",
     "Library": "Library",
-    "MyAgriFm": "MyAgriFm"
+    "MyAgriFm": "MyAgriFm",
+    "UnFollow": "UnFollow",
+    "RemoveFromLibrary":"Remove from Library",
+    "removeDownload" : "Remove from Downloads"
 
 
 
