@@ -12,7 +12,7 @@ import { AuthContext } from '../context/Context';
 const Profile = () => {
     const [modalVisible, setModalVisible] = useState(true);
     const navigation = useNavigation();
-    const {language, selectedlang, setSelectedlang,UserData,setIsSignin} = useContext(AuthContext);
+    const {language, selectedlang, setSelectedlang,UserData,setIsSignin,setUserData} = useContext(AuthContext);
     const data = [
         {
             key: 'Mobile',
@@ -40,6 +40,10 @@ const Profile = () => {
         },
         
     ]
+    const Logout = () => {
+        setUserData({})
+        setIsSignin(false)
+    }
     return (
         <ScrollView style={styles.mainBox}>
             {/* <SocialModal
@@ -76,7 +80,7 @@ const Profile = () => {
                 <Text style={{color:Colors.secondary,fontSize:12,marginTop:10,textAlign:'center'}}>{language?.CreateChannel}</Text>
 
             </View>
-            <WhiteButton onPress={()=>setIsSignin(false)} title={'Logout'} />
+            <WhiteButton onPress={()=>Logout()} title={'Logout'} />
 
       </View>
         </ScrollView>

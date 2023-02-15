@@ -41,20 +41,17 @@ const EditProfile = () => {
       NewCountry: UserData?.nombre,
     },
   });
-
     const [userdetails, setuserdetails] = useState([])
     const navigation = useNavigation();
   const onSubmit = async data => {
     try {
-      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/editprofile-app.php?id_user=22301`;
-
+      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/editprofile-app.php?id_user=${UserData?.user}`;
       const response = await fetch(baseUrl, {
         method: 'POST',
         headers: {
           Accept: 'application/json',
         },
       });
-
       const responseData = await response.json();
       console.log('responseData',responseData)
       setUserData(responseData);
@@ -65,46 +62,42 @@ const EditProfile = () => {
     }
   };
   const UpdateUser = async data => {
+  try {
+    let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/editprofile-app.php?id_user=22301`;
+
+    const response = await fetch(baseUrl, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+      },
+      body: JSON.stringify({
+        name: 'test',
+        lastname: 'testtt',
+        codltf: '34',
+        telefono: '67',
+        password: '990990',
+        email: 'raheel123456@gmail.com',
+
+        country: '1',
+        NombreEmpresa: '21',
+        actividad: '2',
+        cargo: '2',
+        espescies:'[1,2,3]',
+        detalles: '[1,2,3]',
+        idioma: '[1,2,3]',
+      }),
+    });
+
+    const responseData = await response.json();
+    console.log('responseData',responseData)
+    // setUserData(responseData);
     Toast.show('Profile has been updated sucessfully', Toast.LONG);
     navigation.navigate('Home');
-
-  // try {
-  //   let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/editprofile-app.php?id_user=22301`;
-
-  //   const response = await fetch(baseUrl, {
-  //     method: 'POST',
-  //     headers: {
-  //       Accept: 'application/json',
-  //     },
-  //     // body: JSON.stringify({
-  //     //   name: data?.actual_name,
-  //     //   lastname: data?.surname,
-  //     //   codltf: '34',
-  //     //   telefono: data?.ActualCompany,
-  //     //   password: data?.ActualMobilePhone,
-  //     //   email: data?.NewJob,
-
-  //     //   country: '1',
-  //     //   NombreEmpresa: '21',
-  //     //   actividad: '2',
-  //     //   cargo: '2',
-  //     //   // espescies: selectedSpecies.toString(),
-  //     //   // detalles: selectedSpeciesDetail.toString(),
-  //     //   idioma: lang,
-  //     // }),
-  //   });
-
-  //   const responseData = await response.json();
-  //   console.log('responseData',responseData)
-  //   setUserData(responseData);
-  //   // Toast.show('Profile has been updated sucessfully', Toast.LONG);
-
-  //   //   navigation.navigate('Home');
-  // } catch (error) {
-  //   console.log('error => ', error);
-  //   //
-  //   //
-  // }
+  } catch (error) {
+    console.log('error => ', error);
+    //
+    //
+  }
 };
 const [Jobs, setJob] = useState([{}]);
 const [Activity, setActivity] = useState([{}]);

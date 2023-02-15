@@ -133,6 +133,7 @@ const Tab = createBottomTabNavigator();
           component={SelectInterest}
           options={{headerShown: false}}
         />
+        
       </MainStack.Navigator>
     );
   };

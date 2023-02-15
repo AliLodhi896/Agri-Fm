@@ -53,7 +53,7 @@ const LoginPassword = () => {
       console.log('language?.MyAgriFm', language?.MyAgriFm);
       const responseData = await response.json();
       console.log('onSubmit', responseData);
-      if (responseData[0].validation == 'ok') {
+      if (responseData) {
         navigation.navigate(language?.MyAgriFm);
         // alert(responseData[0].validation);
         // const jsonValue = JSON.stringify(responseData[0]);

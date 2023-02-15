@@ -74,7 +74,7 @@ const UserData = () => {
       .then(res => res.json())
 
       .then(data => {
-          setJob(data.map(el => ({label: el.nombrees, value: el.nombrees})));
+          setJob(data.map(el => ({label: el.nombrees, value: el.id})));
       });
   }, []);
   useEffect(() => {
@@ -84,7 +84,7 @@ const UserData = () => {
       .then(res => res.json())
 
       .then(data => {
-          setActivity(data.map(el => ({label: el.nombrees, value: el.nombrees})));
+          setActivity(data.map(el => ({label: el.nombrees, value: el.id})));
       });
   }, []);
   useEffect(() => {
@@ -98,7 +98,7 @@ const UserData = () => {
             data.map(el => ({
               id: el.id,
               label: el.nombrees,
-              value: el.nombrees,
+              value: el.id,
             })),
           );
       });
@@ -116,7 +116,7 @@ const UserData = () => {
                 data.map(el => ({
                   id: el.id,
                   label: el.nombrees,
-                  value: el.nombrees,
+                  value: el.id,
                 })),
               );
           });
@@ -146,7 +146,7 @@ const UserData = () => {
                 data.map(el => ({
                   id: el.id,
                   label: el.nombrees,
-                  value: el.nombrees,
+                  value: el.id,
                 })),
               );
           });
