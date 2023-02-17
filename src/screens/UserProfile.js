@@ -8,8 +8,9 @@ import AntDesign from 'react-native-vector-icons/AntDesign'
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import {useNavigation} from '@react-navigation/native';
 import { AuthContext } from '../context/Context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Profile = () => {
+const UserProfile = () => {
     const [modalVisible, setModalVisible] = useState(true);
     const navigation = useNavigation();
     const {language, selectedlang, setSelectedlang,UserData,setIsSignin,setUserData} = useContext(AuthContext);
@@ -40,10 +41,18 @@ const Profile = () => {
         },
         
     ]
-    const Logout = () => {
-        setUserData({})
-        setIsSignin(false)
-    }
+  
+    const Logout = async () => {
+        try {
+            await AsyncStorage.removeItem('userDetails');
+            setUserData([])
+          setSelectedlang('')
+          setIsSignin(false);
+        } catch (e) {
+          alert(e);
+        }
+      };
+
     return (
         <ScrollView style={styles.mainBox}>
             {/* <SocialModal
@@ -99,7 +108,7 @@ const styles = StyleSheet.create({
 })
 
 
-export default Profile;
+export default UserProfile;
 
 
 

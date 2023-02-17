@@ -1,20 +1,24 @@
 import React, {createContext, useCallback, useEffect, useState} from 'react';
 import Colors from '../constant/Colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {english, spain, brazil} from '../constant/language';
 
 export const AuthContext = createContext({});
 
 export const AuthProvider = props => {
   const [isSignin, setIsSignin] = useState(false);
-  const [language, setLanguage] = useState(null);
+  const [language, setLanguage] = useState(english);
   const [selectedlang, setSelectedlang] = useState('');
-  const [UserData, setUserData] = useState({});
+  const [UserData, setUserData] = useState([]);
   const [tracks, setTracks] = useState({})
   const [sate, setSate] = useState(0)
   const [podcast_id, setpodcast_id] = useState(null)
   const [favoritePodcat_id, setfavoritePodcat_id] = useState([])
   const [downloadedPodcast, setdownloadedPodcast] = useState()
   const [downloadedPodcastID, setdownloadedPodcastID] = useState([])
+  const [phoneNumber, setPhoneNmber] = useState('')
+
+
 
   const getDownloadMusic = async () => {
     const value = await AsyncStorage.getItem('musics')
@@ -25,25 +29,19 @@ export const AuthProvider = props => {
     setdownloadedPodcastID(courseName)
     setdownloadedPodcast(parseMusics)
   }
-
-//   const getData = async () => {
-//     const value = await AsyncStorage.getItem('userDetails')
-//     // const parseUserDetails = JSON.parse(value)
-//     if(value !== {})
-//     {
-//       setUserData(value)
-//       setIsSignin(true)
-//     }else{
-//       setIsSignin(false)
-
-//     }
-// }
+const getData = async () => {
+  const value = await AsyncStorage.getItem('userDetails')
+  const parseUserDetails = JSON.parse(value)
+  if(parseUserDetails.length !== 0)
+  {
+    setUserData(parseUserDetails)
+    setIsSignin(true)
+  }
+}
   useEffect(() => {
       getDownloadMusic();
-    // getData();
-  }, [downloadedPodcast])
-
-
+    getData();
+  }, [downloadedPodcast,isSignin])
 
   return (
     <AuthContext.Provider
@@ -67,7 +65,9 @@ export const AuthProvider = props => {
         downloadedPodcast,
         setdownloadedPodcast,
         setdownloadedPodcastID,
-        downloadedPodcastID
+        downloadedPodcastID,
+        phoneNumber,
+        setPhoneNmber
       }}>
       {props.children}
     </AuthContext.Provider>

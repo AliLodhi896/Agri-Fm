@@ -1,5 +1,5 @@
 import React,{useState,useContext,useEffect,useCallback} from 'react'
-import { StyleSheet, View, Image, Text,ScrollView } from "react-native"
+import { StyleSheet, View, Image, Text,ScrollView,Share } from "react-native"
 import Header from "../components/Header/Header";
 import Colors from "../constant/Colors";
 
@@ -31,11 +31,30 @@ import Toast from 'react-native-simple-toast';
 const Music = ({route}) => {
     const {language,tracks,setTracks,setSate,sate,podcast_id,isSignin,favoritePodcat_id,UserData} = useContext(AuthContext);
     const {podcastDetails,Fromlibrary}= route.params
-    console.log('favoritePodcat_id',podcast_id);
 
     const [modalVisible, setModalVisible] = useState(false);
     const [podCastData, setPodcastData] = useState([]);
     const navigation = useNavigation();
+
+    const onShare = async () => {
+      try {
+        const result = await Share.share({
+          message:
+          Fromlibrary == false ? podcastDetails?.acf?.link_podcast1 : podcastDetails?.LINK + 'This Podcast has been share form AgriFM app',
+        });
+        if (result.action === Share.sharedAction) {
+          if (result.activityType) {
+          } else {
+            // shared
+          }
+        } else if (result.action === Share.dismissedAction) {
+          // dismissed
+        }
+      } catch (error) {
+        alert(error.message);
+      }
+    };
+
     const track = {
         id: podcastDetails?.id,
         url: Fromlibrary == false ? podcastDetails?.acf?.link_podcast1 : podcastDetails?.LINK, // Load media from the app bundle
@@ -66,6 +85,7 @@ useFocusEffect(
     const setupPlayermusic = async()=> {
         await TrackPlayer.setupPlayer()
         await TrackPlayer.add([track])
+        console.log('state',state)
 
         await TrackPlayer.updateOptions({
       stopWithApp: true, 
@@ -93,14 +113,17 @@ useFocusEffect(
       // Obviously, color property would not work if artwork is specified. It can be used as a fallback.
       color: 99410543
     });
+    
     }
+    console.log('sate',sate)
     useEffect(() => {
         setupPlayermusic();
+        setSate(3)
+        TrackPlayer.play();
     },[podcastDetails])
     const toogle = async() => {
         const state = await TrackPlayer.getState();
         setSate(state)
-        console.log('state',state)
         if (state == State.Playing) {
             TrackPlayer.pause();
         }else{
@@ -108,6 +131,7 @@ useFocusEffect(
         }
     }
     const fetchData = () => {
+      
         return fetch("https://socialagri.com/agriFM/wp-json/wp/v2/podcast")
               .then((response) => response.json())
               .then((data) =>{ 
@@ -130,7 +154,7 @@ useFocusEffect(
 
     const AddPodcastToLiabrary =async () =>{
         try {
-          let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/add-favp-app.php?id_user=${UserData?.user}&id_podcast=${Fromlibrary == false ? podcastDetails?.id : podcastDetails?.ID}`;
+          let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/add-favp-app.php?id_user=${UserData[0]?.user}&id_podcast=${Fromlibrary == false ? podcastDetails?.id : podcastDetails?.ID}`;
           const response = await fetch(baseUrl, {
             method: 'POST',
             headers: {
@@ -151,7 +175,7 @@ useFocusEffect(
       
     const RemovePodcastFromLiabrary =async () =>{
         try {
-          let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/remove-libraryp.php?id_user=${UserData?.user}&id_podcast=${Fromlibrary == false ? podcastDetails?.id : podcastDetails?.ID}`;
+          let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/remove-libraryp.php?id_user=${UserData[0]?.user}&id_podcast=${Fromlibrary == false ? podcastDetails?.id : podcastDetails?.ID}`;
           const response = await fetch(baseUrl, {
             method: 'POST',
             headers: {
@@ -186,9 +210,11 @@ useFocusEffect(
                     {/* <Text>50 min</Text> */}
                     <Text style={{ width: '45%', color: 'white', fontWeight: 'bold' }}>{Fromlibrary == false ? podcastDetails?.title?.rendered : podcastDetails?.TITLE} </Text>
                     <View style={{ flexDirection: 'row' }}>
-                        <View style={{ marginTop: '5%', justifyContent: 'center', width: 50, justifyContent: 'center', alignItems: 'center' }}>
+                        <View  style={{ marginTop: '5%', justifyContent: 'center', width: 50, justifyContent: 'center', alignItems: 'center' }}>
+                        <TouchableOpacity onPress={()=>onShare()}>
                         <Image style={{ height: 22, width: 30 }} source={require('../assets/Images/whiteshare.png')} />
                             <Text style={{ fontSize: 12, color: 'white' }}>{language?.Share}</Text>
+                        </TouchableOpacity>
                         </View>
                         <View style={{ marginTop: '5%', justifyContent: 'center',width: 80, justifyContent: 'center', alignItems: 'center' }}>
                         <Image style={{ height: 27, width: 30 }} source={require('../assets/Images/downloadwhite.png')} />

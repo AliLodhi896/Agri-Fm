@@ -40,7 +40,7 @@ import VerifyPassword from '../screens/Auth/VerifyPassword';
 const MainStack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-  export const App = ({navigation}) => {
+  export const GuestStack = ({navigation}) => {
     
     const defaultStackNavOptions = {
       headerStyle: {
@@ -161,7 +161,7 @@ const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
         screenOptions={{...defaultTabNavOptions}}>
           <Tab.Screen
           name={language?.Home}
-          component={App}
+          component={GuestStack}
           options={{
             headerShown: false,
             tabBarShowLabel: true,

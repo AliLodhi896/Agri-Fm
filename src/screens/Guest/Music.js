@@ -1,5 +1,5 @@
 import React,{useState,useContext,useEffect,useCallback} from 'react'
-import { StyleSheet, View, Image, Text,ScrollView } from "react-native"
+import { StyleSheet, View, Image, Text,ScrollView ,Share} from "react-native"
 import Header from "../../components/Header/Header";
 import Colors from "../../constant/Colors";
 
@@ -30,7 +30,24 @@ import {useNavigation,useFocusEffect} from '@react-navigation/native';
 const Music = ({route}) => {
     const {language,tracks,setTracks,setSate,sate} = useContext(AuthContext);
     
-    
+    const onShare = async () => {
+        try {
+          const result = await Share.share({
+            message:
+            podcastDetails?.acf?.link_podcast1 + 'This Podcast has been share form AgriFM app',
+          });
+          if (result.action === Share.sharedAction) {
+            if (result.activityType) {
+            } else {
+              // shared
+            }
+          } else if (result.action === Share.dismissedAction) {
+            // dismissed
+          }
+        } catch (error) {
+          alert(error.message);
+        }
+      };
     const {podcastDetails}= route.params
     const [modalVisible, setModalVisible] = useState(false);
     const [podCastData, setPodcastData] = useState([]);
@@ -149,9 +166,11 @@ useFocusEffect(
                     <Text style={{ width: '45%', color: 'white', fontWeight: 'bold' }}>{podcastDetails?.title?.rendered} </Text>
                     <View style={{ flexDirection: 'row' }}>
 
-                        <View style={{ marginTop: '5%', justifyContent: 'center', width: 50, justifyContent: 'center', alignItems: 'center' }}>
+                    <View  style={{ marginTop: '5%', justifyContent: 'center', width: 50, justifyContent: 'center', alignItems: 'center' }}>
+                        <TouchableOpacity onPress={()=>onShare()}>
                         <Image style={{ height: 22, width: 30 }} source={require('../../assets/Images/whiteshare.png')} />
                             <Text style={{ fontSize: 12, color: 'white' }}>{language?.Share}</Text>
+                        </TouchableOpacity>
                         </View>
                         <View style={{ marginTop: '5%', justifyContent: 'center', marginLeft: '15%', width: 80, justifyContent: 'center', alignItems: 'center' }}>
                         <Image style={{ height: 27, width: 30 }} source={require('../../assets/Images/downloadwhite.png')} />

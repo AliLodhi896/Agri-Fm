@@ -8,9 +8,15 @@ import { AuthContext } from '../context/Context';
 
 const AppNavigationContainer = () => {
 const {language,setIsSignin,isSignin,selectedlang} = useContext(AuthContext);
+console.log('isSignin',isSignin)
   return (
     <NavigationContainer>
-      {selectedlang == '' && isSignin == false ? <Auth /> :  isSignin == true ? <AppNavigation /> : <GuestNavigation /> }
+      {selectedlang == '' ? <Auth /> :  isSignin == false ? <GuestNavigation /> : <AppNavigation /> }
+      {/* {selectedlang == '' && <Auth />}
+      { !isSignin  && <GuestNavigation />}
+      { isSignin  && <AppNavigation />} */}
+
+
     </NavigationContainer>
   );
 };

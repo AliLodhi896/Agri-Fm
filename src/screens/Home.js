@@ -158,7 +158,7 @@ const Home = () => {
     setModalVisible(false);
     setLoading(true)
     try {
-      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/add-favp-app.php?id_user=${UserData?.user}&id_podcast=${podcast_id}`;
+      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/add-favp-app.php?id_user=${UserData[0]?.user}&id_podcast=${podcast_id}`;
       const response = await fetch(baseUrl, {
         method: 'POST',
         headers: {
@@ -182,7 +182,7 @@ const Home = () => {
     setModalVisible(false);
     setLoading(true)
     try {
-      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/remove-libraryp.php?id_user=${UserData?.user}&id_podcast=${podcast_id}`;
+      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/remove-libraryp.php?id_user=${UserData[0]?.user}&id_podcast=${podcast_id}`;
       const response = await fetch(baseUrl, {
         method: 'POST',
         headers: {
@@ -204,7 +204,7 @@ const Home = () => {
   
   const fetchFavoritePodcast =async () =>{
     try {
-      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/misintereses-app.php?id_user=${UserData?.user}`;
+      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/misintereses-app.php?id_user=${UserData[0]?.user}`;
       const response = await fetch(baseUrl, {
         method: 'Get',
         headers: {

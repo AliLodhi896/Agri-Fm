@@ -30,7 +30,7 @@ const ChannelDetails = ({route}) => {
         const fetchFollowedChannels =async () =>{
           setLoading(true)
           try {
-            let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/miscanales-app.php?id_user=${UserData?.user}`;
+            let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/miscanales-app.php?id_user=${UserData[0]?.user}`;
             const response = await fetch(baseUrl, {
               method: 'Get',
               headers: {
@@ -92,7 +92,7 @@ const ChannelDetails = ({route}) => {
       const followChannel =async () =>{
         setLoading(true)
         try {
-          let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/add-favc-app.php?id_user=${UserData?.user}&id_canal=${details?.id}`;
+          let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/add-favc-app.php?id_user=${UserData[0]?.user}&id_canal=${details?.id}`;
           const response = await fetch(baseUrl, {
             method: 'POST',
             headers: {
@@ -116,7 +116,7 @@ const ChannelDetails = ({route}) => {
       const UnfollowChannel =async () =>{
         setLoading(true)
         try {
-          let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/remove-libraryp.php?id_user=${UserData?.user}&id_podcast=${details?.id}`;
+          let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/remove-libraryp.php?id_user=${UserData[0]?.user}&id_podcast=${details?.id}`;
           const response = await fetch(baseUrl, {
             method: 'POST',
             headers: {

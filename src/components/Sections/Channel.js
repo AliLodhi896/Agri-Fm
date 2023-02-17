@@ -22,7 +22,7 @@ const Channel = (props) => {
     const fetchFollowedChannels =async () =>{
       setLoading(true)
       try {
-        let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/miscanales-app.php?id_user=${UserData?.user}`;
+        let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/miscanales-app.php?id_user=${UserData[0]?.user}`;
         const response = await fetch(baseUrl, {
           method: 'Get',
           headers: {
@@ -36,7 +36,7 @@ const Channel = (props) => {
             return  itemxx.ID
           })
         } else {
-          alert('failed to add to fav');
+          // alert('failed to add to fav');
         }
       } catch (error) {
         console.log('error => ', error);

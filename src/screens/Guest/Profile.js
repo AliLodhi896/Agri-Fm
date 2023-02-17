@@ -20,7 +20,7 @@ const Profile = () => {
         <ScrollView style={styles.mainBox}>
             <View style={styles.centeredView}>
                 <View style={styles.modalView}>
-                    <TouchableOpacity style={styles.second_view} >
+                    <TouchableOpacity onPress={()=>navigation.navigate('Home')}  style={styles.second_view} >
                         <MaterialIcons name='close' color={Colors.primary} size={35} />
                     </TouchableOpacity>
                     <View style={{ alignSelf: 'center', marginHorizontal: 30, justifyContent: 'center', alignItems: 'center', width: '100%' }}>
