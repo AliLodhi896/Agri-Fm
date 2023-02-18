@@ -28,13 +28,12 @@ import Slider from '@react-native-community/slider';
 import {useNavigation,useFocusEffect} from '@react-navigation/native';
 
 const Music = ({route}) => {
-    const {language,tracks,setTracks,setSate,sate} = useContext(AuthContext);
-    
+    const {language,tracks,setTracks,setSate,sate,trackForMiniPlayer,settrackForMiniPlayer} = useContext(AuthContext);
     const onShare = async () => {
         try {
           const result = await Share.share({
             message:
-            podcastDetails?.acf?.link_podcast1 + 'This Podcast has been share form AgriFM app',
+            podcastDetails?.acf?.link_podcast1 +' '+ 'This Podcast has been share form AgriFM app',
           });
           if (result.action === Share.sharedAction) {
             if (result.activityType) {
@@ -115,6 +114,9 @@ useFocusEffect(
 
     useEffect(() => {
         setupPlayermusic();
+        setSate(3)
+        TrackPlayer.play();
+        settrackForMiniPlayer(podcastDetails)
     },[podcastDetails])
 
     const toogle = async() => {
@@ -163,7 +165,7 @@ useFocusEffect(
                 <Image style={{ height: 170, width: 170, borderRadius: 10 }} source={{uri: podcastDetails?.acf?.imagen_podcast1}} />
                 <View style={{ padding: 10 }}>
                     {/* <Text>50 min</Text> */}
-                    <Text style={{ width: '45%', color: 'white', fontWeight: 'bold' }}>{podcastDetails?.title?.rendered} </Text>
+                    <Text style={{ width: '45%', color: 'white', fontWeight: 'bold' }}>{ podcastDetails?.title?.rendered} </Text>
                     <View style={{ flexDirection: 'row' }}>
 
                     <View  style={{ marginTop: '5%', justifyContent: 'center', width: 50, justifyContent: 'center', alignItems: 'center' }}>

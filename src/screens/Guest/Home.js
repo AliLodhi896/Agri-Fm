@@ -33,13 +33,14 @@ import TrackPlayer,{
 } from 'react-native-track-player';
 
 const Home = () => {
-const {language, selectedlang,isSignin,sate,setSate} = useContext(AuthContext);
+const {language, selectedlang,isSignin,sate,setSate,tracks} = useContext(AuthContext);
 
   const navigation = useNavigation();
   const [podCastData, setPodcastData] = useState([]);
   const [interest,setInterest] = useState([])
   const [loading, setLoading] = useState(false)
   const [channelsdata, setchannelsdata] = useState([])
+  console.log('tracks===============>',tracks)
   const fetchData = () => {
     setLoading(true)
     return fetch("https://socialagri.com/agriFM/wp-json/wp/v2/podcast")

@@ -46,8 +46,8 @@ const UserProfile = () => {
         try {
             await AsyncStorage.removeItem('userDetails');
             setUserData([])
-          setSelectedlang('')
-          setIsSignin(false);
+            setIsSignin(false);
+            setSelectedlang('')
         } catch (e) {
           alert(e);
         }
@@ -55,11 +55,6 @@ const UserProfile = () => {
 
     return (
         <ScrollView style={styles.mainBox}>
-            {/* <SocialModal
-                isVisible={modalVisible}
-                onClose={() => setModalVisible(false)}
-                onPress={() => setModalVisible(false)}
-            /> */}
             <Header icon={true} />
             <View style={{ alignSelf: 'center' }}>
                 <Image style={styles.image} source={require('../assets/Images/swine.png')} />

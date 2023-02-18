@@ -17,6 +17,7 @@ export const AuthProvider = props => {
   const [downloadedPodcast, setdownloadedPodcast] = useState()
   const [downloadedPodcastID, setdownloadedPodcastID] = useState([])
   const [phoneNumber, setPhoneNmber] = useState('')
+  const [trackForMiniPlayer, settrackForMiniPlayer] = useState({})
 
 
 
@@ -67,7 +68,9 @@ const getData = async () => {
         setdownloadedPodcastID,
         downloadedPodcastID,
         phoneNumber,
-        setPhoneNmber
+        setPhoneNmber,
+        trackForMiniPlayer,
+  settrackForMiniPlayer
       }}>
       {props.children}
     </AuthContext.Provider>

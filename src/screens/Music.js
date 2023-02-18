@@ -29,7 +29,7 @@ import {useNavigation,useFocusEffect} from '@react-navigation/native';
 import Toast from 'react-native-simple-toast';
 
 const Music = ({route}) => {
-    const {language,tracks,setTracks,setSate,sate,podcast_id,isSignin,favoritePodcat_id,UserData} = useContext(AuthContext);
+    const {language,setTracks,setSate,sate,favoritePodcat_id,UserData,trackForMiniPlayer,settrackForMiniPlayer} = useContext(AuthContext);
     const {podcastDetails,Fromlibrary}= route.params
 
     const [modalVisible, setModalVisible] = useState(false);
@@ -85,8 +85,6 @@ useFocusEffect(
     const setupPlayermusic = async()=> {
         await TrackPlayer.setupPlayer()
         await TrackPlayer.add([track])
-        console.log('state',state)
-
         await TrackPlayer.updateOptions({
       stopWithApp: true, 
       jumpInterval: 5,
@@ -115,11 +113,12 @@ useFocusEffect(
     });
     
     }
-    console.log('sate',sate)
+
     useEffect(() => {
         setupPlayermusic();
         setSate(3)
         TrackPlayer.play();
+        settrackForMiniPlayer(podcastDetails)
     },[podcastDetails])
     const toogle = async() => {
         const state = await TrackPlayer.getState();

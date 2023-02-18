@@ -19,7 +19,7 @@ import TrackPlayer,{
 } from 'react-native-track-player';
 import {useNavigation} from '@react-navigation/native';
 const MiniPlayerCard = (props) => {
-    const {language,tracks,setTracks,setSate,sate} = useContext(AuthContext);
+    const {language,tracks,setTracks,setSate,sate,trackForMiniPlayer} = useContext(AuthContext);
     const setupPlayermusic = async()=> {
         await TrackPlayer.setupPlayer()
         await TrackPlayer.add([tracks])
@@ -53,7 +53,6 @@ const MiniPlayerCard = (props) => {
     useEffect(() => {
         setupPlayermusic();
     },[tracks])
-    console.log('tracks',tracks)
 
     const toogle = async() => {
         const state = await TrackPlayer.getState();
@@ -66,11 +65,11 @@ const MiniPlayerCard = (props) => {
     }
     const navigation = useNavigation();
   return (
-    <TouchableOpacity  onPress={()=>navigation.navigate('Music',{Fromlibrary:false,podcastDetails:tracks})} style={{backgroundColor:'white',padding:10,flexDirection:'row',borderRadius:10,alignContent:"center",alignItems:'center',justifyContent:"space-between",
+    <TouchableOpacity  onPress={()=>navigation.navigate('Music',{Fromlibrary:false,podcastDetails:trackForMiniPlayer,miniPlayer:true})} style={{backgroundColor:'white',padding:10,flexDirection:'row',borderRadius:10,alignContent:"center",alignItems:'center',justifyContent:"space-between",
 }}>
     <View style={styles.imageBox}>
       <Image
-          source={{uri: tracks?.artwork}}
+          source={{uri: trackForMiniPlayer?.acf?.imagen_podcast1}}
           style={{width: '100%', height: '100%',borderRadius:10,
           shadowColor: "#000000",
           shadowOffset: {
@@ -83,7 +82,7 @@ const MiniPlayerCard = (props) => {
       />
   </View>
       <View style={{width:'50%'}}>
-        <Text numberOfLines={2} style={{color:Colors.primary,fontSize:16,marginTop:10}}>{tracks?.title}</Text>
+        <Text numberOfLines={1} style={{color:Colors.primary,fontSize:16}}>{trackForMiniPlayer?.acf?.imagen_podcast1}</Text>
       </View>
       <View>
       <TouchableOpacity onPress={()=>toogle()} >
