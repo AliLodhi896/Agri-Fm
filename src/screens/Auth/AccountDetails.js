@@ -114,6 +114,7 @@ const AccountDetails = () => {
           // onChangeText={username => {
           //   setRegistration(prev => ({...prev, Phone: username}));
           // }}
+          keyboardType="number-pad"
           placeholder={language?.Phone}
         />
         {errors.Phone && (

@@ -40,20 +40,20 @@ const CategoriesDetail = (props) => {
   }
   useEffect(() => {
     if(route.params.test == 1){
-      alert('1aa')
+
     api = "https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/animals-avicultura-app.php";
     
     }
     else if (route.params.test == 2){
-      alert('2m')
+
       api ='https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/animals-porcino-app.php';
     }
     else if(route.params.test == 3){
-      alert('3')
+
       api = 'https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/animals-rumiantes-app.php';
     }
     else{
-      alert('4')
+
       api = 'https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/animals-otros-app.php';
     }
     fetchData();

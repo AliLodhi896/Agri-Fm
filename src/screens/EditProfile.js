@@ -11,6 +11,7 @@ import {
 import Header from '../components/Header/Header';
 import Colors from '../constant/Colors';
 import {useNavigation,useFocusEffect} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // ====================== icons ====================
 import Input from '../components/Input/Input';
@@ -22,7 +23,7 @@ import Toast from 'react-native-simple-toast';
 import Dropdown from '../components/Input/Dropdown';
 
 const EditProfile = () => {
-  const {UserData,setUserData,lang} = useContext(AuthContext);
+  const {UserData,setUserData,lang,setPhoneNumber,phoneNumber} = useContext(AuthContext);
   const {
     control,
     register,
@@ -31,80 +32,53 @@ const EditProfile = () => {
   } = useForm({
     mode: 'all',
     defaultValues: {
-      actual_name: UserData?.nombre,
-      surname: UserData?.apellidos,
-      ActualCompany: UserData?.empresa,
-      ActualMobilePhone: UserData?.nombre,
-      NewJob: UserData?.cargo,
-      NewActivity: UserData?.actividad,
-      NewLanguage: UserData?.idioma == 1 ? "Brazil" : UserData?.idioma == 2 ? "Spain" : "English",
-      NewCountry: UserData?.nombre,
+      actual_name: UserData[0]?.nombre,
+      surname: UserData[0]?.apellidos,
+      ActualCompany: UserData[0]?.empresa,
+      ActualMobilePhone: UserData[0]?.movil,
+      NewJob: UserData[0]?.cargo,
+      NewActivity: UserData[0]?.actividad,
+      NewLanguage: UserData[0]?.idioma == 1 ? "Brazil" : UserData?.idioma == 2 ? "Spain" : "English",
+      NewCountry: UserData[0]?.nombre,
     },
   });
-
-    const [userdetails, setuserdetails] = useState([])
     const navigation = useNavigation();
-  const onSubmit = async data => {
-    try {
-      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/editprofile-app.php?id_user=22301`;
+    const json_Empresa = JSON.stringify(UserData[0]?.empresa)
 
-      const response = await fetch(baseUrl, {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-        },
-      });
 
-      const responseData = await response.json();
-      console.log('responseData',responseData)
-      setUserData(responseData);
-    } catch (error) {
-      console.log('error => ', error);
-      //
-      //
+   const UpdateUser = async data => {
+
+  try {
+    let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/editprofile-app.php?id_user=${UserData[0]?.user}&lastname_user=${data?.surname}&name_user=${data?.actual_name}&empresa=${json_Empresa}&cargo=1&actividad=1&idioma=1&country=2&phone=${data?.ActualMobilePhone}`;
+
+    const response = await fetch(baseUrl, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+      },
+    });
+    const response_array = []
+    const responseData = await response.json();
+    response_array.push(responseData)
+    if(response_array[0]?.user === null){
+      Toast.show('User ID not found !', Toast.LONG);
+    }else{
+        const jsonValue = JSON.stringify(response_array);
+        await AsyncStorage.setItem('userDetails',jsonValue)
+        const value = await AsyncStorage.getItem('userDetails')
+        const parseUserDetails = JSON.parse(value)
+        setPhoneNumber(data?.ActualMobilePhone)
+        if(parseUserDetails.length !== 0)
+        {
+          setUserData(parseUserDetails)
+        }
+        Toast.show('Profile has been updated sucessfully', Toast.LONG);
+        navigation.navigate('Home');
     }
-  };
-  const UpdateUser = async data => {
-    Toast.show('Profile has been updated sucessfully', Toast.LONG);
-    navigation.navigate('Home');
 
-  // try {
-  //   let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/editprofile-app.php?id_user=22301`;
-
-  //   const response = await fetch(baseUrl, {
-  //     method: 'POST',
-  //     headers: {
-  //       Accept: 'application/json',
-  //     },
-  //     // body: JSON.stringify({
-  //     //   name: data?.actual_name,
-  //     //   lastname: data?.surname,
-  //     //   codltf: '34',
-  //     //   telefono: data?.ActualCompany,
-  //     //   password: data?.ActualMobilePhone,
-  //     //   email: data?.NewJob,
-
-  //     //   country: '1',
-  //     //   NombreEmpresa: '21',
-  //     //   actividad: '2',
-  //     //   cargo: '2',
-  //     //   // espescies: selectedSpecies.toString(),
-  //     //   // detalles: selectedSpeciesDetail.toString(),
-  //     //   idioma: lang,
-  //     // }),
-  //   });
-
-  //   const responseData = await response.json();
-  //   console.log('responseData',responseData)
-  //   setUserData(responseData);
-  //   // Toast.show('Profile has been updated sucessfully', Toast.LONG);
-
-  //   //   navigation.navigate('Home');
-  // } catch (error) {
-  //   console.log('error => ', error);
-  //   //
-  //   //
-  // }
+  } catch (error) {
+    console.log('error => ', error);
+  }
 };
 const [Jobs, setJob] = useState([{}]);
 const [Activity, setActivity] = useState([{}]);
@@ -210,11 +184,7 @@ useEffect(
 
 
 
-  useFocusEffect(
-    useCallback(() => {
-      onSubmit();
-    }, []),
-  );
+
   const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
   return (
     <ScrollView style={styles.mainBox}>
@@ -325,7 +295,7 @@ useEffect(
               color: 'white',
               fontWeight: 'bold',
             }}>
-            Cancel
+            {language?.cancel}
           </Text>
         </View>
       </View>

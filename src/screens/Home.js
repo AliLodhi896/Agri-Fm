@@ -35,6 +35,7 @@ import TrackPlayer,{
 } from 'react-native-track-player';
 import RNFetchBlob from 'rn-fetch-blob';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Podcast from '../components/Sections/Podcast';
 
 const Home = () => {
   const {downloadedPodcast,downloadedPodcastID,language,selectedlang,sate,setSate,UserData,setpodcast_id,podcast_id,setfavoritePodcat_id,setdownloadedPodcastID,setdownloadedPodcast} = useContext(AuthContext);
@@ -133,7 +134,7 @@ const Home = () => {
     try {
       const result = await Share.share({
         message:
-        muusicUrl + 'This Podcast has been share form AgriFM app',
+        muusicUrl + ' ' + 'This Podcast has been share from AgriFM app',
       });
       if (result.action === Share.sharedAction) {
         if (result.activityType) {
@@ -158,7 +159,7 @@ const Home = () => {
     setModalVisible(false);
     setLoading(true)
     try {
-      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/add-favp-app.php?id_user=${UserData?.user}&id_podcast=${podcast_id}`;
+      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/add-favp-app.php?id_user=${UserData[0]?.user}&id_podcast=${podcast_id}`;
       const response = await fetch(baseUrl, {
         method: 'POST',
         headers: {
@@ -168,7 +169,11 @@ const Home = () => {
       const responseData = await response.json();
       if (responseData[0].favoritos_podcast ) {
         Toast.show('Podcast Added to liabrary', Toast.LONG);
-        navigation.navigate('MyLibrary')
+        let courseName = responseData[0].favoritos_podcast?.map(itemxx => {
+          return  itemxx
+        })
+        setfavoritePodcat_id(courseName)
+        // navigation.navigate('MyLibrary')
       } else {
         alert('Failed to add to liabrary !');
       }
@@ -182,7 +187,7 @@ const Home = () => {
     setModalVisible(false);
     setLoading(true)
     try {
-      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/remove-libraryp.php?id_user=${UserData?.user}&id_podcast=${podcast_id}`;
+      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/remove-libraryp.php?id_user=${UserData[0]?.user}&id_podcast=${podcast_id}`;
       const response = await fetch(baseUrl, {
         method: 'POST',
         headers: {
@@ -192,7 +197,11 @@ const Home = () => {
       const responseData = await response.json();
       if (responseData[0].favoritos_podcast ) {
         Toast.show('Podcast removed from liabrary', Toast.LONG);
-        navigation.navigate('MyLibrary')
+        let courseName = responseData[0].favoritos_podcast?.map(itemxx => {
+          return  itemxx
+        })
+        setfavoritePodcat_id(courseName)
+        // navigation.navigate('MyLibrary')
       } else {
         alert('Failed to remove from liabrary !');
       }
@@ -204,7 +213,7 @@ const Home = () => {
   
   const fetchFavoritePodcast =async () =>{
     try {
-      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/misintereses-app.php?id_user=${UserData?.user}`;
+      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/misintereses-app.php?id_user=${UserData[0]?.user}`;
       const response = await fetch(baseUrl, {
         method: 'Get',
         headers: {
@@ -213,9 +222,6 @@ const Home = () => {
       });
       const responseData = await response.json();
       if (responseData) {
-         console.log('responseData',responseData?.map(itemxx => {
-            return itemxx?.ID
-         }))
         setfavoritePodcast(responseData)
         let courseName = responseData?.map(itemxx => {
           return  itemxx.ID
@@ -236,7 +242,7 @@ const Home = () => {
 const download = (item) => {
   setModalVisible(true);
   setmuusicUrl(item?.acf?.link_podcast1)
-  setpodcast_id(item?.id)
+  setpodcast_id(JSON.stringify(item?.id))
   setmusicdatafordownload(item)
 }
 
@@ -263,7 +269,6 @@ const requestpermissionforDownlaod = async () => {
 };
 
 const downloadPodcast = async (item) => {
-  
   await requestpermissionforDownlaod();
   let url = item?.acf?.link_podcast1;
   let name = item?.title?.rendered;
@@ -314,10 +319,11 @@ const RemoveDownload = async() => {
 }
 
   return (
-    <View style={{height:'100%',backgroundColor:Colors.primary}}>
+    <View style={{height:'100%',backgroundColor:'white'}}>
        <View style={{height: sate !== 0 ? '85%' : '100%'}}>
        <ScrollView style={styles.mainBox}>
-      <ListModals
+          <View style={{backgroundColor:Colors.primary,paddingHorizontal:20}}>
+          <ListModals
         isVisible={modalVisible}
         onPressClose={() => setModalVisible(false)}
         onPressaddTo={()=> AddPodcastToLiabrary()}
@@ -410,7 +416,7 @@ const RemoveDownload = async() => {
         }}></View>
       <View style={styles.cardBox} animation="fadeInUpBig">
         <View style={styles.headingBox}>
-          <Text style={styles.mainHeading}>{language?.FeaturedPodcasts}</Text>
+          <Text style={styles.mainHeading}>{language?.Youarelistening}</Text>
           <Text style={styles.subHeading}>See All</Text>
         </View>
         {loading == true ?
@@ -440,7 +446,7 @@ const RemoveDownload = async() => {
         }}></View>
         <View style={styles.cardBox} animation="fadeInUpBig">
         <View style={styles.headingBox}>
-          <Text style={styles.mainHeading}>{language?.FeaturedChannels}</Text>
+          <Text style={styles.mainHeading}>{language?.channelofInterest}</Text>
           <Text style={styles.subHeading}>See All</Text>
         </View>
         <ScrollView style={styles.categoryBox} horizontal  >
@@ -455,7 +461,6 @@ const RemoveDownload = async() => {
                 onPress={() => navigation.navigate('ChannelDetails',{details:item})}
                 title={item.name}
                 image = {item?.acf?.imagen_perfil}
-                // description={item.description}
               />
             );
           })}
@@ -466,36 +471,44 @@ const RemoveDownload = async() => {
           height: 1,
           backgroundColor: Colors.secondary,
           opacity: 0.5,
-          marginTop:20
         }}></View>
-        <View style={{justifyContent:'space-between',flexDirection:'row',marginHorizontal:30,marginVertical:30}}>
-            <View style={{ alignSelf: 'center' }}>
-                <Image style={styles.image} source={require('../assets/Images/pp.png')} />
-                <TouchableOpacity onPress={() => {
-              Linking.openURL('https://socialagri.com/agriFM/login/?pa=2');
-            }} style={{ borderRadius: 100, alignItems: 'flex-end', marginTop: -20 }}>
-                    <AntDesign style={styles.edit} name="plus" color={'white'} size={18} />
-                </TouchableOpacity>
-                <Text style={{color:Colors.secondary,fontSize:12,marginTop:10,textAlign:'center'}}>{language?.CreateChannel}</Text>
-
-            </View>
-            <View style={{ alignSelf: 'center' }}>
-                <Image style={styles.image} source={require('../assets/Images/mic.png')} />
-                <TouchableOpacity onPress={()=>navigation.navigate('LoginEmail')} style={{ borderRadius: 100, alignItems: 'flex-end', marginTop: -20 }}>
-                    <AntDesign style={styles.edit} name="plus" color={'white'} size={18} />
-                </TouchableOpacity>
-                <Text style={{color:Colors.secondary,fontSize:12,marginTop:10,textAlign:'center'}}>{language?.CreateProfile}</Text>
-            </View>
-      </View>
-      <View style={styles.headingBox}>
-        <Text style={styles.mainHeading}>{language?.TrendingInterest}</Text>
-      </View>
-      <View style={styles.interestlList}>
-        {interest.slice(0, 4).map((item) => {
-          return <InterestCard mainStyle={{width: 170}} description ={item.name} img_intereses = {item.acf.img_intereses} id={item.id}/>;
+      <View style={styles.cardBox} animation="fadeInUpBig">
+        <View style={styles.headingBox}>
+          <Text style={styles.mainHeading}>{language?.Welfare}</Text>
+          <Text style={styles.subHeading}>See All</Text>
+        </View>
+        {loading == true ?
+        <View style={{padding:100}}>
+          <ActivityIndicator size="large" color="white" /> 
+        </View>
+       : 
+        podCastData.slice(0, 5).map((item) => {
+          return (
+            <FeaturedCard
+              onPressDownload={()=>downloadPodcast(item)}
+              onPressIcon={()=>download(item)}
+              onPress={() => trackResetAndNavgate(item)}
+              channelName='Channel Name'
+              podcastname = {item.title?.rendered}
+              image = {item?.acf?.imagen_podcast1}
+              id = {item?.id}
+            />
+          );
         })}
       </View>
-    </ScrollView>
+          </View>    
+          <View style={{backgroundColor:"white",paddingHorizontal:20}}>
+            <Podcast />
+            <View style={styles.headingBox}>
+              <Text style={{fontSize:18,fontWeight:'700',color:Colors.primary}}>{language?.YourInterest}</Text>
+            </View>
+            <ScrollView horizontal style={styles.interestlList}>
+              {interest.map((item) => {
+                return <InterestCard mainStyle={{width: 100,marginHorizontal:10}} textStyle={{color:Colors.primary}} description ={item.name} img_intereses = {item.acf.img_intereses} id={item.id}/>;
+              })}
+            </ScrollView>
+          </View>
+       </ScrollView>
        </View>
        <View style={{marginVertical:20,marginHorizontal:10}}>
       {sate !== 0  ?
@@ -512,8 +525,6 @@ const RemoveDownload = async() => {
 const styles = StyleSheet.create({
   mainBox: {
     flex: 1,
-    backgroundColor: Colors.primary,
-    paddingHorizontal: 20,
   },
   image: { width: 100, height: 100, borderRadius: 100, },
   headerBox: {
@@ -532,6 +543,7 @@ const styles = StyleSheet.create({
     height: 20,
     alignContent: 'center',
     alignSelf: 'center',
+    marginBottom:20
   },
   categoryBox: {
     flexDirection: 'row',
@@ -552,6 +564,7 @@ const styles = StyleSheet.create({
   headingBox: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginTop:30
   },
   mainHeading: {
     fontSize: 18,
@@ -560,9 +573,7 @@ const styles = StyleSheet.create({
   },
   interestlList: {
     marginBottom: 20,
-    justifyContent: 'space-between',
     flexDirection: 'row',
-    flexWrap: 'wrap',
   },
   edit: { backgroundColor: Colors.button, borderRadius: 100, padding: 5 },
 });

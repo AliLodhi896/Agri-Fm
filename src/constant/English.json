@@ -20,11 +20,15 @@
 
     "ExploreOurPodcast": "Explore our podcast",
     "Interests": "Interests",
+    "SelectedJob": "Selected Job",
 
     "Podcasts": "Podcasts",
     "Channels": "Channels",
+    "Filter": "Filter",
     "Play": "Play",
-
+    "closesession": "Close Session",
+    "Cancel": "Cancel",
+"ForgotPassword":"Forgot Password",
     "Welcome": "Welcome",
     "Mobile": "Mobile",
     "Company": "Company",
@@ -81,7 +85,15 @@
     "MyAgriFm": "MyAgriFm",
     "UnFollow": "UnFollow",
     "RemoveFromLibrary":"Remove from Library",
-    "removeDownload" : "Remove from Downloads"
+    "removeDownload" : "Remove from Downloads",
+    "Youarelistening" : "You are listening",
+    "Biosecurity": "Biosecurity",
+    "Welfare": "Welfare",
+    "YourInterest": "Your Interest",
+    "channelofInterest":"Channel of Interest",
+    "RelatedPodcast":"Related Podcast"
+
+    
 
 
 

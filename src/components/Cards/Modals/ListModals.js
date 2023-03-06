@@ -1,14 +1,12 @@
 import React, {useState,useContext,useEffect} from 'react';
 import { View, Text, Modal, Pressable, StyleSheet, Image,TouchableOpacity } from 'react-native';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import Colors from '../../../constant/Colors';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
-import CommonButton from '../../Buttons/CommonButton';
 import { AuthContext } from '../../../context/Context';
 import {useNavigation,useFocusEffect} from '@react-navigation/native';
 
 const ListModals = (props) => {
-    const {language, selectedlang, setSelectedlang,UserData,podcast_id,isSignin,favoritePodcat_id,downloadedPodcast,downloadedPodcastID} = useContext(AuthContext);
+    const {language,podcast_id,favoritePodcat_id,downloadedPodcastID} = useContext(AuthContext);
     const navigation = useNavigation();
 
     return (
@@ -57,7 +55,7 @@ const ListModals = (props) => {
                             <Image  style={{width: '12%', height: 20}} source={require('../../../assets/Images/shares.png')} />
                         </TouchableOpacity>
                         <View style={{height:1,backgroundColor:Colors.primary,opacity:0.5,marginTop:15}}></View>
-                        {favoritePodcat_id.includes(JSON.stringify(podcast_id)) && JSON.stringify(podcast_id) === JSON.stringify(podcast_id) ?
+                        {favoritePodcat_id?.includes(podcast_id) && podcast_id === podcast_id ?
                             <TouchableOpacity style={styles.second_view} onPress={props.onPressRemove}  >
                                 <Text style={{color:Colors.primary,fontSize:16}}>
                                 {language?.RemoveFromLibrary}

@@ -20,14 +20,14 @@ const Profile = () => {
         <ScrollView style={styles.mainBox}>
             <View style={styles.centeredView}>
                 <View style={styles.modalView}>
-                    <TouchableOpacity style={styles.second_view} >
+                    <TouchableOpacity onPress={()=>navigation.navigate('Home')}  style={styles.second_view} >
                         <MaterialIcons name='close' color={Colors.primary} size={35} />
                     </TouchableOpacity>
                     <View style={{ alignSelf: 'center', marginHorizontal: 30, justifyContent: 'center', alignItems: 'center', width: '100%' }}>
                         <Pressable style={{ paddingBottom: 20, padding: 15 }} >
                             <Image source={require('../../assets/Images/agrim1.png')} resizeMode='stretch' style={{ width: 70, height: 70 }} />
                         </Pressable>
-                        <Text style={{ fontSize: 16, color: Colors.primary, fontWeight: '600' , width : '85%' , textAlign : 'center'}}> You have to be login or register to do more</Text>
+                        <Text style={{ fontSize: 16, color: Colors.primary, fontWeight: '600' , width : '85%' , textAlign : 'center'}}> {language?.youhavetologin}</Text>
                         <CommonButton onPress={()=>navigation.navigate('VerifyPassword')} green={true} title={language?.Register} />
                         <CommonButton onPress={()=>navigation.navigate('LoginEmail')} title={language?.Login} />
                     </View>

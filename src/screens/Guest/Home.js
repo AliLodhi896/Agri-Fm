@@ -33,13 +33,14 @@ import TrackPlayer,{
 } from 'react-native-track-player';
 
 const Home = () => {
-const {language, selectedlang,isSignin,sate,setSate} = useContext(AuthContext);
+const {language, selectedlang,isSignin,sate,setSate,tracks} = useContext(AuthContext);
 
   const navigation = useNavigation();
   const [podCastData, setPodcastData] = useState([]);
   const [interest,setInterest] = useState([])
   const [loading, setLoading] = useState(false)
   const [channelsdata, setchannelsdata] = useState([])
+
   const fetchData = () => {
     setLoading(true)
     return fetch("https://socialagri.com/agriFM/wp-json/wp/v2/podcast")
@@ -65,6 +66,7 @@ const {language, selectedlang,isSignin,sate,setSate} = useContext(AuthContext);
             console.log(err,'API Failed');
           });   
   }
+
   useEffect(()=>{
     fetchData();
     fetch('https://socialagri.com/agriFM/wp-json/wp/v2/intereses/')
@@ -72,14 +74,14 @@ const {language, selectedlang,isSignin,sate,setSate} = useContext(AuthContext);
     .then((data) =>{ 
       setInterest(data.length == 0 ? undefined || null : (data));
     })
-},[])
+  },[])
 
-useFocusEffect(
-  useCallback(() => {
-    getChannels();
-    requestToPermissions();
-  }, []),
-);
+  useFocusEffect(
+    useCallback(() => {
+      getChannels();
+      requestToPermissions();
+    }, []),
+  );
 
 
   const categories = [
@@ -121,68 +123,70 @@ useFocusEffect(
   const [muusicUrl, setmuusicUrl] = useState(null)
 
   const addtoliabrary = () =>{
-    setModalVisible(false);
-    Toast.show('Please first login to add to library', Toast.LONG);
-  
-}
-
-const download = (item) => {
-  setModalVisible(true);
-  setmuusicUrl(item?.acf?.link_podcast1)
-}
-const downloadPodcast = (item) => {
-  Toast.show('Please first login to download', Toast.LONG);
-}
-
-const requestToPermissions = async () => {
-  try {
-    const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-      {
-        title: "Cool Photo App Camera Permission",
-        message:
-          "Cool Photo App needs access to your camera " +
-          "so you can take awesome pictures.",
-        buttonNeutral: "Ask Me Later",
-        buttonNegative: "Cancel",
-        buttonPositive: "OK"
-      }
-    );
-    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-      console.log("You can use the camera");
-    } else {
-      console.log("Camera permission denied");
-    }
-  } catch (err) {
-    console.warn(err);
+      setModalVisible(false);
+      Toast.show('Please first login to add to library', Toast.LONG);
+    
   }
 
-};
+  const download = (item) => {
+    setModalVisible(true);
+    setmuusicUrl(item?.acf?.link_podcast1)
+  }
 
+  const downloadPodcast = (item) => {
+    Toast.show('Please first login to download', Toast.LONG);
+  }
 
-const onShare = async () => {
-  try {
-    const result = await Share.share({
-      message:
-      muusicUrl + 'This Podcast has been share form AgriFM app',
-    });
-    if (result.action === Share.sharedAction) {
-      if (result.activityType) {
+  const requestToPermissions = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+        {
+          title: "Cool Photo App Camera Permission",
+          message:
+            "Cool Photo App needs access to your camera " +
+            "so you can take awesome pictures.",
+          buttonNeutral: "Ask Me Later",
+          buttonNegative: "Cancel",
+          buttonPositive: "OK"
+        }
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log("You can use the camera");
       } else {
-        // shared
+        console.log("Camera permission denied");
       }
-    } else if (result.action === Share.dismissedAction) {
-      // dismissed
+    } catch (err) {
+      console.warn(err);
     }
-  } catch (error) {
-    alert(error.message);
+
+  };
+
+  const onShare = async () => {
+    try {
+      const result = await Share.share({
+        message:
+        muusicUrl + 'This Podcast has been share from AgriFM app',
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
+  const trackResetAndNavgate = (item) => {
+    TrackPlayer.reset();
+    setSate(0)
+    navigation.navigate('Music',{podcastDetails:item});
   }
-};
-const trackResetAndNavgate = (item) => {
-  TrackPlayer.reset();
-  setSate(0)
-  navigation.navigate('Music',{podcastDetails:item});
-}
+
   return (
     <View style={{height:'100%',backgroundColor:Colors.primary}}>
       <ScrollView style={styles.mainBox}>
@@ -396,6 +400,7 @@ const styles = StyleSheet.create({
     height: 20,
     alignContent: 'center',
     alignSelf: 'center',
+    marginBottom:20
   },
   categoryBox: {
     flexDirection: 'row',

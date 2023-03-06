@@ -1,9 +1,7 @@
 import React,{useState,useContext,useEffect} from 'react'
 import { View, Text,StyleSheet,TouchableOpacity,Image,ScrollView} from 'react-native'
-import ChannelCard from '../components/Cards/ChannelCard';
 import Colors from '../constant/Colors'
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import FeaturedCard from '../components/Cards/FeaturedCard';
 
 import Podcast from '../components/Sections/Podcast';
 import Channel from '../components/Sections/Channel';

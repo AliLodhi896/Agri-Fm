@@ -5,23 +5,27 @@
     "Swine": "Suíno",
     "Nutrition": "Nutrição",
     "Aqua": "Aqua",
-    "LastChannels": "Ultimos canais",
-    "FeaturedPodcasts": "Podcasts em Destaque",
-    "GoToLibrary": "Ir para a Biblioteca",
+    "LastChannels": "Últimos canais",
+    "FeaturedPodcasts": "Destaques",
+    "GoToLibrary": "Ir ao canal",
     "DownloadPodcast": "Baixar Podcast",
-    "Share": "Compartilhado",
-    "AddToLibrary": "Adicionar à Biblioteca",
-    "FeaturedChannels": "Canais em Destaque",
+    "Share": "Compartilhar",
+    "AddToLibrary": "Adicionar à biblioteca",
+    "FeaturedChannels": "Canais destacados",
     "CreateChannel": "Criar Canal",
     "CreateProfile": "Criar Perfil",
     "TrendingInterest": "Tendências de Interesse",
 
     "ExploreOurPodcast": "Explore nosso podcast",
     "Interests": "Interesses",
+    "Cancel": "Cancelar",
 
+    
     "Podcasts": "Podcasts",
     "Channels": "Canais",
-    "Play": "Jogar",
+    "Filter": "Filtros",
+
+    "Play": "Escutar",
 
     "Welcome": "Bem-vindo",
     "Mobile": "Móvel",
@@ -31,19 +35,20 @@
     "Production": "Produção",
     "Details": "Detalhes",
     "EditProfile": "Editar Perfil",
-    "ChangeInterest": "Alterar Interesse",
-    "ChangeProducting": "Mudança de Produção",
-    "seeAll": "ver tudo",
-
-    "Download": "Download",
+    "ChangeInterest": "Atualizar interesses",
+    "ChangeProducting": "Atualizar espécies",
+    "seeAll": "Ver Tudo",
+    "Download": "Baixar",
     "AddToMyLibrary": "Adicionar à minha biblioteca",
+    "closesession": "Sair",
+
 
     "Name": "Nome",
     "Surname": "Sobrenome",
     "Phone": "Telefone",
     "Next":  "Próximo",
 
-    "YourEmail": "Seu Email",
+    "YourEmail": "Seu e-mail",
     "YourPassword": "Sua Senha",
 
     "ChooseYourJob": "Escolha seu trabalho",
@@ -55,13 +60,15 @@
     "SelectYourSpeciesDetails": "Select Your Species Detalhes",
 
     "Avicultura": "Avicultura",
+    "SelectedJob": "Cargo selecionado",
+
 
     "Select5Interests": "Selecione 5 Interesses",
     "GoBack": "Volte",
 
 
-    "Register": "Registro",
-    "Login": "Conecte-se",
+    "Register": "Cadastro",
+    "Login": "Entrar",
     "Follow": "Seguir",
 
     "ActualName": "Nome Real",
@@ -72,17 +79,25 @@
     "NewActivity": "Nova Atividade",
     "NewLanguage": "Nova Linguagem",
     "NewCountry": "Novo País",
+    "ForgotPassword": "Esqueceu a senha?",
 
-    "Home": "Casa",
+    "Home": "Início",
     "Explore": "Explorar",
     "Library": "Biblioteca",
     "MyAgriFm": "MyagriFmGenericName",
 
 
-    
+    "youhavetologin":"Entre com sua conta ou registre-se para continuar...",
     "Update": "actualizar",
     "UnFollow": "deixar de seguir",
     "RemoveFromLibrary":"Remover da Biblioteca",
-    "removeDownload" : "Remover dos downloads"
+    "removeDownload" : "Remover dos downloads",
+    "Youarelistening" : "Voce esta escutando",
+    "Biosecurity": "Biossegurança",
+    "Welfare": "Bem-estar",
+    "YourInterest": "Seus interess",
+    "channelofInterest":"Canais do seu interesse",
+    "RelatedPodcast":"Podcasts relacionados"
+
 
 }

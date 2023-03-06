@@ -21,7 +21,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 // import colors from '../constants/colors';
 import colors from '../constant/Colors';
 import Colors from '../constant/Colors';
-import Profile from '../screens/Profile';
+import UserProfile from '../screens/UserProfile';
 import Music from '../screens/Music';
 import CategoriesDetail from '../screens/CategoriesDetail';
 import EditProfile from '../screens/EditProfile';
@@ -42,7 +42,7 @@ import VerifyPassword from '../screens/Auth/VerifyPassword';
 const MainStack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-  export const App = ({navigation}) => {
+  export const UserStack = ({navigation}) => {
     
     const defaultStackNavOptions = {
       headerStyle: {
@@ -167,7 +167,7 @@ const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
         screenOptions={{...defaultTabNavOptions}}>
           <Tab.Screen
           name={language?.Home}
-          component={App}
+          component={UserStack}
           options={{
             headerShown: false,
             tabBarShowLabel: true,
@@ -210,7 +210,7 @@ const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
         />
         <Tab.Screen
           name={language?.MyAgriFm}
-          component={Profile}
+          component={UserProfile}
           options={{
             headerShown: false,
             tabBarShowLabel: true,

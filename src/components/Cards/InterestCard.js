@@ -43,7 +43,7 @@ const InterestCard = props => {
           alignContent: 'center',
           justifyContent: 'center',
         }}>
-        <Text style={styles.textStyle}>{props.description}</Text>
+        <Text style={[styles.textStyle,props.textStyle]}>{props.description}</Text>
       </View>
     </TouchableOpacity>
   );

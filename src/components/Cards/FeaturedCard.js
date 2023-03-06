@@ -14,7 +14,6 @@ import { AuthContext } from '../../context/Context';
 const FeaturedCard = (props) => {
   const {language,downloadedPodcast,downloadedPodcastID} = useContext(AuthContext);
 
-console.log('downloadedPodcast--->',downloadedPodcastID);
   return (
     <View style={{justifyContent:'space-between',flexDirection:'row',paddingVertical:10}}>
         <View style={{width:'30%',height:100}}>

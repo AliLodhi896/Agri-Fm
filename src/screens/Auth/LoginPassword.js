@@ -37,37 +37,28 @@ const LoginPassword = () => {
     useContext(AuthContext);
   const route = useRoute();
   const [loading, setLoading] = useState(false);
-
   const [pass, setPass] = useState('');
+  
   const onSubmit = async data => {
     setLoading(true);
     try {
       let baseUrl = `${base_url}/ajax/login-app.php?email=${route.params.email}&password=${data.password}`;
-
       const response = await fetch(baseUrl, {
         method: 'POST',
         headers: {
           Accept: 'application/json',
         },
       });
-      console.log('language?.MyAgriFm', language?.MyAgriFm);
       const responseData = await response.json();
-      console.log('onSubmit', responseData);
-      if (responseData[0].validation == 'ok') {
-        navigation.navigate(language?.MyAgriFm);
-        // alert(responseData[0].validation);
-        // const jsonValue = JSON.stringify(responseData[0]);
-        // await AsyncStorage.setItem('userDetails', jsonValue);
-        // Toast.show('Logged in successfully', Toast.LONG);
+      if (responseData) {
+        const jsonValue = JSON.stringify(responseData);
+        await AsyncStorage.setItem('userDetails',jsonValue)
         setIsSignin(true)
-        setUserData(responseData[0]);
-        
       } else {
         alert(responseData[0].validation);
       }
 
       setLoading(false);
-      //   navigation.navigate('Home');
     } catch (error) {
       console.log('error => ', error);
       setLoading(false);

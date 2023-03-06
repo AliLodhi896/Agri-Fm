@@ -22,27 +22,25 @@ const LangModal = ({ isVisible,onClose, error,onPress }) => {
                     <TouchableOpacity style={styles.second_view}  onPress={onClose}>
                         <MaterialIcons name='close' color={Colors.primary} size={27} />
                     </TouchableOpacity>
-                    <View style={{ alignSelf: 'center', marginHorizontal: 30,   width: '100%' }}>
-                        <TouchableOpacity style={styles.second_view}  onPress={()=>{setLanguage(spain),setSelectedlang('es'),onClose}}>
-                            <Text style={{color:Colors.primary,fontSize:16}}>
-                            Spanish
-                            </Text>
-                            <Image style={{width: '12%', height: 25}} source={require('../../../assets/Images/spain-flag.png')} />
-                        </TouchableOpacity>
-                        <View style={{height:1,backgroundColor:Colors.primary,opacity:0.5,marginTop:15}}></View>
-                        <TouchableOpacity style={styles.second_view} onPress={()=>{setLanguage(brazil),setSelectedlang('pt'),onClose}}>
-                            <Text style={{color:Colors.primary,fontSize:16}}>
-                            Brazil
-                            </Text>
-                            <Image  style={{width: '12%', height: 27}} source={require('../../../assets/Images/brazil-flag.jpg')} />
-                        </TouchableOpacity>
-                        <View style={{height:1,backgroundColor:Colors.primary,opacity:0.5,marginTop:15}}></View>
-                        <TouchableOpacity style={styles.second_view} onPress={()=>{setLanguage(english),setSelectedlang('en'),onClose}} >
-                            <Text style={{color:Colors.primary,fontSize:16}}>
-                            English
-                            </Text>
-                            <Image  style={{width: '12%', height: 20}} source={require('../../../assets/Images/uk-flag.png')} />
-                        </TouchableOpacity>
+                    <View style={{ alignSelf: 'center', marginHorizontal: 30,   width: '100%',    alignItems: 'center',marginTop:'40%'}}>
+                    <TouchableOpacity style={styles.flagBox} onPress={()=>{setLanguage(spain),setSelectedlang('es')}}>
+                        <Image
+                            source={require('../../../assets/Images/spain-flag.png')}
+                            style={{width: '100%', height: '100%',borderRadius:100}}
+                        />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.flagBox} onPress={()=>{setLanguage(brazil),setSelectedlang('pt')}}>
+                        <Image
+                            source={require('../../../assets/Images/brazil-flag.jpg')}
+                            style={{width: '100%', height: '100%',borderRadius:100}}
+                        />
+                    </TouchableOpacity>
+                        <TouchableOpacity style={styles.flagBox} onPress={()=>{setLanguage(english),setSelectedlang('en')}}>
+                        <Image
+                            source={require('../../../assets/Images/uk-flag.png')}
+                            style={{width: '100%', height: '100%',borderRadius:100}}
+                        />
+                    </TouchableOpacity>
                     </View>
                 </View>
             </View>
@@ -51,6 +49,12 @@ const LangModal = ({ isVisible,onClose, error,onPress }) => {
 };
 
 const styles = StyleSheet.create({
+    flagBox: {
+        borderRadius: 100,
+        width: 90,
+        height: 90,
+        marginTop: 30,
+      },
     centeredView: {
         flex: 1,
         justifyContent: 'center',
@@ -59,9 +63,10 @@ const styles = StyleSheet.create({
     },
     modalView: {
         backgroundColor: 'white',
+        height:'90%',
         alignItems: 'center',
         shadowColor: '#000',
-        width: '70%',
+        width: '90%',
         shadowOffset: {
             width: 0,
             height: 2,
@@ -70,7 +75,8 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 5,
         borderRadius: 10,
-        paddingBottom:30
+        paddingBottom:30,
+      
     },
     second_view: {
         width: '100%',

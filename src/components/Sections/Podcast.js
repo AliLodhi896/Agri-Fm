@@ -25,37 +25,47 @@ import TrackPlayer,{
 import ListModals from '../Cards/Modals/ListModals';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNFetchBlob from 'rn-fetch-blob';
+
 const Podcast = (props) => {
-  const {UserData,setSate,setpodcast_id,podcast_id,downloadedPodcast,setdownloadedPodcast} = useContext(AuthContext);
+  const {UserData,setSate,setpodcast_id,podcast_id,downloadedPodcast,favoritePodcat_id,setfavoritePodcat_id} = useContext(AuthContext);
   const navigation = useNavigation();
   const [podCastData, setPodcastData] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false)
   const [muusicUrl, setmuusicUrl] = useState(null)
   const [musicdatafordownload, setmusicdatafordownload] = useState()
-
-    const fetchFavoritePodcast =async () =>{
-        try {
-          let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/misintereses-app.php?id_user=${UserData?.user}`;
-          const response = await fetch(baseUrl, {
-            method: 'Get',
-            headers: {
-              Accept: 'application/json',
-            },
-          });
-          const responseData = await response.json();
-          if (responseData) {
-            setPodcastData(responseData)
-          } else {
-            alert('failed to get fav fav');
+console.log('downloadedPodcast',downloadedPodcast)
+      const fetchFavoritePodcast =async () =>{
+          try {
+            let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/misintereses-app.php?id_user=${UserData[0]?.user}`;
+            const response = await fetch(baseUrl, {
+              method: 'Get',
+              headers: {
+                Accept: 'application/json',
+              },
+            });
+            const responseData = await response.json();
+            if (responseData) {
+              setPodcastData(responseData)
+              // let courseName = responseData?.map(itemxx => {
+              //   return  itemxx.ID
+              // })
+              // setfavoritePodcat_id(courseName)
+            } else {
+              // alert('failed to get fav fav');
+            }
+          } catch (error) {
+            console.log('error => ', error);
           }
-        } catch (error) {
-          console.log('error => ', error);
-        }
-    }
+      }
       useEffect(() => {
-            fetchFavoritePodcast();
-      },[])
+        const interval = setInterval(() => fetchFavoritePodcast(),1000);
+        return () => {
+          clearInterval(interval);
+        };
+            
+      },[podcast_id])
+
       const trackResetAndNavgate = (item) => {
         TrackPlayer.reset();
         setSate(0)
@@ -65,7 +75,7 @@ const Podcast = (props) => {
       const download = (item) => {
         setModalVisible(true);
         setmuusicUrl(item?.acf?.link_podcast1)
-        setpodcast_id(item?.id)
+        setpodcast_id(item?.ID)
         setmusicdatafordownload(item)
       }
       
@@ -149,7 +159,7 @@ const Podcast = (props) => {
         setModalVisible(false);
         setLoading(true)
         try {
-          let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/add-favp-app.php?id_user=${UserData?.user}&id_podcast=${podcast_id}`;
+          let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/add-favp-app.php?id_user=${UserData[0]?.user}&id_podcast=${podcast_id}`;
           const response = await fetch(baseUrl, {
             method: 'POST',
             headers: {
@@ -159,7 +169,10 @@ const Podcast = (props) => {
           const responseData = await response.json();
           if (responseData[0].favoritos_podcast ) {
             Toast.show('Podcast Added to liabrary', Toast.LONG);
-            navigation.navigate('MyLibrary')
+            let courseName = responseData[0].favoritos_podcast?.map(itemxx => {
+              return  itemxx
+            })
+            setfavoritePodcat_id(courseName)
           } else {
             alert('Failed to add to liabrary !');
           }
@@ -173,7 +186,7 @@ const Podcast = (props) => {
         setModalVisible(false);
         setLoading(true)
         try {
-          let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/remove-libraryp.php?id_user=${UserData?.user}&id_podcast=${podcast_id}`;
+          let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/remove-libraryp.php?id_user=${UserData[0]?.user}&id_podcast=${podcast_id}`;
           const response = await fetch(baseUrl, {
             method: 'POST',
             headers: {
@@ -181,9 +194,14 @@ const Podcast = (props) => {
             },
           });
           const responseData = await response.json();
-          if (responseData[0].favoritos_podcast ) {
+          console.log('responseData[0].favoritos_podcast',responseData);
+          if (responseData) {
             Toast.show('Podcast removed from liabrary', Toast.LONG);
-            navigation.navigate('MyLibrary')
+            let courseName = responseData[0].favoritos_podcast?.map(itemxx => {
+              return  itemxx
+            })
+            setfavoritePodcat_id(courseName)
+            
           } else {
             alert('Failed to remove from liabrary !');
           }
@@ -202,6 +220,7 @@ const Podcast = (props) => {
         onClose={() => setModalVisible(false)}
         onPressDownload={()=>downloadPodcast()}
         onPressShare={()=>onShare()}
+        onPressRemoveDownload={()=>RemoveDownload()}
         onPressRemove={()=>RemovePodcastFromLiabrary()}
       />
           <View style={styles.cardBox}>
@@ -235,7 +254,7 @@ const Podcast = (props) => {
                 podCastData.map((item)=>{
                     return(
                         <FeaturedCard 
-                        onPressDownload={()=>downloadPodcast(item)}
+                          onPressDownload={()=>downloadPodcast(item)}
                           textstyle={{color:Colors.primary}} 
                           headingText={{color:'grey'}} 
                           timeText={{color:'grey'}} 

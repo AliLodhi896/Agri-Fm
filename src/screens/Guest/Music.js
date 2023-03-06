@@ -1,5 +1,5 @@
 import React,{useState,useContext,useEffect,useCallback} from 'react'
-import { StyleSheet, View, Image, Text,ScrollView } from "react-native"
+import { StyleSheet, View, Image, Text,ScrollView ,Share} from "react-native"
 import Header from "../../components/Header/Header";
 import Colors from "../../constant/Colors";
 
@@ -28,9 +28,25 @@ import Slider from '@react-native-community/slider';
 import {useNavigation,useFocusEffect} from '@react-navigation/native';
 
 const Music = ({route}) => {
-    const {language,tracks,setTracks,setSate,sate} = useContext(AuthContext);
-    
-    
+    const {language,tracks,setTracks,setSate,sate,trackForMiniPlayer,settrackForMiniPlayer} = useContext(AuthContext);
+    const onShare = async () => {
+        try {
+          const result = await Share.share({
+            message:
+            podcastDetails?.acf?.link_podcast1 +' '+ 'This Podcast has been share form AgriFM app',
+          });
+          if (result.action === Share.sharedAction) {
+            if (result.activityType) {
+            } else {
+              // shared
+            }
+          } else if (result.action === Share.dismissedAction) {
+            // dismissed
+          }
+        } catch (error) {
+          alert(error.message);
+        }
+      };
     const {podcastDetails}= route.params
     const [modalVisible, setModalVisible] = useState(false);
     const [podCastData, setPodcastData] = useState([]);
@@ -98,6 +114,9 @@ useFocusEffect(
 
     useEffect(() => {
         setupPlayermusic();
+        setSate(3)
+        TrackPlayer.play();
+        settrackForMiniPlayer(podcastDetails)
     },[podcastDetails])
 
     const toogle = async() => {
@@ -133,7 +152,13 @@ useFocusEffect(
     const backward = () => {
         TrackPlayer.seekTo(position - 15);
     }
-
+    const trackResetAndNavgate = (item) => {
+        TrackPlayer.reset();
+        setSate(0)
+        navigation.navigate('Music',{podcastDetails:item});
+        setTracks(track)
+         TrackPlayer.add([track])
+      }
     return (
         <ScrollView style={styles.mainBox}>
              <ListModals
@@ -146,14 +171,15 @@ useFocusEffect(
                 <Image style={{ height: 170, width: 170, borderRadius: 10 }} source={{uri: podcastDetails?.acf?.imagen_podcast1}} />
                 <View style={{ padding: 10 }}>
                     {/* <Text>50 min</Text> */}
-                    <Text style={{ width: '45%', color: 'white', fontWeight: 'bold' }}>{podcastDetails?.title?.rendered} </Text>
+                    <Text style={{ width: '45%', color: 'white', fontWeight: 'bold' }}>{ podcastDetails?.title?.rendered} </Text>
                     <View style={{ flexDirection: 'row' }}>
-
-                        <View style={{ marginTop: '5%', justifyContent: 'center', width: 50, justifyContent: 'center', alignItems: 'center' }}>
+                        <View  style={{ marginTop: '5%', justifyContent: 'center', width: 50, justifyContent: 'center', alignItems: 'center' }}>
+                        <TouchableOpacity onPress={()=>onShare()}>
                         <Image style={{ height: 22, width: 30 }} source={require('../../assets/Images/whiteshare.png')} />
                             <Text style={{ fontSize: 12, color: 'white' }}>{language?.Share}</Text>
+                        </TouchableOpacity>
                         </View>
-                        <View style={{ marginTop: '5%', justifyContent: 'center', marginLeft: '15%', width: 80, justifyContent: 'center', alignItems: 'center' }}>
+                        <View style={{ marginTop: '5%', justifyContent: 'center',width: 80, justifyContent: 'center', alignItems: 'center' }}>
                         <Image style={{ height: 27, width: 30 }} source={require('../../assets/Images/downloadwhite.png')} />
                             <Text style={{ fontSize: 12, color: 'white' }}>{language?.Download}</Text>
                         </View>
@@ -206,11 +232,12 @@ useFocusEffect(
                         return (
                             <FeaturedCard
                             
-                            onPressIcon={()=>setModalVisible(true)}
-                            onPress={()=>navigation.navigate('Music',{podcastDetails:item})}
+                            // onPressIcon={()=>setModalVisible(true)}
+                            // onPress={()=>navigation.navigate('Music',{podcastDetails:item})}
+                            onPress={() => trackResetAndNavgate(item)}
                             channelName='Channel Name'
-              podcastname = {item.title?.rendered}
-              image = {item?.acf?.imagen_podcast1}
+                            podcastname = {item.title?.rendered}
+                            image = {item?.acf?.imagen_podcast1}
                             />
                         );
                     })}

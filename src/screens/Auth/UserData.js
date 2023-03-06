@@ -27,25 +27,13 @@ import Dropdown from '../../components/Input/Dropdown';
 const UserData = () => {
   const route = useRoute();
   console.log('AccountDetails========>', route.params);
-  // console.log(route.params.form, 'CheckFromAboveFinal');
   const navigation = useNavigation();
   const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
-  // const [registration, setRegistration] = useState({
-  //   Job: '',
-  //   Activity: '',
-  //   Language: '',
-  //   County: '',
-  // });
   const combineObject = {...UserdataObject, ...route.params.form};
   const [Jobs, setJob] = useState([{}]);
   const [Activity, setActivity] = useState([{}]);
   const [Language, setLanguage] = useState([{}]);
   const [Countries, setCountries] = useState([{}]);
-  // const [items, setItems] = useState([
-  //   {label: 'Male', value: 'male'},
-  //   {label: 'Female', value: 'female'},
-  //   {label: 'Others', value: 'others'},
-  // ]);
   const [ivalueJob, setIvalueJob] = useState(null);
   const [ivalueCountry, setIvalueCountry] = useState(null);
   const [ivalueActivity, setIvalueActivity] = useState(null);
@@ -57,6 +45,8 @@ const UserData = () => {
     County: ivalueCountry,
   };
 
+  console.log('language',selectedlang)
+
   const onSubmit = () => {
     combineObject.jobValue = ivalueJob;
     combineObject.country = ivalueCountry;
@@ -67,42 +57,75 @@ const UserData = () => {
     });
   };
 
-  useEffect(() => {
-    fetch(
-      'https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/cargo-app.php',
-    )
-      .then(res => res.json())
 
-      .then(data => {
-          setJob(data.map(el => ({label: el.nombrees, value: el.nombrees})));
+  const GetJObs = async data => {
+    try {
+      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/cargo-app-end.php?lang=${selectedlang}`;
+      const response = await fetch(baseUrl, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+        },
       });
-  }, []);
-  useEffect(() => {
-    fetch(
-      'https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/actividad-app.php',
-    )
-      .then(res => res.json())
+      const responseData = await response.json();
+      if(responseData){
+        setJob(responseData?.map(el => ({label: el.name, value: el.id})));
+      }else{
+          
+      }
+    } catch (error) {
+      console.log('Network Request Failed=> ', error);
+    }
+  };
 
-      .then(data => {
-          setActivity(data.map(el => ({label: el.nombrees, value: el.nombrees})));
+  const GetActivity = async data => {
+    try {
+      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/actividad-app-end.php?lang=${selectedlang}`;
+      const response = await fetch(baseUrl, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+        },
       });
-  }, []);
-  useEffect(() => {
-    fetch(
-      'https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/idioma-app.php',
-    )
-      .then(res => res.json())
+      const responseData = await response.json();
+      console.log('response-------->',responseData)
+      if(responseData){
+        setActivity(responseData?.map(el => ({label: el.name, value: el.id})));
+      }else{
+          
+      }
+    } catch (error) {
+      console.log('Network Request Failed=> ', error);
+    }
+  };
 
-      .then(data => {
-          setLanguage(
-            data.map(el => ({
-              id: el.id,
-              label: el.nombrees,
-              value: el.nombrees,
-            })),
-          );
+  const GetLanguages = async data => {
+    try {
+      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/idioma-app-end.php?lang=${selectedlang}`;
+      const response = await fetch(baseUrl, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+        },
       });
+      const responseData = await response.json();
+      if(responseData){
+        setLanguage(responseData?.map(el => ({label: el.name, value: el.id})));
+      }else{
+          
+      }
+    } catch (error) {
+      console.log('Network Request Failed=> ', error);
+    }
+  };
+
+  useEffect(() => {
+   GetJObs();
+   GetActivity();
+   GetLanguages();
   }, []);
+
+
   useEffect(
     () => {
       if (ivaluelanguage === 'Português') {
@@ -116,7 +139,7 @@ const UserData = () => {
                 data.map(el => ({
                   id: el.id,
                   label: el.nombrees,
-                  value: el.nombrees,
+                  value: el.id,
                 })),
               );
           });
@@ -146,7 +169,7 @@ const UserData = () => {
                 data.map(el => ({
                   id: el.id,
                   label: el.nombrees,
-                  value: el.nombrees,
+                  value: el.id,
                 })),
               );
           });

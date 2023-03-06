@@ -22,6 +22,7 @@
 
     "Podcasts": "Podcasts",
     "Channels": "Canales",
+    "Filter": "Filtros",
     "Play": "Jugar",
 
     "Welcome": "Welcome",
@@ -37,6 +38,8 @@
 
     "Download": "Descargar",
     "AddToMyLibrary": "Añadir a mi librería",
+    "closesession": "Cerrar sesión",
+    "Cancel": "Cerrar",
 
     "Name": "Nombre",
     "Surname": "Apellido",
@@ -62,6 +65,7 @@
     "Register": "Registro",
     "Login": "Acceso",
     "Follow": "Seguir",
+    "ForgotPassword": "¿Ha olvidado su contraseña? Restablece contraseña",
 
     "ActualName": "Nombre Real",
     "ActualSurname": "Apellido Real",
@@ -72,7 +76,7 @@
     "NewLanguage": "Nuevo Idioma",
     "NewCountry": "Nuevo País",
     "Update": "actualizar",
-
+    "Youarelistening" : "Estás escuchando",
     
 
     "Home": "Casa",
@@ -81,6 +85,13 @@
     "MyAgriFm": "MiagriFm",
     "UnFollow": "dejar de seguir",
     "RemoveFromLibrary":"Eliminar de la biblioteca",
-    "removeDownload" : "Quitar de Descargas"
+    "removeDownload" : "Quitar de Descargas",
+    "Biosecurity": "Bioseguridad",
+    "Welfare": "Bienestar",
+    "YourInterest": "Tu interés",
+    "channelofInterest":"Canales de su interés",
+    "RelatedPodcast":"Podcasts relacionados"
+
+
 
 }
