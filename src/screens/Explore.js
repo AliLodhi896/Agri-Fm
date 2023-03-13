@@ -6,14 +6,14 @@ import InterestCard from '../components/Cards/InterestCard';
 import Header from '../components/Header/Header';
 import * as Animatable from 'react-native-animatable';
 import { AuthContext } from '../context/Context';
-
+import {useNavigation} from '@react-navigation/native';
 const Explore = () => {
 const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
 
   const [interest,setInterest] = useState([])
   const [loading, setLoading] = useState(false)
   const [searchProduct, setSearchProduct] = useState([]);
-
+  const navigation = useNavigation();
     
   useEffect(()=>{
     setLoading(true)
@@ -60,7 +60,7 @@ const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
             <Animatable.View style={styles.interestlList}animation="fadeInUpBig" >
                 {interest.map((item)=>{
                     return(
-                        <InterestCard description ={item.name} img_intereses = {item.acf.img_intereses} id={item.id} />
+                        <InterestCard onPress={()=>navigation.navigate('InterestPodcast',{interest_detail:item})} description ={item.name} img_intereses = {item.acf.img_intereses} id={item.id} />
                     );
                 })}
             </Animatable.View>

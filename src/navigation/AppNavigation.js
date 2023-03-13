@@ -36,6 +36,7 @@ import ProfessionalDatas from '../screens/Auth/ProfessionalDatas';
 import SelectInterest from '../screens/Auth/SelectInterest';
 import { AuthContext } from '../context/Context';
 import VerifyPassword from '../screens/Auth/VerifyPassword';
+import InterestPodcast from '../screens/InterestPodcast';
 
 
 
@@ -140,6 +141,12 @@ const Tab = createBottomTabNavigator();
           component={MyLibrary}
           options={{headerShown: false}}
         />
+        <MainStack.Screen
+          name="InterestPodcast"
+          component={InterestPodcast}
+          options={{headerShown: false}}
+        />
+        
       </MainStack.Navigator>
     );
   };

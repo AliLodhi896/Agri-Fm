@@ -6,7 +6,7 @@
     "Nutrition": "Nutrición",
     "Aqua": "Agua",
     "LastChannels": "Últimos Canales",
-    "FeaturedPodcasts": "Podcasts Destacados",
+    "FeaturedPodcasts": "Lo más destacado",
     "GoToLibrary": "Ir a la Biblioteca",
     "DownloadPodcast": "Descargar Podcast",
     "Share": "Cuota",
@@ -23,7 +23,7 @@
     "Podcasts": "Podcasts",
     "Channels": "Canales",
     "Filter": "Filtros",
-    "Play": "Jugar",
+    "Play": "Escuchar",
 
     "Welcome": "Welcome",
     "Mobile": "Móvil",
@@ -66,7 +66,7 @@
     "Login": "Acceso",
     "Follow": "Seguir",
     "ForgotPassword": "¿Ha olvidado su contraseña? Restablece contraseña",
-
+    "YourLiabrary":"Tu biblioteca",
     "ActualName": "Nombre Real",
     "ActualSurname": "Apellido Real",
     "ActualCompany": "Empresa Real",

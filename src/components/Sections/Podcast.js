@@ -34,7 +34,7 @@ const Podcast = (props) => {
   const [loading, setLoading] = useState(false)
   const [muusicUrl, setmuusicUrl] = useState(null)
   const [musicdatafordownload, setmusicdatafordownload] = useState()
-console.log('downloadedPodcast',downloadedPodcast)
+  
       const fetchFavoritePodcast =async () =>{
           try {
             let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/misintereses-app.php?id_user=${UserData[0]?.user}`;

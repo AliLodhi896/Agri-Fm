@@ -288,12 +288,13 @@ const {language, selectedlang,isSignin,sate,setSate,tracks} = useContext(AuthCon
         </View>
        : 
         podCastData.slice(0, 5).map((item) => {
+          const match = channelsdata.find(item2 => item2?.id == item?.canales[0]);
           return (
             <FeaturedCard
               onPressIcon={()=>download(item)}
               onPressDownload={()=>downloadPodcast()}
               onPress={() => trackResetAndNavgate(item)}
-              channelName='Channel Name'
+              channelName={match?.name}
               podcastname = {item.title?.rendered}
               image = {item?.acf?.imagen_podcast1}
               time = {Object.values(item?.yoast_head_json?.twitter_misc)[0]}

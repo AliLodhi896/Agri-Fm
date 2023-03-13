@@ -29,6 +29,18 @@ import {useNavigation,useFocusEffect} from '@react-navigation/native';
 
 const Music = ({route}) => {
     const {language,tracks,setTracks,setSate,sate,trackForMiniPlayer,settrackForMiniPlayer} = useContext(AuthContext);
+    const [channelsdata, setchannelsdata] = useState([])
+
+    const getChannels = () => {
+        return fetch("https://socialagri.com/agriFM/wp-json/wp/v2/canales")
+              .then((response) => response.json())
+              .then((data) =>{ 
+                setchannelsdata(data);
+              })
+              .catch((err) => {
+                console.log(err,'API Failed');
+              });   
+      }
     const onShare = async () => {
         try {
           const result = await Share.share({
@@ -140,6 +152,7 @@ useFocusEffect(
       }
       useEffect(() => {
         fetchData();
+        getChannels()
       },[])
       
     const { position, buffered, duration } = useProgress()
@@ -229,13 +242,14 @@ useFocusEffect(
                         <Text style={styles.mainHeading}>{language?.FeaturedPodcasts}</Text>
                     </View>
                     {podCastData.slice(0, 5).map((item) => {
+                        const match = channelsdata.find(item2 => item2?.id == item?.canales[0]);
                         return (
                             <FeaturedCard
                             
                             // onPressIcon={()=>setModalVisible(true)}
                             // onPress={()=>navigation.navigate('Music',{podcastDetails:item})}
                             onPress={() => trackResetAndNavgate(item)}
-                            channelName='Channel Name'
+                            channelName={match?.name}
                             podcastname = {item.title?.rendered}
                             image = {item?.acf?.imagen_podcast1}
                             />

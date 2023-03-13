@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useState,useEffect} from 'react';
 import { StyleSheet, View,Image,Text,ScrollView,TouchableOpacity } from "react-native"
 import WhiteButton from '../components/Buttons/WhiteButton';
 import SocialModal from "../components/Cards/Modals/SocialModal";
@@ -14,22 +14,48 @@ const UserProfile = () => {
     const [modalVisible, setModalVisible] = useState(true);
     const navigation = useNavigation();
     const {language, selectedlang, setSelectedlang,UserData,setIsSignin,setUserData} = useContext(AuthContext);
+const [userdetals, setuserdetals] = useState([])
+console.log('userdetals',userdetals)
+
+    const fetchData = () => {
+        return fetch("https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/lista-usuarios.php?id_user=26204")
+              .then((response) => response.json())
+              .then((data) =>{ 
+                console.log('data',data)
+                setuserdetals(data);
+              })
+              .catch((err) => {
+                console.log(err,'API Failed');
+              });      
+      }
+useEffect(() => {
+  fetchData()
+}, [UserData])
+
     const data = [
         {
+            key: 'First Name',
+            value: userdetals[0]?.NAME
+        },
+        {
+            key: 'Sur Name',
+            value: userdetals[0]?.SURNAME
+        },
+        {
             key: 'Mobile',
-            value: UserData?.movil
+            value: userdetals[0]?.PHONE
         },
         {
             key: 'Company',
-            value: UserData?.NombreEspresa
+            value:  userdetals[0]?.COMPANY
         },
         {
             key: 'Job',
-            value: UserData?.cargo
+            value: userdetals[0]?.JOB
         },
         {
             key: 'Activity',
-            value: UserData?.actividad
+            value:userdetals[0]?.ACTIVITY
         },
         {
             key: 'Production',
@@ -62,7 +88,8 @@ const UserProfile = () => {
                     <AntDesign style={styles.edit} name="edit" color={'white'} size={20} />
                 </TouchableOpacity>
             </View>
-            <Text style={styles.welcome}>{language?.Welcome}</Text>
+            
+            <Text style={styles.welcome}>{language?.Welcome} {userdetals[0]?.NAME} {userdetals[0]?.SURNAME}</Text>
             <View style={{ backgroundColor: 'rgba(255,255,255,0.2)', padding: 15, borderRadius: 10, paddingVertical: 20, marginTop: 20 }}>
                 {data.map((item, index) => {
                     return (

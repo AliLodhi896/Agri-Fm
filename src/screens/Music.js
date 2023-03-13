@@ -30,7 +30,18 @@ const Music = ({route}) => {
     const {language,setTracks,setSate,sate,favoritePodcat_id,UserData,setfavoritePodcat_id,settrackForMiniPlayer,setpodcast_id,setdownloadedPodcast,setdownloadedPodcastID} = useContext(AuthContext);
     const {podcastDetails,Fromlibrary}= route.params
 
-    console.log('podcastDetails',podcastDetails)
+    const [channelsdata, setchannelsdata] = useState([])
+
+    const getChannels = () => {
+        return fetch("https://socialagri.com/agriFM/wp-json/wp/v2/canales")
+              .then((response) => response.json())
+              .then((data) =>{ 
+                setchannelsdata(data);
+              })
+              .catch((err) => {
+                console.log(err,'API Failed');
+              });   
+      }
     const [modalVisible, setModalVisible] = useState(false);
     const [podCastData, setPodcastData] = useState([]);
     const navigation = useNavigation();
@@ -101,6 +112,7 @@ const Music = ({route}) => {
         setSate(3)
         TrackPlayer.play();
         settrackForMiniPlayer(podcastDetails)
+        getChannels()
     },[podcastDetails])
 
     const toogle = async() => {
@@ -363,13 +375,15 @@ const RemoveDownload = async() => {
                         <Text style={styles.mainHeading}>{language?.RelatedPodcast}</Text>
                     </View>
                     {podCastData.slice(0, 5).map((item) => {
+                        const match = channelsdata.find(item2 => item2?.id == item?.canales[0]);
+
                         return (
                             <FeaturedCard
                             
                             onPressDownload={()=>downloadPodcast(item)}
                             // onPressIcon={()=>download(item)}
                             onPress={() => trackResetAndNavgate(item)}
-                            channelName='Channel Name'
+                            channelName={match?.name}
                             podcastname = {item.title?.rendered}
                             image = {item?.acf?.imagen_podcast1}
                             />
