@@ -179,7 +179,7 @@ useFocusEffect(
                 onClose={() => setModalVisible(false)}
                 onPress={() => setModalVisible(false)}
             />
-            <Header icon={true} rightIcon={true} />
+            <Header icon={true} rightIcon={false} />
             <View style={{ flexDirection: 'row' }}>
                 <Image style={{ height: 170, width: 170, borderRadius: 10 }} source={{uri: podcastDetails?.acf?.imagen_podcast1}} />
                 <View style={{ padding: 10 }}>

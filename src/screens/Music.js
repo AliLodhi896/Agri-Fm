@@ -314,7 +314,7 @@ const RemoveDownload = async() => {
               onPressRemoveDownload={()=>RemoveDownload()}
               onPressRemove={()=>RemovePodcastFromLiabrary()}
             />
-            <Header icon={true} rightIcon={true} />
+            <Header icon={true} rightIcon={false} />
             <View style={{ flexDirection: 'row' }}>
                 <Image style={{ height: 170, width: 170, borderRadius: 10 }} source={{uri: Fromlibrary == false ? podcastDetails?.acf?.imagen_podcast1 : podcastDetails?.image}} />
                 <View style={{ padding: 10 }}>

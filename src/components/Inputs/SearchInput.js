@@ -5,6 +5,7 @@ import {
     SafeAreaView,
     TextInput,
     Platform,
+    TouchableOpacity,
   } from 'react-native';
   import React from 'react';
   import Colors from '../../constant/Colors';
@@ -29,11 +30,13 @@ import {
             // style={styles.searchInput}
             onChangeText={props.onChangeText}
           />
+          <TouchableOpacity onPress={props.onPressCrosss}>
           <Entypo
             color={Colors.secondary}
             name="cross"
             size={22}
           />
+          </TouchableOpacity>
         </View>
       </SafeAreaView>
     );

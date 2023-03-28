@@ -9,31 +9,75 @@ import FeaturedCard from '../../components/Cards/FeaturedCard';
 import Podcast from '../../components/Sections/Podcast';
 import Channel from '../../components/Sections/Channel';
 
+
 import { useRoute } from '@react-navigation/native';
 let api = '';
 
 import { AuthContext } from '../../context/Context';
-
-
+import TrackPlayer,{
+  Capability,
+  Event,
+  RepeatMode,
+  State,
+  usePlaybackState,
+  useProgress,
+  useTrackPlayerEvents,
+  AppKilledPlaybackBehavior 
+} from 'react-native-track-player';
+import {useNavigation,useFocusEffect} from '@react-navigation/native';
 const CategoriesDetail = ({props,route}) => {
+  const navigation = useNavigation();
 const {details} = route.params
- 
+ console.log('details-------------------->',details)
   const [user, setUser] = useState([]);
   const [podcast, setPodcast] = useState(true)
   const [channels, setChannels] = useState(false)
-  const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
+  const {language, selectedlang, setSelectedlang,setSate} = useContext(AuthContext);
+  const [podCastData, setPodcastData] = useState([]);
+  const [channelsdata, setchannelsdata] = useState([])
 
-  const fetchData = () => {
-    console.log(`${api}?lang:es`,'checkkkk');
-    return fetch(`${api}?lang:es`)
+  const fetchFavoritePodcast =async () =>{
+    try {
+      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/category-post-app.php?category_id=${details}`;
+      const response = await fetch(baseUrl, {
+        method: 'Get',
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+      const responseData = await response.json();
+      if (responseData) {
+        setPodcastData(responseData)
+        
+      } else {
+        // alert('failed to get fav fav');
+      }
+    } catch (error) {
+      console.log('error => ', error);
+    }
+  }
+
+  useEffect(() => {
+    fetchFavoritePodcast();
+  },[])
+  const getChannels = () => {
+    return fetch("https://socialagri.com/agriFM/wp-json/wp/v2/canales?lang=en")
           .then((response) => response.json())
           .then((data) =>{ 
-            console.log(data),
-            setUser(data.length == 0 ? null : (data));
+            setchannelsdata(data);
+            setLoading(false)
           })
           .catch((err) => {
             console.log(err,'API Failed');
-          });
+          });   
+  }
+  useEffect(() => {
+    getChannels()
+  }, [])
+  const trackResetAndNavgate = (item) => {
+    TrackPlayer.reset();
+    setSate(0)
+    navigation.navigate('Music',{podcastDetails:item,Fromlibrary:false});
   }
   
   return (
@@ -60,7 +104,28 @@ const {details} = route.params
           </TouchableOpacity>
         </View>
         {podcast == true ?
-          <Podcast user={user} />
+          <View style={styles.featuredBox}>
+
+          {podCastData?.length == 0 ?
+          <Text style={{fontSize:16,color:Colors.primary,fontWeight:'bold',marginTop:'20%',textAlign:'center'}}>No Podcasts in this Category !</Text>
+          :
+          podCastData?.map((item)=>{
+              return(
+                <FeaturedCard
+                // onPressIcon={()=>download(item)}
+                // onPressDownload={()=>downloadPodcast()}
+                onPress={() => trackResetAndNavgate(item)}
+                channelName={item?.channel_name[0]}
+                podcastname = {item?.title}
+                textstyle={{color:Colors.primary}} 
+                          headingText={{color:'grey'}} 
+                          timeText={{color:'grey'}} 
+                image = {item?.imagen_podcast1}
+                time = {item?.time}
+              />
+              );
+          })}
+    </View> 
           :
           <Channel user={user} />
         }
@@ -125,6 +190,10 @@ const styles = StyleSheet.create({
     buttonTextActive:{
       color:Colors.secondary,
       fontWeight:'700'
+    },
+    featuredBox:{
+      marginHorizontal:10,
+      marginTop:10
     }
 
 })

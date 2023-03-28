@@ -311,7 +311,15 @@ const RemoveDownload = async() => {
   // downloadedPodcastID
   // setdownloadedPodcastID()
 }
-
+const [newpodcast, setnewpodcast] = useState([])
+useEffect(()=>{
+fetchData();
+fetch('https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/podcast-app.php?lang=en')
+.then(res=>res.json())
+.then((data) =>{ 
+  setnewpodcast(data);
+})
+},[])
   return (
     <View style={{backgroundColor:Colors.primary,flex:1}}>
     
@@ -368,7 +376,7 @@ const RemoveDownload = async() => {
            <TouchableOpacity
              style={styles.categories}
              onPress={() => {
-               navigation.navigate('CategoriesDetail',{test: item.id})
+               navigation.navigate('CategoriesDetail',{details: item.id})
                
                }}>
              <Image
@@ -383,7 +391,9 @@ const RemoveDownload = async() => {
      <View style={styles.cardBox}>
        <View style={styles.headingBox}>
          <Text style={styles.mainHeading}>{language?.LastChannels}</Text>
-         <Text style={styles.subHeading}>See All</Text>
+         <TouchableOpacity onPress={()=>navigation.navigate('SeeAllChannels')}>
+          <Text style={styles.subHeading}>See All</Text>
+         </TouchableOpacity>
        </View>
        <ScrollView style={styles.categoryBox} horizontal  >
          {loading == true ?
@@ -412,22 +422,24 @@ const RemoveDownload = async() => {
      <View style={styles.cardBox} animation="fadeInUpBig">
        <View style={styles.headingBox}>
          <Text style={styles.mainHeading}>{language?.Youarelistening}</Text>
-         <Text style={styles.subHeading}>See All</Text>
+         <TouchableOpacity onPress={()=>navigation.navigate('SeeAll')}>
+          <Text style={styles.subHeading}>See All</Text>
+         </TouchableOpacity>
        </View>
        {loading == true ?
        <View style={{padding:100}}>
          <ActivityIndicator size="large" color="white" /> 
        </View>
       : 
-       podCastData.slice(0, 10).map((item) => {
-        // 11425 == 11425
-        const match = channelsdata.find(item2 => item2?.id == item?.canales[0]);
+      
+       podCastData.slice(0, 5).map((item) => {
+        const match = newpodcast.find(item2 => item2?.id == item?.id);
          return (
            <FeaturedCard
              onPressDownload={()=>downloadPodcast(item)}
              onPressIcon={()=>download(item)}
              onPress={() => trackResetAndNavgate(item)}
-             channelName={match?.name}
+             channelName={match?.channel_name}
              podcastname = {item.title?.rendered}
              image = {item?.acf?.imagen_podcast1}
              id = {item?.id}
@@ -507,7 +519,7 @@ const RemoveDownload = async() => {
          </View>
       </ScrollView>
     </View>
-    <View style={{marginVertical:20,marginHorizontal:10,height:'15%' ,backgroundColor:Colors.primary}}>
+    <View style={{marginTop:'9%' ,backgroundColor:Colors.primary}}>
      {sate !== 0  ?
              <MiniPlayerCard />
              : 

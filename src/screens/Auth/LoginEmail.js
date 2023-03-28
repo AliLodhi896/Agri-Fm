@@ -49,7 +49,7 @@ const LoginEmail = () => {
         textStyle={{color: Colors.primary, fontWeight: 'Bold'}}
         backgroundColor={'white'}
         icon={true}
-        title={'Login/Registration'}
+        title={language?.Login}
       />
       <View style={{marginVertical: 30}}>
         <Input

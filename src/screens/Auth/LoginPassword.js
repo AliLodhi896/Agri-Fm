@@ -50,7 +50,8 @@ const LoginPassword = () => {
         },
       });
       const responseData = await response.json();
-      if (responseData) {
+      console.log('responseData',responseData)
+      if (responseData[0].validation !== 'No hemos encontrado ningún usuario con este email, por favor cree una cuenta.' || responseData[0].validation !== 'Revise su email y contraseña' ) {
         const jsonValue = JSON.stringify(responseData);
         await AsyncStorage.setItem('userDetails',jsonValue)
         setIsSignin(true)
@@ -66,7 +67,8 @@ const LoginPassword = () => {
       //
     }
   };
-
+  // [{"validation": "No hemos encontrado ningún usuario con este email, por favor cree una cuenta."}]
+// [{"validation": "Revise su email y contraseña"}]
   return (
     <ScrollView style={styles.mainBox}>
       <Header
@@ -74,7 +76,7 @@ const LoginPassword = () => {
         textStyle={{color: Colors.primary, fontWeight: 'Bold'}}
         backgroundColor={'white'}
         icon={true}
-        title={'Login/Registration'}
+        title={language?.Login}
       />
       <View style={{marginVertical: 30}}>
         <Input

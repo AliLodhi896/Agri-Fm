@@ -65,8 +65,7 @@ const MiniPlayerCard = (props) => {
     }
     const navigation = useNavigation();
   return (
-    <TouchableOpacity  onPress={()=>navigation.navigate('Music',{Fromlibrary:false,podcastDetails:trackForMiniPlayer,miniPlayer:true})} style={{backgroundColor:'white',padding:10,flexDirection:'row',borderRadius:10,alignContent:"center",alignItems:'center',justifyContent:"space-between",
-marginHorizontal:10}}>
+    <TouchableOpacity  onPress={()=>navigation.navigate('Music',{Fromlibrary:false,podcastDetails:trackForMiniPlayer,miniPlayer:true})} style={{backgroundColor:'white',padding:10,flexDirection:'row',alignContent:"center",alignItems:'center',justifyContent:"space-between"}}>
     <View style={styles.imageBox}>
       <Image
           source={{uri: trackForMiniPlayer?.acf?.imagen_podcast1}}

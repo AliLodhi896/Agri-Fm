@@ -6,6 +6,7 @@ import InterestCard from '../../components/Cards/InterestCard';
 import Header from '../../components/Header/Header';
 import * as Animatable from 'react-native-animatable';
 import { AuthContext } from '../../context/Context';
+import FeaturedCard from '../../components/Cards/FeaturedCard';
 
 const Explore = () => {
 const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
@@ -13,9 +14,10 @@ const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
   const [loading, setLoading] = useState(false)
   const [interest,setInterest] = useState([])
   const [searchProduct, setSearchProduct] = useState([]);
+  const [podCastData, setPodcastData] = useState([]);
+  const [serachText, setserachText] = useState()
 
-
-
+console.log('serachText',serachText)
     useEffect(()=>{
         setLoading(true)
         fetch('https://socialagri.com/agriFM/wp-json/wp/v2/intereses/')
@@ -26,48 +28,89 @@ const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
             setLoading(false)
         })
       },[])
-
+      const fetchData = () => {
+        setLoading(true)
+        return fetch("https://socialagri.com/agriFM/wp-json/wp/v2/podcast?lang=en")
+              .then((response) => response.json())
+              .then((data) =>{ 
+                setPodcastData(data);
+                setLoading(false)
+              })
+              .catch((err) => {
+                console.log(err,'API Failed');
+              });      
+      }
+    
+    useEffect(() => {
+      fetchData()
+    }, [])
       const setProducts = text => {
+        setserachText(text)
         setSearchProduct(interest);
         if (text) {
             setSearchProduct(
-            interest.filter(item =>
-              item?.name.toLowerCase().includes(text.toLowerCase()),
+            podCastData.filter(item =>
+              item?.title?.rendered.toLowerCase().includes(text.toLowerCase()),
             ),
           );
         } else {
             setSearchProduct(interest);
         }
       };
+      const [activeTab, setactiveTab] = useState(true)
 
 
   return (
     <ScrollView style={styles.mainBox}  >
-        <Header icon={true}  />
-        <View style={styles.searchBar}>
-            <SearchInput placeholder={language?.ExploreOurPodcast} value={searchProduct} onChangeText={setProducts} />
+    <Header icon={true}  />
+    <View style={styles.searchBar}>
+        <SearchInput onPressCrosss={()=>{setserachText(undefined),setProducts()}} placeholder={language?.ExploreOurPodcast} value={serachText} onChangeText={setProducts} />
+    </View>
+    <View style={styles.cardBox}>
+        <View style={styles.headingBox}>
+          {serachText == undefined || serachText == '' ?
+            <Text style={styles.mainHeading}>{language?.Interests}</Text>
+: null
+          }
         </View>
-        <View style={styles.cardBox}>
-            <View style={styles.headingBox}>
-                <Text style={styles.mainHeading}>{language?.Interests}</Text>
-            </View>
-            {loading == true ? 
-  <View style={{marginTop:'50%'}}> 
+{loading == true ? 
+<View style={{marginTop:'50%'}}> 
 <ActivityIndicator size="large" color="white" /> 
-
-  </View>
-  :
-  
-            <Animatable.View style={styles.interestlList}animation="fadeInUpBig" >
-                {searchProduct?.map((item)=>{
-                    return(
-                        <InterestCard description ={item.name} img_intereses = {item.acf.img_intereses} id={item.id} />
-                    );
-                })}
-            </Animatable.View>
+</View>
+: serachText == undefined || serachText == '' ?
+<Animatable.View style={styles.interestlList}animation="fadeInUpBig" >
+    {searchProduct.map((item)=>{
+        return(
+            <InterestCard onPress={()=>navigation.navigate('InterestPodcast',{interest_detail:item})} description ={item.name} img_intereses = {item.acf.img_intereses} id={item.id} />
+        );
+    })}
+</Animatable.View>
+:
+<View style={{flexDirection:'row',justifyContent:'space-around',marginVertical:20}}>
+  <TouchableOpacity onPress={()=>setactiveTab(true)} style={{ borderBottomWidth:activeTab == true ?2:null,borderBottomColor:Colors.secondary }}>
+    <Text style={{fontSize:20,fontWeight:'bold',color:Colors.secondary}}>Podcasts</Text>
+  </TouchableOpacity>
+  <TouchableOpacity onPress={()=>setactiveTab(false)} style={{borderBottomWidth:activeTab == false ?2:null,borderBottomColor:Colors.secondary}}>
+    <Text style={{fontSize:20,fontWeight:'bold',color:Colors.secondary}}>Channels</Text>
+  </TouchableOpacity>
+</View>
+  }{activeTab == true ? searchProduct.slice(0, 10).map((item) => {
+     return (
+      <>
+        <FeaturedCard
+        //  onPressDownload={()=>downloadPodcast(item)}
+        //  onPressIcon={()=>download(item)}
+        //  onPress={() => trackResetAndNavgate(item)}
+         podcastname = {item.title?.rendered}
+         image = {item?.acf?.imagen_podcast1}
+         id = {item?.id}
+        />
+      </>
+     );
+   }): null
 }
-        </View>
-    </ScrollView>
+    </View>
+</ScrollView>
   )
 }
 

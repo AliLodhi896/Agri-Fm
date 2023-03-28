@@ -55,7 +55,7 @@ const Channel = (props) => {
                         <ChannelCard 
                         staticimg={true}
                         descriptionStyle={{marginHorizontal:0}} 
-                        mainStyle={{width:180}} 
+                        mainStyle={{width:180,height:190}} 
                         style={{marginHorizontal:0}} 
                         title={item.TITLE} 
                         onPress={() => navigation.navigate('ChannelDetails',{details:item})}
@@ -68,11 +68,10 @@ const Channel = (props) => {
 const styles = StyleSheet.create({
 
       interestlList:{
-        marginTop:10,
         justifyContent:'space-between',
         flexDirection:'row',
         flexWrap:'wrap',
-        marginHorizontal:10
+        marginHorizontal:10,marginTop:20
     },
 });
 export default Channel

@@ -37,6 +37,8 @@ import SelectInterest from '../screens/Auth/SelectInterest';
 import { AuthContext } from '../context/Context';
 import VerifyPassword from '../screens/Auth/VerifyPassword';
 import InterestPodcast from '../screens/InterestPodcast';
+import SeeAll from '../screens/SeeAll';
+import SeeAllChannels from '../screens/SeeAllChannels';
 
 
 
@@ -146,7 +148,16 @@ const Tab = createBottomTabNavigator();
           component={InterestPodcast}
           options={{headerShown: false}}
         />
-        
+        <MainStack.Screen
+          name="SeeAll"
+          component={SeeAll}
+          options={{headerShown: false}}
+        />
+        <MainStack.Screen
+          name="SeeAllChannels"
+          component={SeeAllChannels}
+          options={{headerShown: false}}
+        />
       </MainStack.Navigator>
     );
   };

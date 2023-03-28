@@ -15,7 +15,7 @@ const FeaturedCard = (props) => {
   const {language,downloadedPodcast,downloadedPodcastID} = useContext(AuthContext);
 
   return (
-    <View style={{justifyContent:'space-between',flexDirection:'row',paddingVertical:10}}>
+    <TouchableOpacity onPress={props.onPress} style={{justifyContent:'space-between',flexDirection:'row',paddingVertical:10}}>
         <View style={{width:'30%',height:100}}>
             <Image
                 source={{uri: props.image}}
@@ -74,7 +74,7 @@ const FeaturedCard = (props) => {
                 }
                 
         </View>
-    </View>
+    </TouchableOpacity>
   )
 }
 const styles = StyleSheet.create({
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     backgroundColor:Colors.button,
     padding:5,
     borderRadius:50,
-    width:80,
+    width:90,
     alignItems:'center',
     flexDirection:'row'
    },

@@ -75,6 +75,15 @@ const {language, selectedlang,isSignin,sate,setSate,tracks} = useContext(AuthCon
       setInterest(data.length == 0 ? undefined || null : (data));
     })
   },[])
+  const [newpodcast, setnewpodcast] = useState([])
+    useEffect(()=>{
+    fetchData();
+    fetch('https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/podcast-app.php?lang=en')
+    .then(res=>res.json())
+    .then((data) =>{ 
+      setnewpodcast(data);
+    })
+  },[])
 
   useFocusEffect(
     useCallback(() => {
@@ -86,17 +95,17 @@ const {language, selectedlang,isSignin,sate,setSate,tracks} = useContext(AuthCon
 
   const categories = [
     {
-      id: 1,
+      id: 2,
       name: language?.Poultry,
       image: require('../../assets/Images/poultry.png'),
     },
     {
-      id: 2,
+      id: 6,
       name: language?.Ruminant,
       image: require('../../assets/Images/ruminant.png'),
     },
     {
-      id: 3,
+      id: 8,
       name: language?.Swine,
       image: require('../../assets/Images/swine.png'),
     },
@@ -106,12 +115,12 @@ const {language, selectedlang,isSignin,sate,setSate,tracks} = useContext(AuthCon
       image: require('../../assets/Images/nutrition.png'),
     },
     {
-      id: 5,
+      id: 8,
       name: language?.Aqua,
       image: require('../../assets/Images/aqua.png'),
     },
     {
-      id: 6,
+      id: 8,
       name: selectedlang == 'en' ?  'Others' :  'Otras' ,
       image: require('../../assets/Images/aqua.png'),
     },
@@ -238,7 +247,7 @@ const {language, selectedlang,isSignin,sate,setSate,tracks} = useContext(AuthCon
           return (
             <TouchableOpacity
               style={styles.categories}
-              onPress={() => {navigation.navigate('CategoriesDetail',{test: item.id})}}>
+              onPress={() => {navigation.navigate('CategoriesDetail',{details: item.id})}}>
               <Image
                 source={item.image}
                 style={{width: '80%', height: '75%', borderRadius: 100}}
@@ -288,13 +297,13 @@ const {language, selectedlang,isSignin,sate,setSate,tracks} = useContext(AuthCon
         </View>
        : 
         podCastData.slice(0, 5).map((item) => {
-          const match = channelsdata.find(item2 => item2?.id == item?.canales[0]);
+          const match = newpodcast.find(item2 => item2?.id == item?.id);
           return (
             <FeaturedCard
               onPressIcon={()=>download(item)}
               onPressDownload={()=>downloadPodcast()}
               onPress={() => trackResetAndNavgate(item)}
-              channelName={match?.name}
+              channelName={match?.channel_name}
               podcastname = {item.title?.rendered}
               image = {item?.acf?.imagen_podcast1}
               time = {Object.values(item?.yoast_head_json?.twitter_misc)[0]}
@@ -367,7 +376,7 @@ const {language, selectedlang,isSignin,sate,setSate,tracks} = useContext(AuthCon
         })}
       </View>
     </ScrollView>
-    <View style={{marginVertical:20,marginHorizontal:10}}>
+    <View style={{marginTop:20}}>
       {sate !== 0  ?
               <MiniPlayerCard />
               : 

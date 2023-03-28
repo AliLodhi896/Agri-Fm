@@ -72,7 +72,7 @@ const VerifyPassword = () => {
         textStyle={{color: Colors.primary, fontWeight: 'Bold'}}
         backgroundColor={'white'}
         icon={true}
-        title={'Login/Registration'}
+        title={language?.Register}
       />
       <View style={{marginVertical: 30}}>
         <Input

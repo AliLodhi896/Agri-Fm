@@ -15,10 +15,10 @@ const UserProfile = () => {
     const navigation = useNavigation();
     const {language, selectedlang, setSelectedlang,UserData,setIsSignin,setUserData} = useContext(AuthContext);
 const [userdetals, setuserdetals] = useState([])
-console.log('userdetals',userdetals)
+console.log('userdetals',UserData)
 
     const fetchData = () => {
-        return fetch("https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/lista-usuarios.php?id_user=26204")
+        return fetch("https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/lista-usuarios.php?id_user=23005")
               .then((response) => response.json())
               .then((data) =>{ 
                 console.log('data',data)
@@ -35,27 +35,27 @@ useEffect(() => {
     const data = [
         {
             key: 'First Name',
-            value: userdetals[0]?.NAME
+            value: userdetals !== null && userdetals[0]?.NAME
         },
         {
             key: 'Sur Name',
-            value: userdetals[0]?.SURNAME
+            value:userdetals !== null &&  userdetals[0]?.SURNAME
         },
         {
             key: 'Mobile',
-            value: userdetals[0]?.PHONE
+            value:userdetals !== null &&  userdetals[0]?.PHONE
         },
         {
             key: 'Company',
-            value:  userdetals[0]?.COMPANY
+            value:userdetals !== null &&   userdetals[0]?.COMPANY
         },
         {
             key: 'Job',
-            value: userdetals[0]?.JOB
+            value:userdetals !== null &&  userdetals[0]?.JOB
         },
         {
             key: 'Activity',
-            value:userdetals[0]?.ACTIVITY
+            value:userdetals !== null && userdetals[0]?.ACTIVITY
         },
         {
             key: 'Production',
@@ -89,7 +89,7 @@ useEffect(() => {
                 </TouchableOpacity>
             </View>
             
-            <Text style={styles.welcome}>{language?.Welcome} {userdetals[0]?.NAME} {userdetals[0]?.SURNAME}</Text>
+            <Text style={styles.welcome}>{language?.Welcome} {userdetals !== null && userdetals[0]?.NAME} {userdetals !== null && userdetals[0]?.SURNAME}</Text>
             <View style={{ backgroundColor: 'rgba(255,255,255,0.2)', padding: 15, borderRadius: 10, paddingVertical: 20, marginTop: 20 }}>
                 {data.map((item, index) => {
                     return (

@@ -47,10 +47,8 @@ const EditProfile = () => {
 
 
    const UpdateUser = async data => {
-
   try {
     let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/editprofile-app.php?id_user=${UserData[0]?.user}&lastname_user=${data?.surname}&name_user=${data?.actual_name}&empresa=${json_Empresa}&cargo=1&actividad=1&idioma=1&country=2&phone=${data?.ActualMobilePhone}`;
-
     const response = await fetch(baseUrl, {
       method: 'GET',
       headers: {
@@ -80,6 +78,7 @@ const EditProfile = () => {
     console.log('error => ', error);
   }
 };
+
 const [Jobs, setJob] = useState([{}]);
 const [Activity, setActivity] = useState([{}]);
 const [Language, setLanguage] = useState([{}]);
