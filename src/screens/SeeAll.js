@@ -68,7 +68,7 @@ const trackResetAndNavgate = (item) => {
          <View style={styles.featuredBox}>
 
          {podCastData?.length == 0 ?
-         <Text style={{fontSize:16,color:Colors.primary,fontWeight:'bold',marginTop:'20%',textAlign:'center'}}>No Podcasts!</Text>
+         <Text style={{fontSize:20,color:Colors.primary,fontWeight:'bold',marginTop:'50%',textAlign:'center'}}>No Podcasts !</Text>
          :
          podCastData?.map((item)=>{
            const match = channelsdata.find(item2 => item2?.id == item?.canales[0]);

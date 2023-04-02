@@ -41,58 +41,6 @@ const {language, selectedlang,isSignin,sate,setSate,tracks} = useContext(AuthCon
   const [loading, setLoading] = useState(false)
   const [channelsdata, setchannelsdata] = useState([])
 
-  const fetchData = () => {
-    setLoading(true)
-    return fetch("https://socialagri.com/agriFM/wp-json/wp/v2/podcast")
-          .then((response) => response.json())
-          .then((data) =>{ 
-            setPodcastData(data);
-            setLoading(false)
-          })
-          .catch((err) => {
-            console.log(err,'API Failed');
-          });      
-  }
-
-  const getChannels = () => {
-    setLoading(true)
-    return fetch("https://socialagri.com/agriFM/wp-json/wp/v2/canales")
-          .then((response) => response.json())
-          .then((data) =>{ 
-            setchannelsdata(data);
-            setLoading(false)
-          })
-          .catch((err) => {
-            console.log(err,'API Failed');
-          });   
-  }
-
-  useEffect(()=>{
-    fetchData();
-    fetch('https://socialagri.com/agriFM/wp-json/wp/v2/intereses/')
-    .then(res=>res.json())
-    .then((data) =>{ 
-      setInterest(data.length == 0 ? undefined || null : (data));
-    })
-  },[])
-  const [newpodcast, setnewpodcast] = useState([])
-    useEffect(()=>{
-    fetchData();
-    fetch('https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/podcast-app.php?lang=en')
-    .then(res=>res.json())
-    .then((data) =>{ 
-      setnewpodcast(data);
-    })
-  },[])
-
-  useFocusEffect(
-    useCallback(() => {
-      getChannels();
-      requestToPermissions();
-    }, []),
-  );
-
-
   const categories = [
     {
       id: 2,
@@ -126,6 +74,78 @@ const {language, selectedlang,isSignin,sate,setSate,tracks} = useContext(AuthCon
     },
   ];
 
+  const fetchData =async () =>{
+    try {
+      let baseUrl = `https://socialagri.com/agriFM/wp-json/wp/v2/podcast?lang=${selectedlang}`;
+      const response = await fetch(baseUrl, {
+        method: 'Get',
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+      const responseData = await response.json();
+      if (responseData) {
+        setPodcastData(responseData)
+      } else {
+      }
+    } catch (error) {
+      console.log('error => ', error);
+    }
+  }
+
+
+  const getChannels = () => {
+    setLoading(true)
+    return fetch("https://socialagri.com/agriFM/wp-json/wp/v2/canales")
+          .then((response) => response.json())
+          .then((data) =>{ 
+            setchannelsdata(data);
+            setLoading(false)
+          })
+          .catch((err) => {
+            console.log(err,'API Failed');
+          });   
+  }
+
+  useEffect(()=>{
+    fetchData();
+    fetch('https://socialagri.com/agriFM/wp-json/wp/v2/intereses/')
+    .then(res=>res.json())
+    .then((data) =>{ 
+      setInterest(data.length == 0 ? undefined || null : (data));
+    })
+  },[])
+
+  const [newpodcast, setnewpodcast] = useState([])
+
+  const fetchNewPodcast =async () =>{
+    try {
+      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/podcast-app.php?lang=${selectedlang}`;
+      const response = await fetch(baseUrl, {
+        method: 'Get',
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+      const responseData = await response.json();
+      if (responseData) {
+        setnewpodcast(responseData)
+      } else {
+      }
+    } catch (error) {
+      console.log('error => ', error);
+    }
+  }
+
+
+
+  useFocusEffect(
+    useCallback(() => {
+      getChannels();
+      fetchNewPodcast()
+      requestToPermissions();
+    }, []),
+  );
 
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
@@ -260,7 +280,9 @@ const {language, selectedlang,isSignin,sate,setSate,tracks} = useContext(AuthCon
       <View style={styles.cardBox}>
         <View style={styles.headingBox}>
           <Text style={styles.mainHeading}>{language?.LastChannels}</Text>
-          <Text style={styles.subHeading}>See All</Text>
+          <TouchableOpacity onPress={()=>navigation.navigate('SeeAllChannels')}>
+            <Text style={styles.subHeading}>See All</Text>
+          </TouchableOpacity>
         </View>
         <ScrollView style={styles.categoryBox} horizontal  >
           {loading == true ?
@@ -274,7 +296,6 @@ const {language, selectedlang,isSignin,sate,setSate,tracks} = useContext(AuthCon
                 onPress={() => navigation.navigate('ChannelDetails',{details:item})}
                 title={item.name}
                 image = {item?.acf?.imagen_perfil}
-                // description={item.description}
               />
             );
           })}
@@ -289,7 +310,9 @@ const {language, selectedlang,isSignin,sate,setSate,tracks} = useContext(AuthCon
       <View style={styles.cardBox} animation="fadeInUpBig">
         <View style={styles.headingBox}>
           <Text style={styles.mainHeading}>{language?.FeaturedPodcasts}</Text>
-          <Text style={styles.subHeading}>See All</Text>
+          <TouchableOpacity onPress={()=>navigation.navigate('SeeAll')}>
+            <Text style={styles.subHeading}>See All</Text>
+          </TouchableOpacity>
         </View>
         {loading == true ?
         <View style={{padding:100}}>

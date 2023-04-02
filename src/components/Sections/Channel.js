@@ -15,14 +15,13 @@ import {useNavigation,useFocusEffect} from '@react-navigation/native';
 const Channel = (props) => {
     const [user, setUser] = useState([]);
     const {language, selectedlang, setSelectedlang,UserData} = useContext(AuthContext);
-    const [followedchannels, setfollowedchannels] = useState()
+    const [followedchannels, setfollowedchannels] = useState([])
     const [loading, setLoading] = useState(false)
     const navigation = useNavigation();
 
     const fetchFollowedChannels =async () =>{
-      setLoading(true)
       try {
-        let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/miscanales-app.php?id_user=${UserData[0]?.user}`;
+        let baseUrl = `https://socialagri.com/agriFM/wp-json/wp/v2/canales?lang=${selectedlang}`;
         const response = await fetch(baseUrl, {
           method: 'Get',
           headers: {
@@ -32,17 +31,14 @@ const Channel = (props) => {
         const responseData = await response.json();
         if (responseData) {
           setfollowedchannels(responseData)
-          let courseName = responseData?.map(itemxx => {
-            return  itemxx.ID
-          })
         } else {
-          // alert('failed to add to fav');
+          // alert('failed to get fav fav');
         }
       } catch (error) {
         console.log('error => ', error);
       }
-      setLoading(false)
     }
+  
 
     useEffect(() => {
       fetchFollowedChannels();
@@ -50,14 +46,15 @@ const Channel = (props) => {
 
   return  (
             <View style={styles.interestlList}>
-                {followedchannels?.map((item)=>{
+                {
+                followedchannels?.map((item)=>{
                     return(
                         <ChannelCard 
-                        staticimg={true}
+                        image = {item?.acf?.imagen_perfil}
                         descriptionStyle={{marginHorizontal:0}} 
                         mainStyle={{width:180,height:190}} 
                         style={{marginHorizontal:0}} 
-                        title={item.TITLE} 
+                        title={item.name} 
                         onPress={() => navigation.navigate('ChannelDetails',{details:item})}
                         titleStyle={{color:Colors.primary,marginLeft:0}} />
                     );
@@ -71,7 +68,9 @@ const styles = StyleSheet.create({
         justifyContent:'space-between',
         flexDirection:'row',
         flexWrap:'wrap',
-        marginHorizontal:10,marginTop:20
+        marginHorizontal:10,marginTop:20,
+        alignContent:'center',
+        alignItems:'center'
     },
 });
 export default Channel

@@ -34,7 +34,8 @@ import ProfessionalDatas from '../screens/Auth/ProfessionalDatas';
 import SelectInterest from '../screens/Auth/SelectInterest';
 import { AuthContext } from '../context/Context';
 import VerifyPassword from '../screens/Auth/VerifyPassword';
-
+import SeeAll from '../screens/SeeAll';
+import SeeAllChannels from '../screens/SeeAllChannels';
 
 
 const MainStack = createStackNavigator();
@@ -131,6 +132,16 @@ const Tab = createBottomTabNavigator();
         <MainStack.Screen
           name="SelectInterest"
           component={SelectInterest}
+          options={{headerShown: false}}
+        />
+        <MainStack.Screen
+          name="SeeAllChannels"
+          component={SeeAllChannels}
+          options={{headerShown: false}}
+        />
+        <MainStack.Screen
+          name="SeeAll"
+          component={SeeAll}
           options={{headerShown: false}}
         />
         

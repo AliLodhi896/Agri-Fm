@@ -28,21 +28,46 @@ const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
         setLoading(false)
     })
   },[])
-  const fetchData = () => {
-    setLoading(true)
-    return fetch("https://socialagri.com/agriFM/wp-json/wp/v2/podcast?lang=en")
-          .then((response) => response.json())
-          .then((data) =>{ 
-            setPodcastData(data);
-            setLoading(false)
-          })
-          .catch((err) => {
-            console.log(err,'API Failed');
-          });      
+  const fetchData =async () =>{
+    try {
+      let baseUrl = `https://socialagri.com/agriFM/wp-json/wp/v2/podcast?lang=${selectedlang}`;
+      const response = await fetch(baseUrl, {
+        method: 'Get',
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+      const responseData = await response.json();
+      if (responseData) {
+        setPodcastData(responseData)
+      } else {
+      }
+    } catch (error) {
+      console.log('error => ', error);
+    }
   }
-
+  const [newpodcast, setnewpodcast] = useState([])
+  const fetchNewPodcast =async () =>{
+    try {
+      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/podcast-app.php?lang=${selectedlang}`;
+      const response = await fetch(baseUrl, {
+        method: 'Get',
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+      const responseData = await response.json();
+      if (responseData) {
+        setnewpodcast(responseData)
+      } else {
+      }
+    } catch (error) {
+      console.log('error => ', error);
+    }
+  }
 useEffect(() => {
   fetchData()
+  fetchNewPodcast()
 }, [])
 
 
@@ -96,12 +121,14 @@ const [activeTab, setactiveTab] = useState(true)
       </TouchableOpacity>
     </View>
       }{activeTab == true ? searchProduct.slice(0, 10).map((item) => {
+        const match = newpodcast.find(item2 => item2?.id == item?.id);
          return (
           <>
             <FeaturedCard
             //  onPressDownload={()=>downloadPodcast(item)}
             //  onPressIcon={()=>download(item)}
             //  onPress={() => trackResetAndNavgate(item)}
+             channelName={match?.channel_name}
              podcastname = {item.title?.rendered}
              image = {item?.acf?.imagen_podcast1}
              id = {item?.id}

@@ -27,7 +27,7 @@ import RNFetchBlob from 'rn-fetch-blob';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Music = ({route}) => {
-    const {language,setTracks,setSate,sate,favoritePodcat_id,UserData,setfavoritePodcat_id,settrackForMiniPlayer,setpodcast_id,setdownloadedPodcast,setdownloadedPodcastID} = useContext(AuthContext);
+    const {selectedlang,language,setTracks,setSate,sate,favoritePodcat_id,UserData,setfavoritePodcat_id,settrackForMiniPlayer,setpodcast_id,setdownloadedPodcast,setdownloadedPodcastID} = useContext(AuthContext);
     const {podcastDetails,Fromlibrary}= route.params
 
     const [channelsdata, setchannelsdata] = useState([])
@@ -135,18 +135,46 @@ const Music = ({route}) => {
        TrackPlayer.add([track])
     }
 
-    const fetchData = () => {
-        return fetch("https://socialagri.com/agriFM/wp-json/wp/v2/podcast")
-              .then((response) => response.json())
-              .then((data) =>{ 
-                setPodcastData(data);
-              })
-              .catch((err) => {
-                console.log(err,'API Failed');
-              });
+    const fetchData =async () =>{
+      try {
+        let baseUrl = `https://socialagri.com/agriFM/wp-json/wp/v2/podcast?lang=${selectedlang}`;
+        const response = await fetch(baseUrl, {
+          method: 'Get',
+          headers: {
+            Accept: 'application/json',
+          },
+        });
+        const responseData = await response.json();
+        if (responseData) {
+          setPodcastData(responseData)
+        } else {
+        }
+      } catch (error) {
+        console.log('error => ', error);
       }
+    }
+    const [newpodcast, setnewpodcast] = useState([])
+    const fetchNewPodcast =async () =>{
+      try {
+        let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/podcast-app.php?lang=${selectedlang}`;
+        const response = await fetch(baseUrl, {
+          method: 'Get',
+          headers: {
+            Accept: 'application/json',
+          },
+        });
+        const responseData = await response.json();
+        if (responseData) {
+          setnewpodcast(responseData)
+        } else {
+        }
+      } catch (error) {
+        console.log('error => ', error);
+      }
+    }
       useEffect(() => {
         fetchData();
+        fetchNewPodcast()
       },[])
 
     const forward = () => {
@@ -375,15 +403,14 @@ const RemoveDownload = async() => {
                         <Text style={styles.mainHeading}>{language?.RelatedPodcast}</Text>
                     </View>
                     {podCastData.slice(0, 5).map((item) => {
-                        const match = channelsdata.find(item2 => item2?.id == item?.canales[0]);
-
+                        const match = newpodcast.find(item2 => item2?.id == item?.id);
                         return (
                             <FeaturedCard
                             
                             onPressDownload={()=>downloadPodcast(item)}
                             // onPressIcon={()=>download(item)}
                             onPress={() => trackResetAndNavgate(item)}
-                            channelName={match?.name}
+                            channelName={match?.channel_name}
                             podcastname = {item.title?.rendered}
                             image = {item?.acf?.imagen_podcast1}
                             />

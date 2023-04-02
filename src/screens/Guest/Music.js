@@ -28,7 +28,7 @@ import Slider from '@react-native-community/slider';
 import {useNavigation,useFocusEffect} from '@react-navigation/native';
 
 const Music = ({route}) => {
-    const {language,tracks,setTracks,setSate,sate,trackForMiniPlayer,settrackForMiniPlayer} = useContext(AuthContext);
+    const {language,tracks,setTracks,setSate,sate,trackForMiniPlayer,settrackForMiniPlayer,selectedlang} = useContext(AuthContext);
     const [channelsdata, setchannelsdata] = useState([])
 
     const getChannels = () => {
@@ -140,19 +140,47 @@ useFocusEffect(
             TrackPlayer.play();
         }
     }
-    const fetchData = () => {
-        return fetch("https://socialagri.com/agriFM/wp-json/wp/v2/podcast")
-              .then((response) => response.json())
-              .then((data) =>{ 
-                setPodcastData(data);
-              })
-              .catch((err) => {
-                console.log(err,'API Failed');
-              });
+    const fetchData =async () =>{
+        try {
+          let baseUrl = `https://socialagri.com/agriFM/wp-json/wp/v2/podcast?lang=${selectedlang}`;
+          const response = await fetch(baseUrl, {
+            method: 'Get',
+            headers: {
+              Accept: 'application/json',
+            },
+          });
+          const responseData = await response.json();
+          if (responseData) {
+            setPodcastData(responseData)
+          } else {
+          }
+        } catch (error) {
+          console.log('error => ', error);
+        }
       }
+      const [newpodcast, setnewpodcast] = useState([])
+    const fetchNewPodcast =async () =>{
+      try {
+        let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/podcast-app.php?lang=${selectedlang}`;
+        const response = await fetch(baseUrl, {
+          method: 'Get',
+          headers: {
+            Accept: 'application/json',
+          },
+        });
+        const responseData = await response.json();
+        if (responseData) {
+          setnewpodcast(responseData)
+        } else {
+        }
+      } catch (error) {
+        console.log('error => ', error);
+      }
+    }
       useEffect(() => {
         fetchData();
         getChannels()
+        fetchNewPodcast()
       },[])
       
     const { position, buffered, duration } = useProgress()
@@ -242,14 +270,14 @@ useFocusEffect(
                         <Text style={styles.mainHeading}>{language?.FeaturedPodcasts}</Text>
                     </View>
                     {podCastData.slice(0, 5).map((item) => {
-                        const match = channelsdata.find(item2 => item2?.id == item?.canales[0]);
+                        const match = newpodcast.find(item2 => item2?.id == item?.id);
                         return (
                             <FeaturedCard
                             
                             // onPressIcon={()=>setModalVisible(true)}
                             // onPress={()=>navigation.navigate('Music',{podcastDetails:item})}
                             onPress={() => trackResetAndNavgate(item)}
-                            channelName={match?.name}
+                            channelName={match?.channel_name}
                             podcastname = {item.title?.rendered}
                             image = {item?.acf?.imagen_podcast1}
                             />

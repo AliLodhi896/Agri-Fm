@@ -52,50 +52,74 @@ const Home = () => {
   
   const categories = [
     {
-      id: 1,
+      id: 2,
       name: language?.Poultry,
       image: require('../assets/Images/poultry.png'),
     },
     {
-      id: 2,
+      id: 6,
       name: language?.Ruminant,
       image: require('../assets/Images/ruminant.png'),
     },
     {
-      id: 3,
+      id: 8,
       name: language?.Swine,
       image: require('../assets/Images/swine.png'),
     },
     {
       id: 4,
       name: language?.Nutrition,
-      image: require('../assets/Images/aqua.png'),
-    },
-    {
-      id: 5,
-      name: language?.Aqua,
       image: require('../assets/Images/nutrition.png'),
     },
     {
-      id: 6,
+      id: 8,
+      name: language?.Aqua,
+      image: require('../assets/Images/aqua.png'),
+    },
+    {
+      id: 8,
       name: selectedlang == 'en' ?  'Others' :  'Otras' ,
       image: require('../assets/Images/aqua.png'),
     },
   ];
 
-  const fetchData = () => {
-    setLoading(true)
-    return fetch("https://socialagri.com/agriFM/wp-json/wp/v2/podcast?lang=en")
-          .then((response) => response.json())
-          .then((data) =>{ 
-            setPodcastData(data);
-            setLoading(false)
-          })
-          .catch((err) => {
-            console.log(err,'API Failed');
-          });      
+  const fetchData =async () =>{
+    try {
+      let baseUrl = `https://socialagri.com/agriFM/wp-json/wp/v2/podcast?lang=${selectedlang}`;
+      const response = await fetch(baseUrl, {
+        method: 'Get',
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+      const responseData = await response.json();
+      if (responseData) {
+        setPodcastData(responseData)
+      } else {
+      }
+    } catch (error) {
+      console.log('error => ', error);
+    }
   }
-
+  const [newpodcast, setnewpodcast] = useState([])
+  const fetchNewPodcast =async () =>{
+    try {
+      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/podcast-app.php?lang=${selectedlang}`;
+      const response = await fetch(baseUrl, {
+        method: 'Get',
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+      const responseData = await response.json();
+      if (responseData) {
+        setnewpodcast(responseData)
+      } else {
+      }
+    } catch (error) {
+      console.log('error => ', error);
+    }
+  }
   const getChannels = () => {
     setLoading(true)
     return fetch("https://socialagri.com/agriFM/wp-json/wp/v2/canales?lang=en")
@@ -110,7 +134,6 @@ const Home = () => {
   }
 
   useEffect(()=>{
-      fetchData();
       fetch('https://socialagri.com/agriFM/wp-json/wp/v2/intereses/?lang=en')
       .then(res=>res.json())
       .then((data) =>{ 
@@ -120,7 +143,9 @@ const Home = () => {
 
   useFocusEffect(
     useCallback(() => {
+      fetchData();
       getChannels();
+      fetchNewPodcast()
     }, []),
   );
 
@@ -311,15 +336,7 @@ const RemoveDownload = async() => {
   // downloadedPodcastID
   // setdownloadedPodcastID()
 }
-const [newpodcast, setnewpodcast] = useState([])
-useEffect(()=>{
-fetchData();
-fetch('https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/podcast-app.php?lang=en')
-.then(res=>res.json())
-.then((data) =>{ 
-  setnewpodcast(data);
-})
-},[])
+
   return (
     <View style={{backgroundColor:Colors.primary,flex:1}}>
     

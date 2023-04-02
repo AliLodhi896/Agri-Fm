@@ -17,7 +17,6 @@ const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
   const [podCastData, setPodcastData] = useState([]);
   const [serachText, setserachText] = useState()
 
-console.log('serachText',serachText)
     useEffect(()=>{
         setLoading(true)
         fetch('https://socialagri.com/agriFM/wp-json/wp/v2/intereses/')
@@ -28,21 +27,47 @@ console.log('serachText',serachText)
             setLoading(false)
         })
       },[])
-      const fetchData = () => {
-        setLoading(true)
-        return fetch("https://socialagri.com/agriFM/wp-json/wp/v2/podcast?lang=en")
-              .then((response) => response.json())
-              .then((data) =>{ 
-                setPodcastData(data);
-                setLoading(false)
-              })
-              .catch((err) => {
-                console.log(err,'API Failed');
-              });      
-      }
     
+      const fetchData =async () =>{
+        try {
+          let baseUrl = `https://socialagri.com/agriFM/wp-json/wp/v2/podcast?lang=${selectedlang}`;
+          const response = await fetch(baseUrl, {
+            method: 'Get',
+            headers: {
+              Accept: 'application/json',
+            },
+          });
+          const responseData = await response.json();
+          if (responseData) {
+            setPodcastData(responseData)
+          } else {
+          }
+        } catch (error) {
+          console.log('error => ', error);
+        }
+      }
+      const [newpodcast, setnewpodcast] = useState([])
+      const fetchNewPodcast =async () =>{
+        try {
+          let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/podcast-app.php?lang=${selectedlang}`;
+          const response = await fetch(baseUrl, {
+            method: 'Get',
+            headers: {
+              Accept: 'application/json',
+            },
+          });
+          const responseData = await response.json();
+          if (responseData) {
+            setnewpodcast(responseData)
+          } else {
+          }
+        } catch (error) {
+          console.log('error => ', error);
+        }
+      }
     useEffect(() => {
-      fetchData()
+      fetchData();
+      fetchNewPodcast()
     }, [])
       const setProducts = text => {
         setserachText(text)
@@ -95,6 +120,7 @@ console.log('serachText',serachText)
   </TouchableOpacity>
 </View>
   }{activeTab == true ? searchProduct.slice(0, 10).map((item) => {
+    const match = newpodcast.find(item2 => item2?.id == item?.id);
      return (
       <>
         <FeaturedCard
@@ -103,6 +129,7 @@ console.log('serachText',serachText)
         //  onPress={() => trackResetAndNavgate(item)}
          podcastname = {item.title?.rendered}
          image = {item?.acf?.imagen_podcast1}
+         channelName={match?.channel_name}
          id = {item?.id}
         />
       </>
