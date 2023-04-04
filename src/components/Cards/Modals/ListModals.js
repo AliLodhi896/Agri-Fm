@@ -1,12 +1,12 @@
-import React, {useState,useContext,useEffect} from 'react';
-import { View, Text, Modal, Pressable, StyleSheet, Image,TouchableOpacity } from 'react-native';
+import React, { useState, useContext, useEffect } from 'react';
+import { View, Text, Modal, Pressable, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import Colors from '../../../constant/Colors';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { AuthContext } from '../../../context/Context';
-import {useNavigation,useFocusEffect} from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
 const ListModals = (props) => {
-    const {language,podcast_id,favoritePodcat_id,downloadedPodcastID} = useContext(AuthContext);
+    const { language, podcast_id, favoritePodcat_id, downloadedPodcastID } = useContext(AuthContext);
     const navigation = useNavigation();
 
     return (
@@ -16,60 +16,60 @@ const ListModals = (props) => {
             visible={props.isVisible}
             onBackButtonPress={props.onClose}
             onBackdropPress={props.onClose}
-            >
+        >
             <View style={styles.centeredView}>
                 <View style={styles.modalView}>
                     <TouchableOpacity style={styles.second_view} onPress={props.onPressClose} >
                         <MaterialIcons name='close' color={Colors.primary} size={27} />
                     </TouchableOpacity>
-                    <View style={{ alignSelf: 'center', marginHorizontal: 30,   width: '100%' }}>
-                        <TouchableOpacity onPress={()=>navigation.navigate('MyLibrary')} style={styles.second_view} >
-                            <Text style={{color:Colors.primary,fontSize:16}}>
-                            {language?.GoToLibrary}
+                    <View style={{ alignSelf: 'center', marginHorizontal: 30, width: '100%' }}>
+                        <TouchableOpacity onPress={() => props.navigatetolibrary ? props.navigatetolibrary() : navigation.navigate('MyLibrary')} style={styles.second_view} >
+                            <Text style={{ color: Colors.primary, fontSize: 16 }}>
+                                {language?.GoToLibrary}
                             </Text>
-                            <Image style={{width: '15%', height: 25}} source={require('../../../assets/Images/asdsa.png')} />
+                            <Image style={{ width: '15%', height: 25 }} source={require('../../../assets/Images/asdsa.png')} />
                         </TouchableOpacity>
-                        <View style={{height:1,backgroundColor:Colors.primary,opacity:0.5,marginTop:15}}></View>
+                        <View style={{ height: 1, backgroundColor: Colors.primary, opacity: 0.5, marginTop: 15 }}></View>
                         {downloadedPodcastID?.includes(podcast_id) && podcast_id === podcast_id ?
                             <TouchableOpacity style={styles.second_view} onPress={props.onPressRemoveDownload}>
-                                <Text style={{color:Colors.primary,fontSize:16}}>
-                                {language?.removeDownload}
+                                <Text style={{ color: Colors.primary, fontSize: 16 }}>
+                                    {language?.removeDownload}
                                 </Text>
-                                <Image  style={{width: '12%', height: 27}} source={require('../../../assets/Images/downlaod.png')} />
+                                <Image style={{ width: '12%', height: 27 }} source={require('../../../assets/Images/downlaod.png')} />
                             </TouchableOpacity>
-                        :
+                            :
                             <TouchableOpacity style={styles.second_view} onPress={props.onPressDownload}>
-                                <Text style={{color:Colors.primary,fontSize:16}}>
-                                {language?.DownloadPodcast}
+                                <Text style={{ color: Colors.primary, fontSize: 16 }}>
+                                    {language?.DownloadPodcast}
                                 </Text>
-                                <Image  style={{width: '12%', height: 27}} source={require('../../../assets/Images/downlaod.png')} />
+                                <Image style={{ width: '12%', height: 27 }} source={require('../../../assets/Images/downlaod.png')} />
                             </TouchableOpacity>
                         }
-                        
 
-                        <View style={{height:1,backgroundColor:Colors.primary,opacity:0.5,marginTop:15}}></View>
+
+                        <View style={{ height: 1, backgroundColor: Colors.primary, opacity: 0.5, marginTop: 15 }}></View>
                         <TouchableOpacity style={styles.second_view} onPress={props.onPressShare}>
-                            <Text style={{color:Colors.primary,fontSize:16}}>
-                            {language?.Share}
+                            <Text style={{ color: Colors.primary, fontSize: 16 }}>
+                                {language?.Share}
                             </Text>
-                            <Image  style={{width: '12%', height: 20}} source={require('../../../assets/Images/shares.png')} />
+                            <Image style={{ width: '12%', height: 20 }} source={require('../../../assets/Images/shares.png')} />
                         </TouchableOpacity>
-                        <View style={{height:1,backgroundColor:Colors.primary,opacity:0.5,marginTop:15}}></View>
+                        <View style={{ height: 1, backgroundColor: Colors.primary, opacity: 0.5, marginTop: 15 }}></View>
                         {favoritePodcat_id?.includes(podcast_id) && podcast_id === podcast_id ?
                             <TouchableOpacity style={styles.second_view} onPress={props.onPressRemove}  >
-                                <Text style={{color:Colors.primary,fontSize:16}}>
-                                {language?.RemoveFromLibrary}
+                                <Text style={{ color: Colors.primary, fontSize: 16 }}>
+                                    {language?.RemoveFromLibrary}
                                 </Text>
-                                <Image style={{width: '12%', height: 24}} source={require('../../../assets/Images/fav.png')} />
+                                <Image style={{ width: '12%', height: 24 }} source={require('../../../assets/Images/fav.png')} />
                             </TouchableOpacity>
                             :
                             <TouchableOpacity style={styles.second_view} onPress={props.onPressaddTo}  >
-                                <Text style={{color:Colors.primary,fontSize:16}}>
-                                {language?.AddToLibrary}
+                                <Text style={{ color: Colors.primary, fontSize: 16 }}>
+                                    {language?.AddToLibrary}
                                 </Text>
-                                <Image style={{width: '12%', height: 25}} source={require('../../../assets/Images/fav.png')} />
+                                <Image style={{ width: '12%', height: 25 }} source={require('../../../assets/Images/fav.png')} />
                             </TouchableOpacity>
-                        }  
+                        }
                     </View>
                 </View>
             </View>
@@ -97,18 +97,18 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 5,
         borderRadius: 10,
-        paddingBottom:30
+        paddingBottom: 30
     },
     second_view: {
         width: '100%',
         flexDirection: 'row',
         alignItems: 'center',
         // padding: 20,
-        paddingHorizontal : 15,
-        paddingTop : 15,
+        paddingHorizontal: 15,
+        paddingTop: 15,
         borderTopLeftRadius: 10,
         borderTopRightRadius: 10,
-        justifyContent:'space-between'
+        justifyContent: 'space-between'
     },
     successText: {
         fontSize: 25,
