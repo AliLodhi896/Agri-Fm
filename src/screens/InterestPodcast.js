@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, PermissionsAndroid } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, PermissionsAndroid, ActivityIndicator } from 'react-native'
 import Colors from '../constant/Colors'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
@@ -33,9 +33,11 @@ const InterestPodcast = ({ route }) => {
   const [interestPodcast, setInterestPodcast] = useState()
   const { UserData, setSate, setpodcast_id, podcast_id, downloadedPodcast, favoritePodcat_id, setfavoritePodcat_id, language, isSignin, selectedlang } = useContext(AuthContext);
   const [modalVisible, setModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false)
   const [muusicUrl, setmuusicUrl] = useState(null)
 
   const InterestPodcast = async () => {
+    setLoading(true)
     try {
       // let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/interess-post-app.php?inter_id=${interest_detail.id}`;
       let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/interess-post-app.php?inter_id=${interest_detail.id}&lang=${selectedlang == "pt" ? "pt-br" : selectedlang}`;
@@ -52,8 +54,10 @@ const InterestPodcast = ({ route }) => {
         setInterestPodcast(responseData)
       } else {
       }
+      setLoading(false)
     } catch (error) {
       console.log('error => ', error);
+      setLoading(false)
     }
   }
   useEffect(() => {
@@ -274,30 +278,36 @@ const InterestPodcast = ({ route }) => {
         title={interest_detail.name}
       />
       <View style={styles.featuredBox}>
-
-        {interestPodcast?.length == 0 ?
-          <Text style={{ fontSize: 16, color: Colors.primary, fontWeight: 'bold', marginTop: '20%', textAlign: 'center' }}>No Podcasts in this Interest !</Text>
-          :
-          interestPodcast?.map((item) => {
-            return (
-              <FeaturedCard
-                renderHTML
-                //   onPressDownload={()=>downloadPodcast(item)}
-                onPressDownload={() => !isSignin ? Toast.show('Please first login to download', Toast.LONG) : downloadPodcast(item)}
-                onPressIcon={() => download(item)}
-                onPress={() => trackResetAndNavgate(item)}
-                textstyle={{ color: Colors.primary }}
-                headingText={{ color: 'grey' }}
-                timeText={{ color: 'grey' }}
-                //   onPressIcon={()=>download(item)}
-                //   onPress={()=>trackResetAndNavgate(item)}
-                purpleIcon={true}
-                channelName={item?.channel_name[0]}
-                podcastname={item.title}
-                image={item?.imagen_podcast1}
-              />
-            );
-          })}
+        {
+          loading == true ?
+            <View style={{ padding: 100 }}>
+              <ActivityIndicator size="large" color="blue" />
+            </View>
+            :
+            interestPodcast?.length == 0 ?
+              <Text style={{ fontSize: 16, color: Colors.primary, fontWeight: 'bold', marginTop: '20%', textAlign: 'center' }}>No Podcasts in this Interest !</Text>
+              :
+              interestPodcast?.map((item) => {
+                return (
+                  <FeaturedCard
+                    renderHTML
+                    //   onPressDownload={()=>downloadPodcast(item)}
+                    onPressDownload={() => !isSignin ? Toast.show('Please first login to download', Toast.LONG) : downloadPodcast(item)}
+                    onPressIcon={() => download(item)}
+                    onPress={() => trackResetAndNavgate(item)}
+                    textstyle={{ color: Colors.primary }}
+                    headingText={{ color: 'grey' }}
+                    timeText={{ color: 'grey' }}
+                    //   onPressIcon={()=>download(item)}
+                    //   onPress={()=>trackResetAndNavgate(item)}
+                    purpleIcon={true}
+                    channelName={item?.channel_name[0]}
+                    podcastname={item.title}
+                    image={item?.imagen_podcast1}
+                  />
+                );
+              })
+        }
       </View>
     </ScrollView>
   )

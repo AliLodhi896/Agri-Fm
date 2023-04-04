@@ -99,6 +99,7 @@ const Home = () => {
     return fetch("https://socialagri.com/agriFM/wp-json/wp/v2/canales")
       .then((response) => response.json())
       .then((data) => {
+        // console.log("🚀 ~ file: Home.js:102 ~ .then ~ data:", data)
         setchannelsdata(data);
         setLoading(false)
       })

@@ -36,7 +36,7 @@ const ChannelDetails = ({ route }) => {
     return fetch(`https://socialagri.com/agriFM/${selectedlang == "pt" ? "pt-br" : selectedlang}/wp-json/wp/v2/podcast?per_page=100&canales=${route.params.details.id}`)
       .then((response) => response.json())
       .then((data) => {
-        // console.log("🚀 ~ file: ChannelDetails.js:32 ~ .then ~ data:", data)
+        console.log("🚀 ~ file: ChannelDetails.js:32 ~ .then ~ data:", data)
         setPodcastData(data);
         setLoading(false)
       })
@@ -136,19 +136,15 @@ const ChannelDetails = ({ route }) => {
                 return (
                   <FeaturedCard
                     onPress={() => navigation.navigate('Music', {
-                      podcastDetails: {
-                        acf: { link_podcast1: item.link_podcast1, imagen_podcast1: item?.imagen_podcast1 },
-                        id: item.id,
-                        title: { rendered: item.title },
-                      }
+                      podcastDetails: item
                     })}
                     onPressDownload={() => {
                       Toast.show('Please first login to download', Toast.LONG);
                     }}
                     onPressIcon={() => download(item)}
                     // channelName='Channel Name'
-                    podcastname={item.title}
-                    image={item?.imagen_podcast1}
+                    podcastname={item?.title?.rendered}
+                    image={item?.acf?.imagen_podcast1}
                   />
                 );
               })}

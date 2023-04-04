@@ -153,11 +153,7 @@ const ChannelDetails = ({ route }) => {
     TrackPlayer.reset();
     setSate(0)
     navigation.navigate('Music', {
-      podcastDetails: {
-        acf: { link_podcast1: item.link_podcast1, imagen_podcast1: item?.imagen_podcast1 },
-        id: item.id,
-        title: { rendered: item.title },
-      }, Fromlibrary: false
+      podcastDetails: item, Fromlibrary: false
     })
   }
 
@@ -326,8 +322,11 @@ const ChannelDetails = ({ route }) => {
                     onPressIcon={() => download(item)}
                     onPressDownload={() => downloadPodcast(item)}
                     // channelName='Channel Name'
-                    podcastname={item.title}
-                    image={item?.imagen_podcast1}
+                    // onPress={() => navigation.navigate('Music', {
+                    //   podcastDetails: item
+                    // })}
+                    podcastname={item?.title?.rendered}
+                    image={item?.acf?.imagen_podcast1}
                   />
                 );
               })}
