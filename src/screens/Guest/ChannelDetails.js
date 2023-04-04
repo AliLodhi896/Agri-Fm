@@ -33,7 +33,8 @@ const ChannelDetails = ({ route }) => {
   const fetchData = () => {
     setLoading(true)
     // return fetch(`https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/channel-post-app.php?canales_id=${route.params.details.id}`)
-    return fetch(`https://socialagri.com/agriFM/${selectedlang == "pt" ? "pt-br" : selectedlang}/wp-json/wp/v2/podcast?per_page=100&canales=${route.params.details.id}`)
+    // return fetch(`https://socialagri.com/agriFM/${selectedlang == "pt" ? "pt-br" : selectedlang}/wp-json/wp/v2/podcast?per_page=100&canales=${route.params.details.id}`)
+    return fetch(`https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/channel-post-app.php?canales_id=203&lang=${selectedlang == "pt" ? "pt-br" : selectedlang}`)
       .then((response) => response.json())
       .then((data) => {
         console.log("🚀 ~ file: ChannelDetails.js:32 ~ .then ~ data:", data)
