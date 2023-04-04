@@ -11,11 +11,13 @@ import { AuthContext } from '../context/Context';
 const MyLibrary = () => {
   const [podcast, setPodcast] = useState(true)
   const [channels, setChannels] = useState(false)
-  const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
+  const {language, selectedlang, setSelectedlang,setdownloadedPodcastID,setdownloadedPodcast,downloadedPodcast} = useContext(AuthContext);
   const [podCastData, setPodcastData] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [muusicUrl, setmuusicUrl] = useState(null)
   const [musicdatafordownload, setmusicdatafordownload] = useState()
+
+
 
   return (
     <ScrollView style={styles.mainBox}>

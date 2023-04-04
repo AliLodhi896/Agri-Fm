@@ -21,15 +21,15 @@ export const AuthProvider = props => {
 
 
 
-  const getDownloadMusic = async () => {
-    const value = await AsyncStorage.getItem('musics')
-    const parseMusics = JSON.parse(value)
-    let courseName = parseMusics?.map(itemxx => {
-      return  itemxx.ID
-    })
-    setdownloadedPodcastID(courseName)
-    setdownloadedPodcast(parseMusics)
-  }
+  // const getDownloadMusic = async () => {
+  //   const value = await AsyncStorage.getItem('musics')
+  //   const parseMusics = JSON.parse(value)
+  //   let courseName = parseMusics?.map(itemxx => {
+  //     return  itemxx.ID
+  //   })
+  //   setdownloadedPodcastID(courseName)
+  //   setdownloadedPodcast(parseMusics)
+  // }
 const getData = async () => {
   const value = await AsyncStorage.getItem('userDetails')
   const parseUserDetails = JSON.parse(value)
@@ -40,9 +40,8 @@ const getData = async () => {
   }
 }
   useEffect(() => {
-      getDownloadMusic();
     getData();
-  }, [downloadedPodcast,isSignin])
+  }, [isSignin])
 
   return (
     <AuthContext.Provider

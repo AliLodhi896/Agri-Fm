@@ -27,7 +27,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNFetchBlob from 'rn-fetch-blob';
 
 const Podcast = (props) => {
-  const {UserData,setSate,setpodcast_id,podcast_id,downloadedPodcast,favoritePodcat_id,setfavoritePodcat_id} = useContext(AuthContext);
+  const {UserData,setSate,setpodcast_id,podcast_id,downloadedPodcast,favoritePodcat_id,setfavoritePodcat_id,setdownloadedPodcastID,setdownloadedPodcast,downloadedPodcastID} = useContext(AuthContext);
   const navigation = useNavigation();
   const [podCastData, setPodcastData] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
@@ -135,6 +135,16 @@ const Podcast = (props) => {
             console.log('res', res);
             Toast.show('Successfully Downloaded at ' + res.path(), Toast.LONG);
           });
+      }
+      const RemoveDownload = async() => {
+        let newItems = downloadedPodcast.filter(e => e?.ID !== podcast_id);
+        setdownloadedPodcast(newItems)
+        const dataString = JSON.stringify(newItems);
+        await AsyncStorage.setItem('musics', dataString);
+        let newItemsID = downloadedPodcastID.filter(e => e !== podcast_id);
+        setdownloadedPodcastID(newItemsID)
+        // downloadedPodcastID
+        // setdownloadedPodcastID()
       }
       
       const onShare = async () => {
