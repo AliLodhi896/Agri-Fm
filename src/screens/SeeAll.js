@@ -78,6 +78,7 @@ const trackResetAndNavgate = (item) => {
                // onPressDownload={()=>downloadPodcast()}
                onPress={() => trackResetAndNavgate(item)}
                channelName={match?.name}
+               purpleIcon={true}
                podcastname = {item.title?.rendered}
                textstyle={{color:Colors.primary}} 
                          headingText={{color:'grey'}} 
