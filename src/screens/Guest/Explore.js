@@ -230,7 +230,7 @@ const Explore = ({ navigation }) => {
     navigation.navigate('Music', { podcastDetails: item });
   }
 
-  const renderPoscasts = () => {
+  const renderPodcasts = () => {
     const temp = serachText == '' ? searchProduct : searchProduct.slice(0, 10);
 
     if (!temp.length) {
@@ -338,7 +338,7 @@ const Explore = ({ navigation }) => {
                   {Array(6).fill().map((_, i) => <SkeletonLoader key={i} />)}
                 </> : <>
                   {
-                    renderPoscasts()
+                    renderPodcasts()
                   }
 
                 </> : null}

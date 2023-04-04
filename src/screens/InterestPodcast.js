@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, PermissionsAndroid } from 'react-native'
 import Colors from '../constant/Colors'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
@@ -31,7 +31,7 @@ const InterestPodcast = ({ route }) => {
   const [podcast, setPodcast] = useState(true)
   const [channels, setChannels] = useState(false)
   const [interestPodcast, setInterestPodcast] = useState()
-  const { UserData, setSate, setpodcast_id, podcast_id, downloadedPodcast, favoritePodcat_id, setfavoritePodcat_id, language } = useContext(AuthContext);
+  const { UserData, setSate, setpodcast_id, podcast_id, downloadedPodcast, favoritePodcat_id, setfavoritePodcat_id, language, isSignin } = useContext(AuthContext);
   const [modalVisible, setModalVisible] = useState(false);
   const [muusicUrl, setmuusicUrl] = useState(null)
 
@@ -46,7 +46,7 @@ const InterestPodcast = ({ route }) => {
       });
       const responseData = await response.json();
       if (responseData) {
-        console.log("🚀 ~ file: InterestPodcast.js:47 ~ InterestPodcast ~ responseData:", responseData)
+        // console.log("🚀 ~ file: InterestPodcast.js:47 ~ InterestPodcast ~ responseData:", responseData)
         setInterestPodcast(responseData)
       } else {
       }
@@ -81,15 +81,20 @@ const InterestPodcast = ({ route }) => {
       console.log('error => ', error);
     }
   }
-  useEffect(() => {
-    const interval = setInterval(() => fetchFavoritePodcast(), 1000);
-    return () => {
-      clearInterval(interval);
-    };
+  // useEffect(() => {
+  //   const interval = setInterval(() => fetchFavoritePodcast(), 1000);
+  //   return () => {
+  //     clearInterval(interval);
+  //   };
 
-  }, [podcast_id])
+  // }, [podcast_id])
 
   const trackResetAndNavgate = (item) => {
+    // console.log({
+    //   acf: { link_podcast1: item.link_podcast1, imagen_podcast1: item?.imagen_podcast1 },
+    //   id: item.id,
+    //   title: { rendered: item.title },
+    // });
     TrackPlayer.reset();
     setSate(0)
     navigation.navigate('Music', {
@@ -97,7 +102,7 @@ const InterestPodcast = ({ route }) => {
         acf: { link_podcast1: item.link_podcast1, imagen_podcast1: item?.imagen_podcast1 },
         id: item.id,
         title: { rendered: item.title },
-      }, Fromlibrary: true
+      }, Fromlibrary: false
     });
   }
 
@@ -128,6 +133,10 @@ const InterestPodcast = ({ route }) => {
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
         console.log('startDownload...');
         this.startDownload();
+        return true;
+      } else {
+        Toast.show('Permission denied.', Toast.LONG);
+        return false;
       }
     } catch (err) {
       console.log(err);
@@ -135,7 +144,8 @@ const InterestPodcast = ({ route }) => {
   };
 
   const downloadPodcast = async (item) => {
-    await requestpermissionforDownlaod();
+    const permission = await requestpermissionforDownlaod();
+    if (!permission) return;
     let url = item?.acf?.link_podcast1;
     let name = item?.title?.rendered;
     const path = RNFetchBlob.fs.dirs.DownloadDir + `/${name}.mp3`;
@@ -227,7 +237,7 @@ const InterestPodcast = ({ route }) => {
         },
       });
       const responseData = await response.json();
-      console.log('responseData[0].favoritos_podcast', responseData);
+      // console.log('responseData[0].favoritos_podcast', responseData);
       if (responseData) {
         Toast.show('Podcast removed from liabrary', Toast.LONG);
         let courseName = responseData[0].favoritos_podcast?.map(itemxx => {
@@ -249,13 +259,9 @@ const InterestPodcast = ({ route }) => {
         navigatetolibrary={() => navigation.navigate(language?.Library)}
         isVisible={modalVisible}
         onPressClose={() => setModalVisible(false)}
-        onPressaddTo={() => {
-          Toast.show('Please first login to add to library', Toast.LONG);
-        }}
+        onPressaddTo={() => isSignin ? AddPodcastToLiabrary() : Toast.show('Please first login to add to library', Toast.LONG)}
         onClose={() => setModalVisible(false)}
-        onPressDownload={() => {
-          Toast.show('Please first login to download', Toast.LONG);
-        }}
+        onPressDownload={() => isSignin ? downloadPodcast() : Toast.show('Please first login to download', Toast.LONG)}
         onPressShare={() => onShare()}
       />
 
@@ -275,9 +281,7 @@ const InterestPodcast = ({ route }) => {
               <FeaturedCard
                 renderHTML
                 //   onPressDownload={()=>downloadPodcast(item)}
-                onPressDownload={() => {
-                  Toast.show('Please first login to download', Toast.LONG);
-                }}
+                onPressDownload={() => !isSignin ? Toast.show('Please first login to download', Toast.LONG) : downloadPodcast(item)}
                 onPressIcon={() => download(item)}
                 onPress={() => trackResetAndNavgate(item)}
                 textstyle={{ color: Colors.primary }}

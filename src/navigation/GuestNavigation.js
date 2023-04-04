@@ -181,7 +181,7 @@ export const GuestNavigation = navigation => {
   };
   return (
     <Tab.Navigator
-      initialRouteName="Explore"
+      initialRouteName="Home"
       screenOptions={{ ...defaultTabNavOptions }}>
       <Tab.Screen
         name={language?.Home}

@@ -34,7 +34,7 @@ const ChannelDetails = ({ route }) => {
     return fetch(`https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/channel-post-app.php?canales_id=${route.params.details.id}`)
       .then((response) => response.json())
       .then((data) => {
-        console.log("🚀 ~ file: ChannelDetails.js:32 ~ .then ~ data:", data)
+        // console.log("🚀 ~ file: ChannelDetails.js:32 ~ .then ~ data:", data)
         setPodcastData(data);
         setLoading(false)
       })
