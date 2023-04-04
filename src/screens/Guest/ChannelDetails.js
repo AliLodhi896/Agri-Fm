@@ -28,10 +28,12 @@ const ChannelDetails = ({ route }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [muusicUrl, setmuusicUrl] = useState(null)
 
+  // alert(route.params.details.id)
 
   const fetchData = () => {
     setLoading(true)
-    return fetch(`https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/channel-post-app.php?canales_id=${route.params.details.id}`)
+    // return fetch(`https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/channel-post-app.php?canales_id=${route.params.details.id}`)
+    return fetch(`https://socialagri.com/agriFM/${selectedlang == "pt" ? "pt-br" : selectedlang}/wp-json/wp/v2/podcast?per_page=100&canales=${route.params.details.id}`)
       .then((response) => response.json())
       .then((data) => {
         // console.log("🚀 ~ file: ChannelDetails.js:32 ~ .then ~ data:", data)
@@ -40,6 +42,7 @@ const ChannelDetails = ({ route }) => {
       })
       .catch((err) => {
         console.log(err, 'API Failed');
+        setLoading(false)
       });
   }
 

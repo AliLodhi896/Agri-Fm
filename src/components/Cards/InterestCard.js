@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, { useContext, useState } from 'react';
 import {
   View,
   Text,
@@ -15,6 +15,7 @@ import Colors from '../../constant/Colors';
 // import packages
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
+const placeholderimage = "https://sternbergclinic.com.au/wp-content/uploads/2020/03/placeholder.png";
 
 const InterestCard = (props) => {
   return (
@@ -28,7 +29,7 @@ const InterestCard = (props) => {
           borderRadius: 10,
           opacity: props.opacity ? 1 : 0.5,
         }}
-        source={{uri: props.img_intereses}}
+        source={{ uri: props.img_intereses ? props.img_intereses : placeholderimage }}
       />
       <View
         style={{
@@ -36,7 +37,7 @@ const InterestCard = (props) => {
           alignContent: 'center',
           justifyContent: 'center',
         }}>
-        <Text style={[styles.textStyle,props.textStyle]}>{props.description}</Text>
+        <Text style={[styles.textStyle, props.textStyle]}>{props.description}</Text>
       </View>
     </TouchableOpacity>
   );

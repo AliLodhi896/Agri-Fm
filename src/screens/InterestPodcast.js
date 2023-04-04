@@ -31,22 +31,24 @@ const InterestPodcast = ({ route }) => {
   const [podcast, setPodcast] = useState(true)
   const [channels, setChannels] = useState(false)
   const [interestPodcast, setInterestPodcast] = useState()
-  const { UserData, setSate, setpodcast_id, podcast_id, downloadedPodcast, favoritePodcat_id, setfavoritePodcat_id, language, isSignin } = useContext(AuthContext);
+  const { UserData, setSate, setpodcast_id, podcast_id, downloadedPodcast, favoritePodcat_id, setfavoritePodcat_id, language, isSignin, selectedlang } = useContext(AuthContext);
   const [modalVisible, setModalVisible] = useState(false);
   const [muusicUrl, setmuusicUrl] = useState(null)
 
   const InterestPodcast = async () => {
     try {
-      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/interess-post-app.php?inter_id=${interest_detail.id}`;
+      // let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/interess-post-app.php?inter_id=${interest_detail.id}`;
+      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/interess-post-app.php?inter_id=${interest_detail.id}&lang=${selectedlang == "pt" ? "pt-br" : selectedlang}`;
+      console.log("🚀 ~ file: InterestPodcast.js:43 ~ InterestPodcast ~ baseUrl:", baseUrl)
       const response = await fetch(baseUrl, {
         method: 'GET',
         headers: {
           Accept: 'application/json',
         },
       });
+      // console.log("🚀 ~ file: InterestPodcast.js:47 ~ InterestPodcast ~ responseData:", await response.json())
       const responseData = await response.json();
       if (responseData) {
-        // console.log("🚀 ~ file: InterestPodcast.js:47 ~ InterestPodcast ~ responseData:", responseData)
         setInterestPodcast(responseData)
       } else {
       }
@@ -290,7 +292,7 @@ const InterestPodcast = ({ route }) => {
                 //   onPressIcon={()=>download(item)}
                 //   onPress={()=>trackResetAndNavgate(item)}
                 purpleIcon={true}
-                channelName={item.channel_name[0]}
+                channelName={item?.channel_name[0]}
                 podcastname={item.title}
                 image={item?.imagen_podcast1}
               />
