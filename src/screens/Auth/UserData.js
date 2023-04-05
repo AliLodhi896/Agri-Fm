@@ -26,7 +26,6 @@ import Dropdown from '../../components/Input/Dropdown';
 
 const UserData = () => {
   const route = useRoute();
-  console.log('AccountDetails========>', route.params);
   const navigation = useNavigation();
   const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
   const combineObject = {...UserdataObject, ...route.params.form};

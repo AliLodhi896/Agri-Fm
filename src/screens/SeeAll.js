@@ -1,5 +1,5 @@
 import React,{useState,useEffect,useContext} from 'react'
-import { View, Text,StyleSheet,TouchableOpacity,Image,ScrollView} from 'react-native'
+import { View, Text,StyleSheet,TouchableOpacity,Image,ScrollView,ActivityIndicator} from 'react-native'
 import ChannelCard from '../components/Cards/ChannelCard';
 import Colors from '../constant/Colors'
 import Ionicons from 'react-native-vector-icons/Ionicons';

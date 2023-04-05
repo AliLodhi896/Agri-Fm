@@ -25,7 +25,7 @@ const MyLibrary = () => {
                 style={{ backgroundColor:Colors.lightBackground, paddingHorizontal: 20 }}
                 textStyle={{ color: Colors.primary, fontWeight: 'Bold' }}
                 icon={true}
-                title={'My Library'}
+                title={language.MyLibrary}
             />
         <View style={styles.switchComponentsBox}>
           <TouchableOpacity style={podcast == true ? styles.playButtonActive : styles.playButton} onPress={()=>[setPodcast(true),setChannels(false)]}>

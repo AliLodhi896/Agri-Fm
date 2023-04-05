@@ -49,6 +49,7 @@ const Home = () => {
   const [muusicUrl, setmuusicUrl] = useState(null)
   const [favoritePodcast, setfavoritePodcast] = useState()
   const [musicdatafordownload, setmusicdatafordownload] = useState()
+  const [loaderwhileLoader, setloaderwhileLoader] = useState(false)
   
   const categories = [
     {
@@ -278,6 +279,7 @@ const getDownloadMusic = async () => {
   setdownloadedPodcast(parseMusics)
 }
 const downloadPodcast = async (item) => {
+  setloaderwhileLoader(true)
   const granted = await PermissionsAndroid.request(
     PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
     {
@@ -322,14 +324,14 @@ const downloadPodcast = async (item) => {
     .fetch('GET', url)
     .then(res => {
       console.log('res', res);
-    // getDownloadMusic();
+    getDownloadMusic();
     Toast.show('Successfully Downloaded at ' + res.path(), Toast.LONG);
+    setloaderwhileLoader(false)
     navigation.navigate('MyLibrary')
     });
   }else{
     alert('Permission Not Granted !')
   }
-  
 }
 useFocusEffect(
   useCallback(() => {
@@ -468,6 +470,7 @@ const RemoveDownload = async() => {
              onPressIcon={()=>download(item)}
              onPress={() => trackResetAndNavgate(item)}
              channelName={match?.channel_name}
+             downloadLoading={loaderwhileLoader}
              podcastname = {item.title?.rendered}
              image = {item?.acf?.imagen_podcast1}
              id = {item?.id}
@@ -515,7 +518,12 @@ const RemoveDownload = async() => {
          <View style={styles.headingBox}>
              <Text style={{fontSize:18,fontWeight:'700',color:Colors.primary}}>{language?.YourLiabrary}</Text>
            </View>
-           {favoritePodcast?.length == 0 ?
+           {loading == true ?
+           <View style={{padding:100,marginLeft:20}}>
+             <ActivityIndicator size="large" color={Colors.primary} /> 
+           </View>
+         :
+           favoritePodcast?.length == 0 ?
                <Text style={{fontSize:16,color:Colors.primary,fontWeight:'bold',marginTop:'20%',textAlign:'center'}}>No Podcasts In your Liabrary !</Text>
                :
                favoritePodcast?.map((item)=>{

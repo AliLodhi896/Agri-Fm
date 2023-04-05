@@ -9,6 +9,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import ListModals from './Modals/ListModals';
 import { AuthContext } from '../../context/Context';
+import { ActivityIndicator } from 'react-native-paper';
 
 
 const FeaturedCard = (props) => {
@@ -63,12 +64,18 @@ const FeaturedCard = (props) => {
              </TouchableOpacity>
                     : 
              <TouchableOpacity onPress={props.onPressDownload}>
-                <Ionicons
+                {props.downloadLoading == true ?
+
+                <ActivityIndicator color='white' />
+                    :
+                    <Ionicons
                     name="ios-cloud-download-outline"
                     color={props.purpleIcon == true ? Colors.primary : 'white'}
                     size={25}
                     style={{}}
                 />
+                }
+               
              </TouchableOpacity>
 
                 }
