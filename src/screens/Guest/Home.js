@@ -96,7 +96,7 @@ const Home = () => {
 
   const getChannels = () => {
     setLoading(true)
-    return fetch("https://socialagri.com/agriFM/wp-json/wp/v2/canales")
+    return fetch(`https://socialagri.com/agriFM/wp-json/wp/v2/canales/?lang=${selectedlang}&per_page=10`)
       .then((response) => response.json())
       .then((data) => {
         // console.log("🚀 ~ file: Home.js:102 ~ .then ~ data:", data)
@@ -110,7 +110,7 @@ const Home = () => {
 
   useEffect(() => {
     fetchData();
-    fetch('https://socialagri.com/agriFM/wp-json/wp/v2/intereses/')
+    fetch(`https://socialagri.com/agriFM/wp-json/wp/v2/intereses/?lang=${selectedlang == "pt" ? "pt-br" : selectedlang}`)
       .then(res => res.json())
       .then((data) => {
         setInterest(data.length == 0 ? undefined || null : (data));
