@@ -154,7 +154,11 @@ const ChannelDetails = ({ route }) => {
     TrackPlayer.reset();
     setSate(0)
     navigation.navigate('Music', {
-      podcastDetails: item, Fromlibrary: false
+      podcastDetails: {
+        acf: { link_podcast1: item?.link_podcast1, imagen_podcast1: item?.imagen_podcast1 },
+        id: item.id,
+        title: { rendered: item?.title },
+      }, Fromlibrary: false
     })
   }
 
@@ -326,8 +330,8 @@ const ChannelDetails = ({ route }) => {
                     // onPress={() => navigation.navigate('Music', {
                     //   podcastDetails: item
                     // })}
-                    podcastname={item?.title?.rendered}
-                    image={item?.acf?.imagen_podcast1}
+                    podcastname={item?.title}
+                    image={item?.imagen_podcast1}
                   />
                 );
               })}

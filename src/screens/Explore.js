@@ -41,9 +41,10 @@ const Explore = ({ navigation }) => {
 
   useEffect(() => {
     setLoading(true)
-    fetch('https://socialagri.com/agriFM/wp-json/wp/v2/intereses/')
+    fetch(`https://socialagri.com/agriFM/wp-json/wp/v2/intereses/?lang=${selectedlang == "pt" ? "pt-br" : selectedlang}`)
       .then(res => res.json())
       .then((data) => {
+        // console.log("🚀 ~ file: Explore.js:47 ~ .then ~ data:", data)
         setInterest(data.length == 0 ? undefined || null : (data));
         setSearchProduct(data.length == 0 ? undefined || null : (data))
         setLoading(false)
@@ -410,11 +411,11 @@ const Explore = ({ navigation }) => {
                 }
               </View>
               <Animatable.View style={styles.interestlList} animation="fadeInUpBig" >
-                {interest.slice(0, 10).map((item) => {
+                {interest ? interest.slice(0, 10)?.map((item) => {
                   return (
                     <InterestCard onPress={() => navigation.navigate('InterestPodcast', { interest_detail: item })} description={item.name} img_intereses={item.acf.img_intereses} id={item.id} />
                   );
-                })}
+                }) : null}
               </Animatable.View>
             </>
             :
