@@ -38,10 +38,10 @@ const Explore = ({ navigation }) => {
 
   useEffect(() => {
     setLoading(true)
-    fetch('https://socialagri.com/agriFM/wp-json/wp/v2/intereses/')
+    fetch(`https://socialagri.com/agriFM/wp-json/wp/v2/intereses/?lang=${selectedlang == "pt" ? "pt-br" : selectedlang}`)
       .then(res => res.json())
       .then((data) => {
-        console.log("🚀 ~ file: Explore.js:43 ~ .then ~ data:", data)
+        // console.log("🚀 ~ file: Explore.js:43 ~ .then ~ data:", data)
         setInterest(data.length == 0 ? undefined || null : (data));
         setSearchProduct(data.length == 0 ? undefined || null : (data))
         setLoading(false)

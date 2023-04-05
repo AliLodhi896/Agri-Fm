@@ -137,15 +137,18 @@ const ChannelDetails = ({ route }) => {
                 return (
                   <FeaturedCard
                     onPress={() => navigation.navigate('Music', {
-                      podcastDetails: item
+                      podcastDetails: {
+                        acf: { link_podcast1: item?.link_podcast1, imagen_podcast1: item?.imagen_podcast1 },
+                        id: item.id,
+                        title: { rendered: item?.title },
+                      }
                     })}
                     onPressDownload={() => {
                       Toast.show('Please first login to download', Toast.LONG);
                     }}
                     onPressIcon={() => download(item)}
-                    // channelName='Channel Name'
-                    podcastname={item?.title?.rendered}
-                    image={item?.acf?.imagen_podcast1}
+                    podcastname={item?.title}
+                    image={item?.imagen_podcast1}
                   />
                 );
               })}
