@@ -31,7 +31,6 @@ const Music = ({route}) => {
     const {podcastDetails,Fromlibrary}= route.params
 
     const [channelsdata, setchannelsdata] = useState([])
-
     const getChannels = () => {
         return fetch("https://socialagri.com/agriFM/wp-json/wp/v2/canales")
               .then((response) => response.json())
@@ -259,6 +258,11 @@ const download = (item) => {
 }
 
 const requestpermissionforDownlaod = async () => {
+ 
+};
+
+const downloadPodcast = async (item) => {
+  
   try {
     const granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
@@ -272,18 +276,7 @@ const requestpermissionforDownlaod = async () => {
       },
     );
     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-      console.log('startDownload...');
-      this.startDownload();
-    }
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-const downloadPodcast = async (item) => {
-  
-  await requestpermissionforDownlaod();
-  let url = item?.acf?.link_podcast1;
+      let url = item?.acf?.link_podcast1;
   let name = item?.title?.rendered;
   const path = RNFetchBlob.fs.dirs.DownloadDir+`/${name}.mp3`;
   
@@ -317,6 +310,11 @@ const downloadPodcast = async (item) => {
       console.log('res', res);
       Toast.show('Successfully Downloaded at ' + res.path(), Toast.LONG);
     });
+    }
+  } catch (err) {
+    console.log(err);
+  }
+  
 }
 const RemoveDownload = async() => {
   let newItems = downloadedPodcast.filter(e => e?.ID !== podcast_id);
@@ -408,7 +406,7 @@ const RemoveDownload = async() => {
                             <FeaturedCard
                             
                             onPressDownload={()=>downloadPodcast(item)}
-                            // onPressIcon={()=>download(item)}
+                            onPressIcon={()=>download(item)}
                             onPress={() => trackResetAndNavgate(item)}
                             channelName={match?.channel_name}
                             podcastname = {item.title?.rendered}

@@ -38,7 +38,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Podcast from '../components/Sections/Podcast';
 
 const Home = () => {
-  const {downloadedPodcast,downloadedPodcastID,language,selectedlang,sate,setSate,UserData,setpodcast_id,podcast_id,setfavoritePodcat_id,setdownloadedPodcastID,setdownloadedPodcast} = useContext(AuthContext);
+  
+
+  const {setmusicdatafordownload,musicdatafordownload,downloadedPodcast,downloadedPodcastID,language,selectedlang,sate,setSate,UserData,setpodcast_id,podcast_id,setfavoritePodcat_id,setdownloadedPodcastID,setdownloadedPodcast} = useContext(AuthContext);
   const navigation = useNavigation();
   const [podCastData, setPodcastData] = useState([]);
   const [interest,setInterest] = useState([])
@@ -48,9 +50,9 @@ const Home = () => {
   const [modalVisible2, setModalVisible2] = useState(false);
   const [muusicUrl, setmuusicUrl] = useState(null)
   const [favoritePodcast, setfavoritePodcast] = useState()
-  const [musicdatafordownload, setmusicdatafordownload] = useState()
+
   const [loaderwhileLoader, setloaderwhileLoader] = useState(false)
-  
+  console.log('musicdatafordownload',musicdatafordownload)
   const categories = [
     {
       id: 2,
@@ -83,6 +85,7 @@ const Home = () => {
       image: require('../assets/Images/aqua.png'),
     },
   ];
+  console.log('selectedlang',selectedlang)
 
   const fetchData =async () =>{
     try {
@@ -105,7 +108,13 @@ const Home = () => {
   const [newpodcast, setnewpodcast] = useState([])
   const fetchNewPodcast =async () =>{
     try {
-      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/podcast-app.php?lang=${selectedlang}`;
+      var baseUrl = ''
+      if(selectedlang == 'en' || selectedlang == 'es'){
+         baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/podcast-app.php?lang=${selectedlang}`;
+      }else{
+         baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/podcast-app.php?lang=pt-br`;
+        
+      }
       const response = await fetch(baseUrl, {
         method: 'Get',
         headers: {
@@ -113,6 +122,7 @@ const Home = () => {
         },
       });
       const responseData = await response.json();
+      console.log('responseData---------------------------->',responseData)
       if (responseData) {
         setnewpodcast(responseData)
       } else {
@@ -260,14 +270,13 @@ const Home = () => {
   },[podcast_id])
 
 const download = (item) => {
-  console.log('item------------------>',item?.acf?.link_podcast1)
+  console.log('item',item)
   setModalVisible(true);
   setmuusicUrl(item?.acf?.link_podcast1)
   setpodcast_id(JSON.stringify(item?.id))
   setmusicdatafordownload(item)
-  downloadPodcast(item)
+  // downloadPodcast(item)s
 }
-
 
 const getDownloadMusic = async () => {
   const value = await AsyncStorage.getItem('musics')
@@ -279,6 +288,7 @@ const getDownloadMusic = async () => {
   setdownloadedPodcast(parseMusics)
 }
 const downloadPodcast = async (item) => {
+  console.log('download by button ',item)
   setloaderwhileLoader(true)
   const granted = await PermissionsAndroid.request(
     PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
@@ -352,20 +362,19 @@ const RemoveDownload = async() => {
 
   return (
     <View style={{backgroundColor:Colors.primary,flex:1}}>
-    
     <View style={{height: sate !== 0 ?'85%': '100%',backgroundColor:'white'}}>
       <ScrollView style={styles.mainBox}>
          <View style={{backgroundColor:Colors.primary,paddingHorizontal:20}}>
          <ListModals
-       isVisible={modalVisible}
-       onPressClose={() => setModalVisible(false)}
-       onPressaddTo={()=> AddPodcastToLiabrary()}
-       onClose={() => setModalVisible(false)}
-       onPressDownload={()=>download()}
-       onPressShare={()=>onShare()}
-       onPressRemoveDownload={()=>RemoveDownload()}
-       onPressRemove={()=>RemovePodcastFromLiabrary()}
-     />
+            isVisible={modalVisible}
+            onPressClose={() => setModalVisible(false)}
+            onPressaddTo={()=> AddPodcastToLiabrary()}
+            onClose={() => setModalVisible(false)}
+            onPressDownload={()=>download()}
+            onPressShare={()=>onShare()}
+            onPressRemoveDownload={()=>RemoveDownload()}
+            onPressRemove={()=>RemovePodcastFromLiabrary()}
+        />
      <LangModal
        isVisible={modalVisible2}
        onClose={() => setModalVisible2(false)}
@@ -469,7 +478,7 @@ const RemoveDownload = async() => {
              onPressDownload={()=>downloadPodcast(item)}
              onPressIcon={()=>download(item)}
              onPress={() => trackResetAndNavgate(item)}
-             channelName={match?.channel_name}
+             channelName={match?.channel_name == undefined ? 'Chatting with poultry experts' : match?.channel_name}
              downloadLoading={loaderwhileLoader}
              podcastname = {item.title?.rendered}
              image = {item?.acf?.imagen_podcast1}

@@ -64,17 +64,12 @@ const FeaturedCard = (props) => {
              </TouchableOpacity>
                     : 
              <TouchableOpacity onPress={props.onPressDownload}>
-                {props.downloadLoading == true ?
-
-                <ActivityIndicator color='white' />
-                    :
                     <Ionicons
                     name="ios-cloud-download-outline"
                     color={props.purpleIcon == true ? Colors.primary : 'white'}
                     size={25}
                     style={{}}
                 />
-                }
                
              </TouchableOpacity>
 

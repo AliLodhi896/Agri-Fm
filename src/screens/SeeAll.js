@@ -1,10 +1,16 @@
-import React,{useState,useEffect,useContext} from 'react'
-import { View, Text,StyleSheet,TouchableOpacity,Image,ScrollView,ActivityIndicator} from 'react-native'
+import React,{useState,useEffect,useContext,useCallback} from 'react'
+import { View, Text,StyleSheet,TouchableOpacity,Image,ScrollView,ActivityIndicator,
+
+  Linking,
+  Share,
+  PermissionsAndroid} from 'react-native'
 import ChannelCard from '../components/Cards/ChannelCard';
 import Colors from '../constant/Colors'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FeaturedCard from '../components/Cards/FeaturedCard';
-
+import RNFetchBlob from 'rn-fetch-blob';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import RNFS from 'react-native-fs';
 
 import Podcast from '../components/Sections/Podcast';
 import Channel from '../components/Sections/Channel';
@@ -20,13 +26,15 @@ import TrackPlayer,{
     AppKilledPlaybackBehavior 
   } from 'react-native-track-player';
   import {useNavigation,useFocusEffect} from '@react-navigation/native';
+import ListModals from '../components/Cards/Modals/ListModals';
 
 const SeeAll = (props) => {
   
 const navigation = useNavigation();
   const [podcast, setPodcast] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [channels, setChannels] = useState(false)
-  const {language, selectedlang, setSelectedlang,sate,setSate} = useContext(AuthContext);
+  const {setmusicdatafordownload,musicdatafordownload,downloadedPodcast,downloadedPodcastID,language,selectedlang,sate,setSate,UserData,setpodcast_id,podcast_id,setfavoritePodcat_id,setdownloadedPodcastID,setdownloadedPodcast} = useContext(AuthContext);
   const [podCastData, setPodcastData] = useState([]);
   const [channelsdata, setchannelsdata] = useState([])
   const fetchData = () => {
@@ -61,9 +69,270 @@ const trackResetAndNavgate = (item) => {
     setSate(0)
     navigation.navigate('Music',{podcastDetails:item,Fromlibrary:false});
   }
+
+ 
+  const [newpodcast, setnewpodcast] = useState([])
+  const fetchNewPodcast =async () =>{
+    try {
+      var baseUrl = ''
+      if(selectedlang == 'en' || selectedlang == 'es'){
+         baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/podcast-app.php?lang=${selectedlang}`;
+      }else{
+         baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/podcast-app.php?lang=pt-br`;
+        
+      }
+      const response = await fetch(baseUrl, {
+        method: 'Get',
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+      const responseData = await response.json();
+      console.log('responseData---------------------------->',responseData)
+      if (responseData) {
+        setnewpodcast(responseData)
+      } else {
+      }
+    } catch (error) {
+      console.log('error => ', error);
+    }
+  }
+
+
+  useEffect(()=>{
+      fetch('https://socialagri.com/agriFM/wp-json/wp/v2/intereses/?lang=en')
+      .then(res=>res.json())
+      .then((data) =>{ 
+        setInterest(data.length == 0 ? undefined || null : (data));
+      })
+  },[])
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+      getChannels();
+      fetchNewPodcast()
+    }, []),
+  );
+
+  const onShare = async () => {
+    try {
+      const result = await Share.share({
+        message:
+        muusicUrl + ' ' + 'This Podcast has been share from AgriFM app',
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+  
+
+  const AddPodcastToLiabrary =async () =>{
+    setModalVisible(false);
+    setLoading(true)
+    try {
+      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/add-favp-app.php?id_user=${UserData[0]?.user}&id_podcast=${podcast_id}`;
+      const response = await fetch(baseUrl, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+      const responseData = await response.json();
+      if (responseData[0].favoritos_podcast ) {
+        Toast.show('Podcast Added to liabrary', Toast.LONG);
+        let courseName = responseData[0].favoritos_podcast?.map(itemxx => {
+          return  itemxx
+        })
+        setfavoritePodcat_id(courseName)
+        // navigation.navigate('MyLibrary')
+      } else {
+        alert('Failed to add to liabrary !');
+      }
+    } catch (error) {
+      console.log('error => ', error);
+    }
+    setLoading(false)
+  }
+  
+  const RemovePodcastFromLiabrary =async () =>{
+    setModalVisible(false);
+    setLoading(true)
+    try {
+      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/remove-libraryp.php?id_user=${UserData[0]?.user}&id_podcast=${podcast_id}`;
+      const response = await fetch(baseUrl, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+      const responseData = await response.json();
+      if (responseData[0].favoritos_podcast ) {
+        Toast.show('Podcast removed from liabrary', Toast.LONG);
+        let courseName = responseData[0].favoritos_podcast?.map(itemxx => {
+          return  itemxx
+        })
+        setfavoritePodcat_id(courseName)
+        // navigation.navigate('MyLibrary')
+      } else {
+        alert('Failed to remove from liabrary !');
+      }
+    } catch (error) {
+      console.log('error => ', error);
+    }
+    setLoading(false)
+  }
+  
+  const fetchFavoritePodcast =async () =>{
+    try {
+      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/misintereses-app.php?id_user=${UserData[0]?.user}`;
+      const response = await fetch(baseUrl, {
+        method: 'Get',
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+      const responseData = await response.json();
+      if (responseData) {
+        setfavoritePodcast(responseData)
+        let courseName = responseData?.map(itemxx => {
+          return  itemxx.ID
+        })
+        setfavoritePodcat_id(courseName)
+      } else {
+        // alert('failed to get fav fav');
+      }
+    } catch (error) {
+      console.log('error => ', error);
+    }
+  }
+
+  useEffect(() => {
+    fetchFavoritePodcast();
+  },[podcast_id])
+
+const download = (item) => {
+  console.log('item',item)
+  setModalVisible(true);
+  setmuusicUrl(item?.acf?.link_podcast1)
+  setpodcast_id(JSON.stringify(item?.id))
+  setmusicdatafordownload(item)
+  // downloadPodcast(item)s
+}
+
+const getDownloadMusic = async () => {
+  const value = await AsyncStorage.getItem('musics')
+  const parseMusics = JSON.parse(value)
+  let courseName = parseMusics?.map(itemxx => {
+    return  itemxx.ID
+  })
+  setdownloadedPodcastID(courseName)
+  setdownloadedPodcast(parseMusics)
+}
+const downloadPodcast = async (item) => {
+  console.log('download by button ',item)
+  const granted = await PermissionsAndroid.request(
+    PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+    {
+      title: 'Music', 
+      message:
+        'App needs access to your Files... ',
+      buttonNeutral: 'Ask Me Later',
+      buttonNegative: 'Cancel',
+      buttonPositive: 'OK',
+    },
+  );
+  if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+    let url = item?.acf?.link_podcast1;
+  let name = item?.title?.rendered;
+  const path = RNFetchBlob.fs.dirs.DownloadDir+`/${name}.mp3`;
+  
+  const newObject = {
+    ID: item?.id,
+    TITLE: item?.title?.rendered,
+    image: item?.acf?.imagen_podcast1,
+    LINK: path
+  }
+  const previousData = await AsyncStorage.getItem('musics');
+  let data = [];
+  if (previousData !== null) {
+    data = JSON.parse(previousData);
+  }
+  data.push(newObject);
+  const dataString = JSON.stringify(data);
+  await AsyncStorage.setItem('musics', dataString);
+  RNFetchBlob.config({
+    fileCache: true,
+    appendExt: 'mp3',
+    addAndroidDownloads: {
+      useDownloadManager: true,
+      notification: true,
+      title: name,
+      path: path, // Android platform
+      description: 'Downloading the file',
+    },
+  })
+    .fetch('GET', url)
+    .then(res => {
+      console.log('res', res);
+    getDownloadMusic();
+    Toast.show('Successfully Downloaded at ' + res.path(), Toast.LONG);
+    navigation.navigate('MyLibrary')
+    });
+  }else{
+    alert('Permission Not Granted !')
+  }
+}
+useFocusEffect(
+  useCallback(() => {
+    getDownloadMusic();
+  }, []),
+);
+const RemoveDownload = async() => {
+  let newItems = downloadedPodcast.filter(e => e?.ID !== podcast_id);
+
+  setdownloadedPodcast(newItems)
+  const dataString = JSON.stringify(downloadedPodcast);
+  await AsyncStorage.setItem('musics', dataString);
+  let newItemsID = downloadedPodcastID.filter(e => e !== podcast_id);
+  setdownloadedPodcastID(newItemsID)
+  // downloadedPodcastID
+  // setdownloadedPodcastID()
+}
+
+
+
+
+
+
+
+
+const [modalVisible, setModalVisible] = useState(false);
+const [muusicUrl, setmuusicUrl] = useState(null)
+const [favoritePodcast, setfavoritePodcast] = useState()
+
+
+
   return (
     <ScrollView style={styles.mainBox}>
-       
+       <ListModals
+            isVisible={modalVisible}
+            onPressClose={() => setModalVisible(false)}
+            onPressaddTo={()=> AddPodcastToLiabrary()}
+            onClose={() => setModalVisible(false)}
+            onPressDownload={()=>download()}
+            onPressShare={()=>onShare()}
+            onPressRemoveDownload={()=>RemoveDownload()}
+            onPressRemove={()=>RemovePodcastFromLiabrary()}
+        />
         {podcast == true ?
          <View style={styles.featuredBox}>
 
@@ -71,13 +340,13 @@ const trackResetAndNavgate = (item) => {
          <Text style={{fontSize:20,color:Colors.primary,fontWeight:'bold',marginTop:'50%',textAlign:'center'}}>No Podcasts !</Text>
          :
          podCastData?.map((item)=>{
-           const match = channelsdata.find(item2 => item2?.id == item?.canales[0]);
+          const match = newpodcast.find(item2 => item2?.id == item?.id);
              return(
                <FeaturedCard
-               // onPressIcon={()=>download(item)}
-               // onPressDownload={()=>downloadPodcast()}
+               onPressIcon={()=>download(item)}
+               onPressDownload={()=>downloadPodcast(item)}
                onPress={() => trackResetAndNavgate(item)}
-               channelName={match?.name}
+               channelName={match?.channel_name == undefined ? 'agriBusiness International' : match?.channel_name}
                purpleIcon={true}
                podcastname = {item.title?.rendered}
                textstyle={{color:Colors.primary}} 
