@@ -31,6 +31,8 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 const Music = ({ route }) => {
   const { language, tracks, setTracks, setSate, sate, trackForMiniPlayer, settrackForMiniPlayer, selectedlang } = useContext(AuthContext);
   const [channelsdata, setchannelsdata] = useState([])
+  const {podcastDetails}= route.params
+  console.log("🚀 ~ file: Music.js:35 ~ Music ~ podcastDetails:", podcastDetails)
 
   const getChannels = () => {
     return fetch("https://socialagri.com/agriFM/wp-json/wp/v2/canales")
@@ -60,7 +62,6 @@ const Music = ({ route }) => {
       alert(error.message);
     }
   };
-  const { podcastDetails } = route.params
   const [modalVisible, setModalVisible] = useState(false);
   const [muusicUrl, setmuusicUrl] = useState(null)
 
@@ -285,7 +286,7 @@ const Music = ({ route }) => {
         <Text style={{ color: 'white', fontWeight: 'bold' }} numberOfLines={5}>{podcastDetails?.yoast_head_json?.description}</Text>
         <View style={styles.cardBox}>
           <View style={styles.headingBox}>
-            <Text style={styles.mainHeading}>{language?.FeaturedPodcasts}</Text>
+            <Text style={styles.mainHeading}>{language?.RelatedPodcast}</Text>
           </View>
           {podCastData.slice(0, 5).map((item) => {
             const match = newpodcast.find(item2 => item2?.id == item?.id);

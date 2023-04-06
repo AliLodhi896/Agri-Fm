@@ -235,6 +235,132 @@ const Music = ({ route }) => {
     }
   }
 
+  const requestpermissionforDownlaod = async () => {
+
+  };
+
+  const downloadPodcast = async (item) => {
+
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+        {
+          title: 'Music',
+          message:
+            'App needs access to your Files... ',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        let url = item?.acf?.link_podcast1;
+        let name = item?.title?.rendered;
+        const path = RNFetchBlob.fs.dirs.DownloadDir + `/${name}.mp3`;
+
+        const newObject = {
+          ID: item?.id,
+          TITLE: item?.title?.rendered,
+          image: item?.acf?.imagen_podcast1,
+          LINK: path
+        }
+
+        const requestpermissionforDownlaod = async () => {
+          try {
+            const granted = await PermissionsAndroid.request(
+              PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+              {
+                title: 'Music',
+                message:
+                  'App needs access to your Files... ',
+                buttonNeutral: 'Ask Me Later',
+                buttonNegative: 'Cancel',
+                buttonPositive: 'OK',
+              },
+            );
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+              console.log('startDownload...');
+              this.startDownload();
+            }
+          } catch (err) {
+            console.log(err);
+          }
+        };
+
+        const downloadPodcast = async (item) => {
+
+          await requestpermissionforDownlaod();
+          let url = item?.acf?.link_podcast1;
+          let name = item?.title?.rendered;
+          const path = RNFetchBlob.fs.dirs.DownloadDir + `/${name}.mp3`;
+
+          const newObject = {
+            ID: item?.id,
+            TITLE: item?.title?.rendered,
+            image: item?.acf?.imagen_podcast1,
+            LINK: path
+          }
+          const previousData = await AsyncStorage.getItem('musics');
+          let data = [];
+          if (previousData !== null) {
+            data = JSON.parse(previousData);
+          }
+          data.push(newObject);
+          const dataString = JSON.stringify(data);
+          await AsyncStorage.setItem('musics', dataString);
+          RNFetchBlob.config({
+            fileCache: true,
+            appendExt: 'mp3',
+            addAndroidDownloads: {
+              useDownloadManager: true,
+              notification: true,
+              title: name,
+              path: path, // Android platform
+              description: 'Downloading the file',
+            },
+          })
+            .fetch('GET', url)
+            .then(res => {
+              console.log('res', res);
+              Toast.show('Successfully Downloaded at ' + res.path(), Toast.LONG);
+            });
+        }
+        data.push(newObject);
+        const dataString = JSON.stringify(data);
+        await AsyncStorage.setItem('musics', dataString);
+        RNFetchBlob.config({
+          fileCache: true,
+          appendExt: 'mp3',
+          addAndroidDownloads: {
+            useDownloadManager: true,
+            notification: true,
+            title: name,
+            path: path, // Android platform
+            description: 'Downloading the file',
+          },
+        })
+          .fetch('GET', url)
+          .then(res => {
+            console.log('res', res);
+            Toast.show('Successfully Downloaded at ' + res.path(), Toast.LONG);
+          });
+      }
+    } catch (err) {
+      console.log(err);
+    }
+
+  }
+  const RemoveDownload = async () => {
+    let newItems = downloadedPodcast.filter(e => e?.ID !== podcast_id);
+
+    setdownloadedPodcast(newItems)
+    const dataString = JSON.stringify(downloadedPodcast);
+    await AsyncStorage.setItem('musics', dataString);
+    let newItemsID = downloadedPodcastID.filter(e => e !== podcast_id);
+    setdownloadedPodcastID(newItemsID)
+    // downloadedPodcastID
+    // setdownloadedPodcastID()
+  }
   const onShare = async () => {
     try {
       const result = await Share.share({
@@ -253,83 +379,10 @@ const Music = ({ route }) => {
       alert(error.message);
     }
   };
-
   const download = (item) => {
     setModalVisible(true);
     setmuusicUrl(item?.acf?.link_podcast1)
     setpodcast_id(JSON.stringify(item?.id))
-  }
-
-  const requestpermissionforDownlaod = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-        {
-          title: 'Music',
-          message:
-            'App needs access to your Files... ',
-          buttonNeutral: 'Ask Me Later',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        },
-      );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log('startDownload...');
-        this.startDownload();
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const downloadPodcast = async (item) => {
-
-    await requestpermissionforDownlaod();
-    let url = item?.acf?.link_podcast1;
-    let name = item?.title?.rendered;
-    const path = RNFetchBlob.fs.dirs.DownloadDir + `/${name}.mp3`;
-
-    const newObject = {
-      ID: item?.id,
-      TITLE: item?.title?.rendered,
-      image: item?.acf?.imagen_podcast1,
-      LINK: path
-    }
-    const previousData = await AsyncStorage.getItem('musics');
-    let data = [];
-    if (previousData !== null) {
-      data = JSON.parse(previousData);
-    }
-    data.push(newObject);
-    const dataString = JSON.stringify(data);
-    await AsyncStorage.setItem('musics', dataString);
-    RNFetchBlob.config({
-      fileCache: true,
-      appendExt: 'mp3',
-      addAndroidDownloads: {
-        useDownloadManager: true,
-        notification: true,
-        title: name,
-        path: path, // Android platform
-        description: 'Downloading the file',
-      },
-    })
-      .fetch('GET', url)
-      .then(res => {
-        console.log('res', res);
-        Toast.show('Successfully Downloaded at ' + res.path(), Toast.LONG);
-      });
-  }
-  const RemoveDownload = async () => {
-    let newItems = downloadedPodcast.filter(e => e?.ID !== podcast_id);
-
-    setdownloadedPodcast(newItems)
-    const dataString = JSON.stringify(downloadedPodcast);
-    await AsyncStorage.setItem('musics', dataString);
-    let newItemsID = downloadedPodcastID.filter(e => e !== podcast_id);
-    setdownloadedPodcastID(newItemsID)
-    // downloadedPodcastID
-    // setdownloadedPodcastID()
   }
 
   return (
@@ -410,7 +463,7 @@ const Music = ({ route }) => {
               <FeaturedCard
 
                 onPressDownload={() => downloadPodcast(item)}
-                onPressIcon={()=>download(item)}
+                onPressIcon={() => download(item)}
                 onPress={() => trackResetAndNavgate(item)}
                 channelName={match?.channel_name}
                 podcastname={item.title?.rendered}

@@ -38,7 +38,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Podcast from '../components/Sections/Podcast';
 
 const Home = () => {
-  const { downloadedPodcast, downloadedPodcastID, language, selectedlang, sate, setSate, UserData, setpodcast_id, podcast_id, setfavoritePodcat_id, setdownloadedPodcastID, setdownloadedPodcast } = useContext(AuthContext);
+
+
+  const { setmusicdatafordownload, musicdatafordownload, downloadedPodcast, downloadedPodcastID, language, selectedlang, sate, setSate, UserData, setpodcast_id, podcast_id, setfavoritePodcat_id, setdownloadedPodcastID, setdownloadedPodcast } = useContext(AuthContext);
   const navigation = useNavigation();
   const [podCastData, setPodcastData] = useState([]);
   const [interest, setInterest] = useState([])
@@ -48,44 +50,65 @@ const Home = () => {
   const [modalVisible2, setModalVisible2] = useState(false);
   const [muusicUrl, setmuusicUrl] = useState(null)
   const [favoritePodcast, setfavoritePodcast] = useState()
-  const [musicdatafordownload, setmusicdatafordownload] = useState()
 
-  const categories = [
-    {
-      id: 2,
-      name: language?.Poultry,
-      image: require('../assets/Images/poultry.png'),
-    },
-    {
-      id: 6,
-      name: language?.Ruminant,
-      image: require('../assets/Images/ruminant.png'),
-    },
-    {
-      id: 8,
-      name: language?.Swine,
-      image: require('../assets/Images/swine.png'),
-    },
-    {
-      id: 4,
-      name: language?.Nutrition,
-      image: require('../assets/Images/nutrition.png'),
-    },
-    {
-      id: 8,
-      name: language?.Aqua,
-      image: require('../assets/Images/aqua.png'),
-    },
-    {
-      id: 8,
-      name: selectedlang == 'en' ? 'Others' : 'Otras',
-      image: require('../assets/Images/aqua.png'),
-    },
-  ];
+  const [loaderwhileLoader, setloaderwhileLoader] = useState(false)
+  console.log('musicdatafordownload', musicdatafordownload)
+  // const categories = [
+  //   {
+  //     id: 2,
+  //     name: language?.Poultry,
+  //     image: require('../assets/Images/poultry.png'),
+  //   },
+  //   {
+  //     id: 6,
+  //     name: language?.Ruminant,
+  //     image: require('../assets/Images/ruminant.png'),
+  //   },
+  //   {
+  //     id: 8,
+  //     name: language?.Swine,
+  //     image: require('../assets/Images/swine.png'),
+  //   },
+  //   {
+  //     id: 4,
+  //     name: language?.Nutrition,
+  //     image: require('../assets/Images/nutrition.png'),
+  //   },
+  //   {
+  //     id: 8,
+  //     name: language?.Aqua,
+  //     image: require('../assets/Images/aqua.png'),
+  //   },
+  //   {
+  //     id: 8,
+  //     name: selectedlang == 'en' ? 'Others' : 'Otras',
+  //     image: require('../assets/Images/aqua.png'),
+  //   },
+  // ];
+  const [categories, setCategories] = useState([]);
+  // console.log('selectedlang',selectedlang)
+
+  const fetchCategories = async () => {
+    try {
+      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/category-app-end.php?lang=${selectedlang}`;
+      const response = await fetch(baseUrl, {
+        method: 'Get',
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+      const responseData = await response.json();
+      setCategories(responseData);
+      // console.log("🚀 ~ file: Home.js:101 ~ fetchCategories ~ responseData:", responseData)
+      
+    } catch (error) {
+      console.log('error => ', error);
+    }
+  }
 
   const fetchData = async () => {
     try {
-      let baseUrl = `https://socialagri.com/agriFM/wp-json/wp/v2/podcast?lang=${selectedlang}`;
+      let baseUrl = `https://socialagri.com/agriFM/wp-json/wp/v2/podcast?lang=${selectedlang == "pt" ? "pt-br" : selectedlang}`;
       const response = await fetch(baseUrl, {
         method: 'Get',
         headers: {
@@ -104,7 +127,13 @@ const Home = () => {
   const [newpodcast, setnewpodcast] = useState([])
   const fetchNewPodcast = async () => {
     try {
-      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/podcast-app.php?lang=${selectedlang}`;
+      var baseUrl = ''
+      if (selectedlang == 'en' || selectedlang == 'es') {
+        baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/podcast-app.php?lang=${selectedlang}`;
+      } else {
+        baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/podcast-app.php?lang=pt-br`;
+
+      }
       const response = await fetch(baseUrl, {
         method: 'Get',
         headers: {
@@ -112,6 +141,7 @@ const Home = () => {
         },
       });
       const responseData = await response.json();
+      console.log('responseData---------------------------->', responseData)
       if (responseData) {
         setnewpodcast(responseData)
       } else {
@@ -122,7 +152,7 @@ const Home = () => {
   }
   const getChannels = () => {
     setLoading(true)
-    return fetch(`https://socialagri.com/agriFM/wp-json/wp/v2/canales/?lang=${selectedlang}&per_page=10`)
+    return fetch(`https://socialagri.com/agriFM/wp-json/wp/v2/canales/?lang=${selectedlang}&per_page=100`)
       .then((response) => response.json())
       .then((data) => {
         setchannelsdata(data);
@@ -134,6 +164,8 @@ const Home = () => {
   }
 
   useEffect(() => {
+    fetchCategories();
+
     fetch(`https://socialagri.com/agriFM/wp-json/wp/v2/intereses/?lang=${selectedlang == "pt" ? "pt-br" : selectedlang}`)
       .then(res => res.json())
       .then((data) => {
@@ -259,14 +291,13 @@ const Home = () => {
   }, [podcast_id])
 
   const download = (item) => {
-    console.log('item------------------>', item?.acf?.link_podcast1)
+    console.log('item', item)
     setModalVisible(true);
     setmuusicUrl(item?.acf?.link_podcast1)
     setpodcast_id(JSON.stringify(item?.id))
     setmusicdatafordownload(item)
-    downloadPodcast(item)
+    // downloadPodcast(item)s
   }
-
 
   const getDownloadMusic = async () => {
     const value = await AsyncStorage.getItem('musics')
@@ -278,6 +309,8 @@ const Home = () => {
     setdownloadedPodcast(parseMusics)
   }
   const downloadPodcast = async (item) => {
+    console.log('download by button ', item)
+    setloaderwhileLoader(true)
     const granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
       {
@@ -322,14 +355,14 @@ const Home = () => {
         .fetch('GET', url)
         .then(res => {
           console.log('res', res);
-          // getDownloadMusic();
+          getDownloadMusic();
           Toast.show('Successfully Downloaded at ' + res.path(), Toast.LONG);
+          setloaderwhileLoader(false)
           navigation.navigate('MyLibrary')
         });
     } else {
       alert('Permission Not Granted !')
     }
-
   }
   useFocusEffect(
     useCallback(() => {
@@ -351,9 +384,17 @@ const Home = () => {
     // setdownloadedPodcastID()
   }
 
+  function obtenNombreCanal(value) {
+    for (let i = 0; i < channelsdata.length; i++) {
+      if (value == channelsdata[i].id) {
+        var nombre = channelsdata[i].name;
+        return nombre;
+      }
+    }
+  }
+
   return (
     <View style={{ backgroundColor: Colors.primary, flex: 1 }}>
-
       <View style={{ height: sate !== 0 ? '85%' : '100%', backgroundColor: 'white' }}>
         <ScrollView style={styles.mainBox}>
           <View style={{ backgroundColor: Colors.primary, paddingHorizontal: 20 }}>
@@ -401,17 +442,17 @@ const Home = () => {
                 }
               </TouchableOpacity>
             </View>
-            <ScrollView style={styles.categoryBox} horizontal>
+            <ScrollView showsHorizontalScrollIndicator={false} style={styles.categoryBox} horizontal>
               {categories.map(item => {
                 return (
                   <TouchableOpacity
-                    style={styles.categories}
+                    style={[styles.categories, { marginRight:3}]}
                     onPress={() => {
                       navigation.navigate('CategoriesDetail', { details: item.id })
 
                     }}>
                     <Image
-                      source={item.image}
+                      source={item?.image}
                       style={{ width: '80%', height: '75%', borderRadius: 100 }}
                     />
                     <Text style={styles.categoriesName}>{item.name}</Text>
@@ -423,7 +464,7 @@ const Home = () => {
               <View style={styles.headingBox}>
                 <Text style={styles.mainHeading}>{language?.LastChannels}</Text>
                 <TouchableOpacity onPress={() => navigation.navigate('SeeAllChannels')}>
-                  <Text style={styles.subHeading}>See All</Text>
+                  <Text style={styles.subHeading}>{language?.seeAll}</Text>
                 </TouchableOpacity>
               </View>
               <ScrollView style={styles.categoryBox} horizontal  >
@@ -432,7 +473,7 @@ const Home = () => {
                     <ActivityIndicator size="large" color="white" />
                   </View>
                   :
-                  channelsdata.map(item => {
+                  channelsdata?.slice(0, 10).map(item => {
                     return (
                       <ChannelCard
                         onPress={() => navigation.navigate('ChannelDetails', { details: item })}
@@ -454,7 +495,7 @@ const Home = () => {
               <View style={styles.headingBox}>
                 <Text style={styles.mainHeading}>{language?.Youarelistening}</Text>
                 <TouchableOpacity onPress={() => navigation.navigate('SeeAll')}>
-                  <Text style={styles.subHeading}>See All</Text>
+                  <Text style={styles.subHeading}>{language?.seeAll}</Text>
                 </TouchableOpacity>
               </View>
               {loading == true ?
@@ -464,13 +505,16 @@ const Home = () => {
                 :
 
                 podCastData.slice(0, 5).map((item) => {
-                  const match = newpodcast.find(item2 => item2?.id == item?.id);
+                  // const match = newpodcast.find(item2 => item2?.id == item?.id);
+                  const match = obtenNombreCanal(item.canales);
                   return (
                     <FeaturedCard
                       onPressDownload={() => downloadPodcast(item)}
                       onPressIcon={() => download(item)}
                       onPress={() => trackResetAndNavgate(item)}
-                      channelName={match?.channel_name}
+                      // channelName={match?.channel_name == undefined ? 'Chatting with poultry experts' : match?.channel_name}
+                      channelName={match}
+                      downloadLoading={loaderwhileLoader}
                       podcastname={item.title?.rendered}
                       image={item?.acf?.imagen_podcast1}
                       id={item?.id}
@@ -487,7 +531,7 @@ const Home = () => {
             <View style={styles.cardBox} animation="fadeInUpBig">
               <View style={styles.headingBox}>
                 <Text style={styles.mainHeading}>{language?.channelofInterest}</Text>
-                <Text style={styles.subHeading}>See All</Text>
+                <Text style={styles.subHeading}>{language?.seeAll}</Text>
               </View>
               <ScrollView style={styles.categoryBox} horizontal  >
                 {loading == true ?
@@ -495,7 +539,7 @@ const Home = () => {
                     <ActivityIndicator size="large" color="white" />
                   </View>
                   :
-                  channelsdata.map(item => {
+                  channelsdata?.slice(0, 10).map(item => {
                     return (
                       <ChannelCard
                         onPress={() => navigation.navigate('ChannelDetails', { details: item })}
@@ -518,25 +562,30 @@ const Home = () => {
             <View style={styles.headingBox}>
               <Text style={{ fontSize: 18, fontWeight: '700', color: Colors.primary }}>{language?.YourLiabrary}</Text>
             </View>
-            {favoritePodcast?.length == 0 ?
-              <Text style={{ fontSize: 16, color: Colors.primary, fontWeight: 'bold', marginTop: '20%', textAlign: 'center' }}>No Podcasts In your Liabrary !</Text>
+            {loading == true ?
+              <View style={{ padding: 100, marginLeft: 20 }}>
+                <ActivityIndicator size="large" color={Colors.primary} />
+              </View>
               :
-              favoritePodcast?.map((item) => {
-                return (
-                  <FeaturedCard
-                    onPressDownload={() => downloadPodcast(item)}
-                    textstyle={{ color: Colors.primary }}
-                    headingText={{ color: 'grey' }}
-                    timeText={{ color: 'grey' }}
-                    onPressIcon={() => download(item)}
-                    onPress={() => trackResetAndNavgate(item)}
-                    purpleIcon={true}
-                    channelName='Channel Name'
-                    podcastname={item.TITLE}
-                    image={item?.image}
-                  />
-                );
-              })}
+              favoritePodcast?.length == 0 ?
+                <Text style={{ fontSize: 16, color: Colors.primary, fontWeight: 'bold', marginTop: '20%', textAlign: 'center' }}>No Podcasts In your Liabrary !</Text>
+                :
+                favoritePodcast?.map((item) => {
+                  return (
+                    <FeaturedCard
+                      onPressDownload={() => downloadPodcast(item)}
+                      textstyle={{ color: Colors.primary }}
+                      headingText={{ color: 'grey' }}
+                      timeText={{ color: 'grey' }}
+                      onPressIcon={() => download(item)}
+                      onPress={() => trackResetAndNavgate(item)}
+                      purpleIcon={true}
+                      channelName=' '
+                      podcastname={item.TITLE}
+                      image={item?.image}
+                    />
+                  );
+                })}
 
 
             <View style={styles.headingBox}>

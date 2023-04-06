@@ -5,24 +5,24 @@
     "Swine": "Suíno",
     "Nutrition": "Nutrição",
     "Aqua": "Aqua",
-    "LastChannels": "Últimos canais",
+    "LastChannels": "Últimos canals",
     "FeaturedPodcasts": "Destaques",
     "GoToLibrary": "Ir ao canal",
     "DownloadPodcast": "Baixar Podcast",
     "Share": "Compartilhar",
     "AddToLibrary": "Adicionar à biblioteca",
-    "FeaturedChannels": "Canais destacados",
+    "FeaturedChannels": "Canals destacados",
     "CreateChannel": "Criar Canal",
     "CreateProfile": "Criar Perfil",
     "TrendingInterest": "Tendências de Interesse",
 
-    "ExploreOurPodcast": "Explore nosso podcast",
+    "ExploreOurPodcast": "Explorar podcasts",
     "Interests": "Interesses",
     "Cancel": "Cancelar",
 
     
     "Podcasts": "Podcasts",
-    "Channels": "Canais",
+    "Channels": "Canals",
     "Filter": "Filtros",
 
     "Play": "Escutar",
@@ -50,6 +50,7 @@
 
     "YourEmail": "Seu e-mail",
     "YourPassword": "Sua Senha",
+    "VerifyPassword": "Verificar senha",
 
     "ChooseYourJob": "Escolha seu trabalho",
     "ChooseYourActivity": "Escolha sua atividade",
@@ -84,7 +85,7 @@
     "Home": "Início",
     "Explore": "Explorar",
     "Library": "Biblioteca",
-    "MyAgriFm": "MyagriFmGenericName",
+    "MyAgriFm": "Registro",
 
 
     "youhavetologin":"Entre com sua conta ou registre-se para continuar...",
@@ -96,7 +97,7 @@
     "Biosecurity": "Biossegurança",
     "Welfare": "Bem-estar",
     "YourInterest": "Seus interess",
-    "channelofInterest":"Canais do seu interesse",
+    "channelofInterest":"Canals do seu interesse",
     "RelatedPodcast":"Podcasts relacionados"
 
 

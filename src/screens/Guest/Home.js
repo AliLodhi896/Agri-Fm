@@ -41,42 +41,43 @@ const Home = () => {
   const [loading, setLoading] = useState(false)
   const [channelsdata, setchannelsdata] = useState([])
 
-  const categories = [
-    {
-      id: 2,
-      name: language?.Poultry,
-      image: require('../../assets/Images/poultry.png'),
-    },
-    {
-      id: 6,
-      name: language?.Ruminant,
-      image: require('../../assets/Images/ruminant.png'),
-    },
-    {
-      id: 8,
-      name: language?.Swine,
-      image: require('../../assets/Images/swine.png'),
-    },
-    {
-      id: 4,
-      name: language?.Nutrition,
-      image: require('../../assets/Images/nutrition.png'),
-    },
-    {
-      id: 8,
-      name: language?.Aqua,
-      image: require('../../assets/Images/aqua.png'),
-    },
-    {
-      id: 8,
-      name: selectedlang == 'en' ? 'Others' : 'Otras',
-      image: require('../../assets/Images/aqua.png'),
-    },
-  ];
+  // const categories = [
+  //   {
+  //     id: 2,
+  //     name: language?.Poultry,
+  //     image: require('../../assets/Images/poultry.png'),
+  //   },
+  //   {
+  //     id: 6,
+  //     name: language?.Ruminant,
+  //     image: require('../../assets/Images/ruminant.png'),
+  //   },
+  //   {
+  //     id: 8,
+  //     name: language?.Swine,
+  //     image: require('../../assets/Images/swine.png'),
+  //   },
+  //   {
+  //     id: 4,
+  //     name: language?.Nutrition,
+  //     image: require('../../assets/Images/nutrition.png'),
+  //   },
+  //   {
+  //     id: 8,
+  //     name: language?.Aqua,
+  //     image: require('../../assets/Images/aqua.png'),
+  //   },
+  //   {
+  //     id: 8,
+  //     name: selectedlang == 'en' ? 'Others' : 'Otras',
+  //     image: require('../../assets/Images/aqua.png'),
+  //   },
+  // ];
+  const [categories, setCategories] = useState([]);
 
-  const fetchData = async () => {
+  const fetchCategories = async () => {
     try {
-      let baseUrl = `https://socialagri.com/agriFM/wp-json/wp/v2/podcast?lang=${selectedlang}`;
+      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/category-app-end.php?lang=${selectedlang}`;
       const response = await fetch(baseUrl, {
         method: 'Get',
         headers: {
@@ -84,6 +85,25 @@ const Home = () => {
         },
       });
       const responseData = await response.json();
+      setCategories(responseData);
+      // console.log("🚀 ~ file: Home.js:101 ~ fetchCategories ~ responseData:", responseData)
+
+    } catch (error) {
+      console.log('error => ', error);
+    }
+  }
+  const fetchData = async () => {
+    // alert(selectedlang);
+    try {
+      let baseUrl = `https://socialagri.com/agriFM/wp-json/wp/v2/podcast?lang=${selectedlang == "pt" ? "pt-br" : selectedlang}`;
+      const response = await fetch(baseUrl, {
+        method: 'Get',
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+      const responseData = await response.json();
+      // console.log("🚀 ~ file: Home.js:87 ~ fetchData ~ responseData:", responseData)
       if (responseData) {
         setPodcastData(responseData)
       } else {
@@ -96,10 +116,11 @@ const Home = () => {
 
   const getChannels = () => {
     setLoading(true)
-    return fetch(`https://socialagri.com/agriFM/wp-json/wp/v2/canales/?lang=${selectedlang}&per_page=10`)
+    return fetch(`https://socialagri.com/agriFM/wp-json/wp/v2/canales/?lang=${selectedlang}&per_page=100`)
       .then((response) => response.json())
       .then((data) => {
-        // console.log("🚀 ~ file: Home.js:102 ~ .then ~ data:", data)
+        // console.log("🚀 ~ file: Home.js:102 ~ .then ~ data:", data?.length)
+        // alert(data?.length)
         setchannelsdata(data);
         setLoading(false)
       })
@@ -110,6 +131,7 @@ const Home = () => {
 
   useEffect(() => {
     fetchData();
+    fetchCategories();
     fetch(`https://socialagri.com/agriFM/wp-json/wp/v2/intereses/?lang=${selectedlang == "pt" ? "pt-br" : selectedlang}`)
       .then(res => res.json())
       .then((data) => {
@@ -217,6 +239,15 @@ const Home = () => {
     navigation.navigate('Music', { podcastDetails: item });
   }
 
+  function obtenNombreCanal(value) {
+    for (let i = 0; i < channelsdata.length; i++) {
+      if (value == channelsdata[i].id) {
+        var nombre = channelsdata[i].name;
+        return nombre;
+      }
+    }
+  }
+
   return (
     <View style={{ height: '100%', backgroundColor: Colors.primary }}>
       <ScrollView style={styles.mainBox}>
@@ -282,7 +313,7 @@ const Home = () => {
           <View style={styles.headingBox}>
             <Text style={styles.mainHeading}>{language?.LastChannels}</Text>
             <TouchableOpacity onPress={() => navigation.navigate('SeeAllChannels')}>
-              <Text style={styles.subHeading}>See All</Text>
+              <Text style={styles.subHeading}>{language?.seeAll}</Text>
             </TouchableOpacity>
           </View>
           <ScrollView style={styles.categoryBox} horizontal  >
@@ -291,7 +322,7 @@ const Home = () => {
                 <ActivityIndicator size="large" color="white" />
               </View>
               :
-              channelsdata.map(item => {
+              channelsdata?.slice(0, 10).map(item => {
                 return (
                   <ChannelCard
                     onPress={() => navigation.navigate('ChannelDetails', { details: item })}
@@ -312,7 +343,7 @@ const Home = () => {
           <View style={styles.headingBox}>
             <Text style={styles.mainHeading}>{language?.FeaturedPodcasts}</Text>
             <TouchableOpacity onPress={() => navigation.navigate('SeeAll')}>
-              <Text style={styles.subHeading}>See All</Text>
+              <Text style={styles.subHeading}>{language?.seeAll}</Text>
             </TouchableOpacity>
           </View>
           {loading == true ?
@@ -321,13 +352,15 @@ const Home = () => {
             </View>
             :
             podCastData.slice(0, 5).map((item) => {
-              const match = newpodcast.find(item2 => item2?.id == item?.id);
+              const match = obtenNombreCanal(item.canales);
+              // const match = newpodcast.find(item2 => item2?.id == item?.id);
               return (
                 <FeaturedCard
                   onPressIcon={() => download(item)}
                   onPressDownload={() => downloadPodcast()}
                   onPress={() => trackResetAndNavgate(item)}
-                  channelName={match?.channel_name}
+                  channelName={match}
+                  // channelName={match?.channel_name}
                   podcastname={item.title?.rendered}
                   image={item?.acf?.imagen_podcast1}
                   time={Object.values(item?.yoast_head_json?.twitter_misc)[0]}
@@ -345,7 +378,7 @@ const Home = () => {
         <View style={styles.cardBox} animation="fadeInUpBig">
           <View style={styles.headingBox}>
             <Text style={styles.mainHeading}>{language?.FeaturedChannels}</Text>
-            <Text style={styles.subHeading}>See All</Text>
+            <Text style={styles.subHeading}>{language?.seeAll}</Text>
           </View>
           <ScrollView style={styles.categoryBox} horizontal>
             {loading == true ?
@@ -353,7 +386,7 @@ const Home = () => {
                 <ActivityIndicator size="large" color="white" />
               </View>
               :
-              channelsdata.map(item => {
+              channelsdata?.slice(0, 10).map(item => {
                 return (
                   <ChannelCard
                     onPress={() => navigation.navigate('ChannelDetails', { details: item })}
@@ -380,7 +413,7 @@ const Home = () => {
             }} style={{ borderRadius: 100, alignItems: 'flex-end', marginTop: -20 }}>
               <AntDesign style={styles.edit} name="plus" color={'white'} size={18} />
             </TouchableOpacity>
-            <Text style={{ color: Colors.secondary, fontSize: 12, marginTop: 10, textAlign: 'center' }}>{language?.CreateChannel}</Text>
+            <Text style={{ color: Colors.secondary, fontSize: 12, marginTop: 10, textAlign: 'center' }}>{language?.CreateProfile}</Text>
 
           </View>
           <View style={{ alignSelf: 'center' }}>
@@ -388,7 +421,7 @@ const Home = () => {
             <TouchableOpacity onPress={() => navigation.navigate('LoginEmail')} style={{ borderRadius: 100, alignItems: 'flex-end', marginTop: -20 }}>
               <AntDesign style={styles.edit} name="plus" color={'white'} size={18} />
             </TouchableOpacity>
-            <Text style={{ color: Colors.secondary, fontSize: 12, marginTop: 10, textAlign: 'center' }}>{language?.CreateProfile}</Text>
+            <Text style={{ color: Colors.secondary, fontSize: 12, marginTop: 10, textAlign: 'center' }}>{language?.CreateChannel}</Text>
           </View>
         </View>
         <View style={styles.headingBox}>

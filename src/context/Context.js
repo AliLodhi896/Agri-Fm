@@ -18,7 +18,7 @@ export const AuthProvider = props => {
   const [downloadedPodcastID, setdownloadedPodcastID] = useState([])
   const [phoneNumber, setPhoneNmber] = useState('')
   const [trackForMiniPlayer, settrackForMiniPlayer] = useState({})
-
+  const [musicdatafordownload, setmusicdatafordownload] = useState()
 
 
   // const getDownloadMusic = async () => {
@@ -46,6 +46,8 @@ const getData = async () => {
   return (
     <AuthContext.Provider
       value={{
+        setmusicdatafordownload,
+        musicdatafordownload,
         isSignin,
         setIsSignin,
         setLanguage,

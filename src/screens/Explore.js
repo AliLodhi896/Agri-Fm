@@ -46,7 +46,7 @@ const Explore = ({ navigation }) => {
       .then((data) => {
         // console.log("🚀 ~ file: Explore.js:47 ~ .then ~ data:", data)
         setInterest(data.length == 0 ? undefined || null : (data));
-        setSearchProduct(data.length == 0 ? undefined || null : (data))
+        // setSearchProduct(data.length == 0 ? undefined || null : (data))
         setLoading(false)
       })
   }, [])
@@ -72,7 +72,7 @@ const Explore = ({ navigation }) => {
 
   const fetchData1 = () => {
     setSearchLoading(true);
-    const url = `https://socialagri.com/agriFM/wp-json/wp/v2/podcast/?lang=${selectedlang}&per_page=100`;
+    const url = `https://socialagri.com/agriFM/wp-json/wp/v2/podcast/?lang=${selectedlang == "pt" ? "pt-br" : selectedlang}&per_page=100`;
 
     fetch(url)
       .then(response => {

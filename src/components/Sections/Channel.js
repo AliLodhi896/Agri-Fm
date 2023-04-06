@@ -21,7 +21,8 @@ const Channel = (props) => {
 
     const fetchFollowedChannels =async () =>{
       try {
-        let baseUrl = `https://socialagri.com/agriFM/wp-json/wp/v2/canales?lang=${selectedlang}`;
+        // let baseUrl = `https://socialagri.com/agriFM/wp-json/wp/v2/canales?lang=${selectedlang}`;
+        let baseUrl = `https://socialagri.com/agriFM/wp-json/wp/v2/canales/?lang=${selectedlang}&per_page=100`;
         const response = await fetch(baseUrl, {
           method: 'Get',
           headers: {

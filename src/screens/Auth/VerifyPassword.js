@@ -83,7 +83,7 @@ const VerifyPassword = () => {
             required: 'Email is required',
 
           }}
-          placeholder="Email"
+          placeholder={language.YourEmail}
           // onChangeText={username => {
           //   setRegistration(prev => ({...prev, Password: username}));
           // }}
@@ -109,7 +109,7 @@ const VerifyPassword = () => {
               message: 'Password maximum length is 16',
             },
           }}
-          placeholder="Verify Password"
+          placeholder={language.VerifyPassword}
         />
         {errors.verify_password && (
           <Text style={styles.errormessage}>

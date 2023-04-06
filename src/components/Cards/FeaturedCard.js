@@ -10,6 +10,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import ListModals from './Modals/ListModals';
 import { AuthContext } from '../../context/Context';
 import RenderHtml from 'react-native-render-html';
+import { ActivityIndicator } from 'react-native-paper';
 
 
 const FeaturedCard = (props) => {
@@ -89,6 +90,7 @@ const FeaturedCard = (props) => {
                             size={25}
                             style={{}}
                         />
+
                     </TouchableOpacity>
 
                 }
@@ -98,6 +100,9 @@ const FeaturedCard = (props) => {
     )
 }
 const styles = StyleSheet.create({
+    channelname:{
+        color: "white"
+    },
     description: {
         fontSize: 16,
         fontWeight: '600',

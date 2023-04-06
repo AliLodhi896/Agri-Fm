@@ -17,7 +17,7 @@
     "TrendingInterest": "Tendencia de Interés",
     "seeAll": "ver todo",
 
-    "ExploreOurPodcast": "Explora nuestro podcast",
+    "ExploreOurPodcast": "Explorar podcasts",
     "Interests": "Intereses",
 
     "Podcasts": "Podcasts",
@@ -25,7 +25,7 @@
     "Filter": "Filtros",
     "Play": "Escutar",
 
-    "Welcome": "Welcome",
+    "Welcome": "Bienvenido",
     "Mobile": "Móvil",
     "Company": "Empresa",
     "Job": "Trabajo",
@@ -44,10 +44,11 @@
     "Name": "Nombre",
     "Surname": "Apellido",
     "Phone": "Teléfono",
-    "Next":  "Próximo",
+    "Next":  "Siguiente",
 
-    "YourEmail": "Tu correo electrónico",
+    "YourEmail": "Su email",
     "YourPassword": "Tu Contraseña",
+    "VerifyPassword": "Verificar contraseña",
 
     "ChooseYourJob": "Elige tu trabajo",
     "ChooseYourActivity": "Elige tu actividad",
@@ -63,7 +64,7 @@
     "GoBack": "Regresa",
 
     "Register": "Registro",
-    "Login": "Acceso",
+    "Login": "Entrar",
     "Follow": "Seguir",
     "ForgotPassword": "¿Ha olvidado su contraseña? Restablece contraseña",
     "YourLiabrary":"Tu biblioteca",
@@ -75,14 +76,14 @@
     "NewActivity": "Nueva actividad",
     "NewLanguage": "Nuevo Idioma",
     "NewCountry": "Nuevo País",
-    "Update": "actualizar",
+    "Update": "atualizar",
     "Youarelistening" : "Estás escuchando",
     
 
     "Home": "Casa",
     "Explore": "Explorar",
     "Library": "Biblioteca",
-    "MyAgriFm": "MiagriFm",
+    "MyAgriFm": "Registro",
     "UnFollow": "dejar de seguir",
     "RemoveFromLibrary":"Eliminar de la biblioteca",
     "removeDownload" : "Quitar de Descargas",

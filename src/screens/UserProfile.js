@@ -14,8 +14,10 @@ const UserProfile = () => {
     const [modalVisible, setModalVisible] = useState(true);
     const navigation = useNavigation();
     const {language, selectedlang, setSelectedlang,UserData,setIsSignin,setUserData} = useContext(AuthContext);
-const [userdetals, setuserdetals] = useState([])
-console.log('userdetals',UserData)
+    const [userdetals, setuserdetals] = useState([])
+    const [Jobs, setJob] = useState([{}]);
+    const [Activity, setActivity] = useState([{}]);
+
 
     const fetchData = () => {
         return fetch("https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/lista-usuarios.php?id_user=23005")
@@ -28,43 +30,83 @@ console.log('userdetals',UserData)
                 console.log(err,'API Failed');
               });      
       }
+
+      const GetJObs = async data => {
+        try {
+          let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/cargo-app-end.php?lang=${selectedlang}`;
+          const response = await fetch(baseUrl, {
+            method: 'GET',
+            headers: {
+              Accept: 'application/json',
+            },
+          });
+          const responseData = await response.json();
+          console.log('responseData',responseData)
+          if(responseData){
+            setJob(responseData?.map(el => ({label: el.name, value: el.id})));
+          }else{
+              
+          }
+        } catch (error) {
+          console.log('Network Request Failed=> ', error);
+        }
+      };
+
+  const GetActivity = async data => {
+    try {
+      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/actividad-app-end.php?lang=${selectedlang}`;
+      const response = await fetch(baseUrl, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+      const responseData = await response.json();
+      console.log('response-------->',responseData)
+      if(responseData){
+        setActivity(responseData?.map(el => ({label: el.name, value: el.id})));
+      }else{
+          
+      }
+    } catch (error) {
+      console.log('Network Request Failed=> ', error);
+    }
+  };
+
 useEffect(() => {
-  fetchData()
-}, [UserData])
+    GetJObs()
+    fetchData()
+    GetActivity()
+}, [userdetals])
+
+            const matchJob = Jobs.find(item2 => item2?.value == UserData[0]?.cargo);
+            const matchActivity = Activity.find(item2 => item2?.value == UserData[0]?.actividad);
 
     const data = [
         {
             key: 'First Name',
-            value: userdetals !== null && userdetals[0]?.NAME
+            value: UserData[0]?.nombre
         },
         {
             key: 'Sur Name',
-            value:userdetals !== null &&  userdetals[0]?.SURNAME
+            value:UserData[0]?.apellidos
         },
         {
             key: 'Mobile',
-            value:userdetals !== null &&  userdetals[0]?.PHONE
+            value:UserData[0]?.movil
         },
         {
             key: 'Company',
-            value:userdetals !== null &&   userdetals[0]?.COMPANY
+            value:UserData[0]?.empresa
         },
         {
-            key: 'Job',
-            value:userdetals !== null &&  userdetals[0]?.JOB
+            key:'Job',
+            value:matchJob?.label
         },
         {
-            key: 'Activity',
-            value:userdetals !== null && userdetals[0]?.ACTIVITY
-        },
-        {
-            key: 'Production',
-            value: 'Avicultura'
-        },
-        {
-            key: 'Details',
-            value: UserData?.Detallesotros
-        },
+            key:'Activity',
+            value:matchActivity?.label
+        }
         
     ]
   
