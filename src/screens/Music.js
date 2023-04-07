@@ -241,6 +241,10 @@ const Music = ({ route }) => {
 
   const downloadPodcast = async (item) => {
 
+    if (!item) {
+      item = podcastDetails;
+    };
+
     try {
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
@@ -287,44 +291,6 @@ const Music = ({ route }) => {
           }
         };
 
-        const downloadPodcast = async (item) => {
-
-          await requestpermissionforDownlaod();
-          let url = item?.acf?.link_podcast1;
-          let name = item?.title?.rendered;
-          const path = RNFetchBlob.fs.dirs.DownloadDir + `/${name}.mp3`;
-
-          const newObject = {
-            ID: item?.id,
-            TITLE: item?.title?.rendered,
-            image: item?.acf?.imagen_podcast1,
-            LINK: path
-          }
-          const previousData = await AsyncStorage.getItem('musics');
-          let data = [];
-          if (previousData !== null) {
-            data = JSON.parse(previousData);
-          }
-          data.push(newObject);
-          const dataString = JSON.stringify(data);
-          await AsyncStorage.setItem('musics', dataString);
-          RNFetchBlob.config({
-            fileCache: true,
-            appendExt: 'mp3',
-            addAndroidDownloads: {
-              useDownloadManager: true,
-              notification: true,
-              title: name,
-              path: path, // Android platform
-              description: 'Downloading the file',
-            },
-          })
-            .fetch('GET', url)
-            .then(res => {
-              console.log('res', res);
-              Toast.show('Successfully Downloaded at ' + res.path(), Toast.LONG);
-            });
-        }
         data.push(newObject);
         const dataString = JSON.stringify(data);
         await AsyncStorage.setItem('musics', dataString);
@@ -411,8 +377,10 @@ const Music = ({ route }) => {
               </TouchableOpacity>
             </View>
             <View style={{ marginTop: '5%', justifyContent: 'center', width: 80, justifyContent: 'center', alignItems: 'center' }}>
-              <Image style={{ height: 27, width: 30 }} source={require('../assets/Images/downloadwhite.png')} />
-              <Text style={{ fontSize: 12, color: 'white' }}>{language?.Download}</Text>
+              <TouchableOpacity onPress={downloadPodcast} >
+                <Image style={{ height: 27, width: 30 }} source={require('../assets/Images/downloadwhite.png')} />
+                <Text style={{ fontSize: 12, color: 'white' }}>{language?.Download}</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </View>

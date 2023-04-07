@@ -31,7 +31,7 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 const Music = ({ route }) => {
   const { language, tracks, setTracks, setSate, sate, trackForMiniPlayer, settrackForMiniPlayer, selectedlang } = useContext(AuthContext);
   const [channelsdata, setchannelsdata] = useState([])
-  const {podcastDetails}= route.params
+  const { podcastDetails } = route.params
   console.log("🚀 ~ file: Music.js:35 ~ Music ~ podcastDetails:", podcastDetails)
 
   const getChannels = () => {
@@ -205,7 +205,7 @@ const Music = ({ route }) => {
     TrackPlayer.add([track])
   }
 
-  
+
   const download = (item) => {
     setModalVisible(true);
     setmuusicUrl(item?.acf?.link_podcast1)
@@ -213,7 +213,7 @@ const Music = ({ route }) => {
 
   return (
     <ScrollView style={styles.mainBox}>
-       <ListModals
+      <ListModals
         navigatetolibrary={() => navigation.navigate(language?.Library)}
         isVisible={modalVisible}
         onPressClose={() => setModalVisible(false)}
@@ -240,8 +240,12 @@ const Music = ({ route }) => {
               </TouchableOpacity>
             </View>
             <View style={{ marginTop: '5%', justifyContent: 'center', width: 80, justifyContent: 'center', alignItems: 'center' }}>
-              <Image style={{ height: 27, width: 30 }} source={require('../../assets/Images/downloadwhite.png')} />
-              <Text style={{ fontSize: 12, color: 'white' }}>{language?.Download}</Text>
+              <TouchableOpacity onPress={() => {
+                Toast.show('Please first login to download', Toast.LONG);
+              }}>
+                <Image style={{ height: 27, width: 30 }} source={require('../../assets/Images/downloadwhite.png')} />
+                <Text style={{ fontSize: 12, color: 'white' }}>{language?.Download}</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </View>

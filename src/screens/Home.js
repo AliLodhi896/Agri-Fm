@@ -599,7 +599,7 @@ const Home = () => {
           </View>
         </ScrollView>
       </View>
-      <View style={{ marginTop: '9%', backgroundColor: Colors.primary }}>
+      <View style={{ backgroundColor: Colors.primary, bottom: -15 }}>
         {sate !== 0 ?
           <MiniPlayerCard />
           :
