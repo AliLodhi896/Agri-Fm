@@ -29,6 +29,9 @@ import TrackPlayer, {
 } from 'react-native-track-player';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import ListModals from '../components/Cards/Modals/ListModals';
+import { ref, remove, set } from 'firebase/database';
+import database from '../../firebaseConfig';
+import Toast from 'react-native-simple-toast';
 
 const SeeAll = (props) => {
 
@@ -141,7 +144,7 @@ const SeeAll = (props) => {
 
 
   const AddPodcastToLiabrary = async () => {
-    setModalVisible(false);
+    console.log("🚀 ~ file: SeeAll.js:173 ~ AddPodcastToLiabrary ~ selectedPodcast:", selectedPodcast)
     setLoading(true)
     try {
       let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/add-favp-app.php?id_user=${UserData[0]?.user}&id_podcast=${podcast_id}`;
@@ -152,7 +155,15 @@ const SeeAll = (props) => {
         },
       });
       const responseData = await response.json();
+      setModalVisible(false);
       if (responseData[0].favoritos_podcast) {
+        if(selectedPodcast?.yoast_head_json?.twitter_misc){
+          delete selectedPodcast?.yoast_head_json?.twitter_misc;
+        }
+
+        set(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + podcast_id), selectedPodcast);
+
+
         Toast.show('Podcast Added to liabrary', Toast.LONG);
         let courseName = responseData[0].favoritos_podcast?.map(itemxx => {
           return itemxx
@@ -169,7 +180,6 @@ const SeeAll = (props) => {
   }
 
   const RemovePodcastFromLiabrary = async () => {
-    setModalVisible(false);
     setLoading(true)
     try {
       let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/remove-libraryp.php?id_user=${UserData[0]?.user}&id_podcast=${podcast_id}`;
@@ -180,7 +190,11 @@ const SeeAll = (props) => {
         },
       });
       const responseData = await response.json();
+      setModalVisible(false);
       if (responseData[0].favoritos_podcast) {
+        remove(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + podcast_id))
+
+
         Toast.show('Podcast removed from liabrary', Toast.LONG);
         let courseName = responseData[0].favoritos_podcast?.map(itemxx => {
           return itemxx
@@ -224,8 +238,10 @@ const SeeAll = (props) => {
     fetchFavoritePodcast();
   }, [podcast_id])
 
-  const download = (item) => {
+  const download = (item, channelName) => {
     console.log('item', item)
+    setSelectedPodcast({ ...item, channelName: channelName });
+
     setModalVisible(true);
     setmuusicUrl(item?.acf?.link_podcast1)
     setpodcast_id(JSON.stringify(item?.id))
@@ -323,6 +339,7 @@ const SeeAll = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [muusicUrl, setmuusicUrl] = useState(null)
   const [favoritePodcast, setfavoritePodcast] = useState()
+  const [selectedPodcast, setSelectedPodcast] = useState(null);
 
 
 
@@ -338,6 +355,9 @@ const SeeAll = (props) => {
         onPressRemoveDownload={() => RemoveDownload()}
         onPressRemove={() => RemovePodcastFromLiabrary()}
       />
+      <Text style={{ paddingTop: 20, paddingLeft: 20, fontSize: 22, fontWeight: "bold", color: "black" }}>{language?.Podcasts}</Text>
+
+
       {
         loading ?
           <View style={{ paddingTop: 150 }}>
@@ -353,7 +373,7 @@ const SeeAll = (props) => {
                   const match = newpodcast.find(item2 => item2?.id == item?.id);
                   return (
                     <FeaturedCard
-                      onPressIcon={() => download(item)}
+                      onPressIcon={() => download(item, match?.channel_name == undefined ? 'agriBusiness International' : match?.channel_name)}
                       onPressDownload={() => downloadPodcast(item)}
                       onPress={() => trackResetAndNavgate(item)}
                       channelName={match?.channel_name == undefined ? 'agriBusiness International' : match?.channel_name}
@@ -363,7 +383,7 @@ const SeeAll = (props) => {
                       headingText={{ color: 'grey' }}
                       timeText={{ color: 'grey' }}
                       image={item?.acf?.imagen_podcast1}
-                      time={Object.values(item?.yoast_head_json?.twitter_misc)[0]}
+                      time={item?.yoast_head_json?.twitter_misc ? Object.values(item?.yoast_head_json?.twitter_misc)[0]: null}
                     />
                   );
                 })}

@@ -146,7 +146,7 @@ const Music = ({ route }) => {
   }
   const fetchData = async () => {
     try {
-      let baseUrl = `https://socialagri.com/agriFM/wp-json/wp/v2/podcast?lang=${selectedlang}`;
+      let baseUrl = `https://socialagri.com/agriFM/wp-json/wp/v2/podcast?lang=${selectedlang == "pt" ? "pt-br" : selectedlang}`;
       const response = await fetch(baseUrl, {
         method: 'Get',
         headers: {

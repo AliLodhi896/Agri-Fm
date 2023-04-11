@@ -15,9 +15,11 @@ import Toast from 'react-native-simple-toast';
 import TrackPlayer from 'react-native-track-player';
 import RNFetchBlob from 'rn-fetch-blob';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ref, remove, set } from 'firebase/database';
+import database from '../../firebaseConfig';
 
 const Explore = ({ navigation }) => {
-  const { language, selectedlang, setSelectedlang, setSate, UserData, podcast_id, setfavoritePodcat_id } = useContext(AuthContext);
+  const { language, selectedlang, setSelectedlang, setSate, UserData, podcast_id, setfavoritePodcat_id, setpodcast_id } = useContext(AuthContext);
 
   const [loading, setLoading] = useState(false)
   const [interest, setInterest] = useState([])
@@ -33,6 +35,7 @@ const Explore = ({ navigation }) => {
 
   const [modalVisible, setModalVisible] = useState(false);
   const [muusicUrl, setmuusicUrl] = useState(null)
+  const [selectedPodcast, setSelectedPodcast] = useState(null);
 
   const [podcastID, setPodcastID] = useState(null);
 
@@ -204,9 +207,12 @@ const Explore = ({ navigation }) => {
   }
 
 
-  const download = (item) => {
+  const download = (item, channelName) => {
+    setSelectedPodcast({ ...item, channelName: channelName });
     setModalVisible(true);
     setmuusicUrl(item?.acf?.link_podcast1)
+
+    setpodcast_id(JSON.stringify(item?.id))
 
 
     // setPodcastID(item?.id)
@@ -332,7 +338,7 @@ const Explore = ({ navigation }) => {
         <>
           <FeaturedCard
             key={index}
-            onPressIcon={() => download(item)}
+            onPressIcon={() => download(item, match?.channel_name)}
             onPressDownload={() => downloadPodcast(item)}
             onPress={() => trackResetAndNavgate(item)}
             channelName={match?.channel_name}
@@ -346,7 +352,8 @@ const Explore = ({ navigation }) => {
   }
 
   const AddPodcastToLiabrary = async () => {
-    setModalVisible(false);
+    // console.log(podcast_id);
+    // return;
     // setLoading(true)
     try {
       let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/add-favp-app.php?id_user=${UserData[0]?.user}&id_podcast=${podcast_id}`;
@@ -357,7 +364,13 @@ const Explore = ({ navigation }) => {
         },
       });
       const responseData = await response.json();
+      setModalVisible(false);
       if (responseData[0].favoritos_podcast) {
+        if(selectedPodcast?.yoast_head_json?.twitter_misc){
+          delete selectedPodcast?.yoast_head_json?.twitter_misc;
+        }
+        set(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + podcast_id), selectedPodcast);
+
         Toast.show('Podcast Added to liabrary', Toast.LONG);
         let courseName = responseData[0].favoritos_podcast?.map(itemxx => {
           return itemxx
@@ -372,6 +385,41 @@ const Explore = ({ navigation }) => {
     // setLoading(false)
   }
 
+  const RemovePodcastFromLiabrary = async () => {
+    try {
+      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/remove-libraryp.php?id_user=${UserData[0]?.user}&id_podcast=${podcast_id}`;
+      const response = await fetch(baseUrl, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+      const responseData = await response.json();
+      if (responseData[0].favoritos_podcast) {
+        remove(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + podcast_id))
+
+
+        Toast.show('Podcast removed from liabrary', Toast.LONG);
+        let courseName = responseData[0].favoritos_podcast?.map(itemxx => {
+          return itemxx
+        })
+        setfavoritePodcat_id(courseName)
+
+        // closeModal()
+
+      } else {
+        alert('Failed to remove from liabrary !');
+      }
+      setModalVisible(false);
+
+    } catch (error) {
+      console.log('error => ', error);
+    }
+
+    setSelectedPodcast(null);
+
+  }
+
   return (
     <ScrollView style={styles.mainBox}  >
       <ListModals
@@ -379,6 +427,7 @@ const Explore = ({ navigation }) => {
         isVisible={modalVisible}
         onPressClose={() => setModalVisible(false)}
         onPressaddTo={() => AddPodcastToLiabrary()}
+        onPressRemove={() => RemovePodcastFromLiabrary()}
         onClose={() => setModalVisible(false)}
         onPressDownload={() => downloadPodcast()}
         onPressShare={() => onShare()}

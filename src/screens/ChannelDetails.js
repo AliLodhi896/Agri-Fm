@@ -20,20 +20,52 @@ import TrackPlayer from 'react-native-track-player';
 import RNFetchBlob from 'rn-fetch-blob';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ListModals from '../components/Cards/Modals/ListModals';
+import { onValue, ref, remove, set } from 'firebase/database';
+import database from '../../firebaseConfig';
 
 const ChannelDetails = ({ route }) => {
   const navigation = useNavigation();
-  const { language, selectedlang, setSelectedlang, UserData, setSate, podcast_id, setfavoritePodcat_id } = useContext(AuthContext);
+  const { language, selectedlang, setSelectedlang, UserData, setSate, podcast_id, setfavoritePodcat_id, setpodcast_id } = useContext(AuthContext);
   const [podCastData, setPodcastData] = useState([]);
   const { details } = route.params
+  // console.log("🚀 ~ file: ChannelDetails.js:31 ~ ChannelDetails ~ details:", typeof(details.id))
   const [loading, setLoading] = useState(false)
   const [followedchannels, setfollowedchannels] = useState()
   const [followedID, setfollowedID] = useState([])
 
   const [modalVisible, setModalVisible] = useState(false);
   const [muusicUrl, setmuusicUrl] = useState(null)
+  const [selectedPodcast, setSelectedPodcast] = useState(null);
 
-  const fetchFollowedChannels = async () => {
+  const closeModal = () => {
+    setModalVisible(false);
+    setSelectedPodcast(null);
+  }
+
+  function convertToString(value) {
+    if (typeof value === 'string') {
+      return value; 
+    } else if (typeof value === 'number') {
+      return value.toString(); 
+    } else {
+      return value;
+    }
+  }
+
+  const fetchFollowedChannels = () => {
+    setLoading(true)
+    const dbRef = ref(database, `Library/Channels/${UserData[0]?.user}`);
+    onValue(dbRef, (snapshot) => {
+      let data = snapshot.val();
+      let arr = data || data?.length ? Object.values(data) : [];
+      let arr1 = arr.map(ch => convertToString(ch.id));
+      // console.log(arr.map(ch => ch.id));
+      setfollowedID(arr1);
+      setLoading(false);
+    })
+  }
+
+  const fetchFollowedChannels1 = async () => {
     setLoading(true)
     try {
       let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/miscanales-app.php?id_user=${UserData[0]?.user}`;
@@ -103,6 +135,13 @@ const ChannelDetails = ({ route }) => {
   };
 
   const followChannel = async () => {
+    // console.log(UserData[0].user);
+    // console.log(details.id);
+    // console.log(details);
+
+
+    // return;
+
     setLoading(true)
     try {
       let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/add-favc-app.php?id_user=${UserData[0]?.user}&id_canal=${details?.id}`;
@@ -114,9 +153,11 @@ const ChannelDetails = ({ route }) => {
       });
       const responseData = await response.json();
       if (responseData[0].favoritos_canales) {
+        set(ref(database, 'Library/Channels/' + UserData[0]?.user + "/" + details.id), details);
+
         Toast.show('Channel Followed', Toast.LONG);
         navigation.navigate('Home')
-        fetchFollowedChannels()
+        // fetchFollowedChannels()
       } else {
         alert(responseData[0].validation);
       }
@@ -138,9 +179,11 @@ const ChannelDetails = ({ route }) => {
       });
       const responseData = await response.json();
       if (responseData[0].favoritos_canales) {
+        remove(ref(database, 'Library/Channels/' + UserData[0]?.user + "/" + details.id))
+
         Toast.show('Channel Unfollowed', Toast.LONG);
         navigation.navigate('Home')
-        fetchFollowedChannels()
+        // fetchFollowedChannels()
       } else {
         alert(responseData[0].validation);
       }
@@ -227,16 +270,61 @@ const ChannelDetails = ({ route }) => {
   }
 
   const download = (item) => {
+    setSelectedPodcast({ acf: { ...item }, title: { rendered: item.title }, channelName: item.channel_name[0] });
+
     setModalVisible(true);
     setmuusicUrl(item?.acf?.link_podcast1)
+    setpodcast_id(JSON.stringify(item?.id))
 
   }
 
   const AddPodcastToLiabrary = async () => {
-    setModalVisible(false);
     // setLoading(true)
+    // console.log(UserData[0]?.user,
+    //   podcast_id);
+
+    // console.log(selectedPodcast);
+    // return;
     try {
-      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/add-favp-app.php?id_user=${UserData[0]?.user}&id_podcast=${podcast_id}`;
+      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/add-favp-app.php?id_user=${UserData[0]?.user}&id_podcast=${selectedPodcast.acf.id}`;
+      const response = await fetch(baseUrl, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+      const string = await response.text();
+      console.log("🚀 ~ file: ChannelDetails.js:256 ~ AddPodcastToLiabrary ~ response:", response)
+      const responseData = string === "" ? {} : JSON.parse(string);
+      console.log("🚀 ~ file: ChannelDetails.js:256 ~ AddPodcastToLiabrary ~ responseData:", responseData)
+      if (responseData[0]?.favoritos_podcast) {
+        delete selectedPodcast?.yoast_head_json?.twitter_misc;
+
+        set(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + selectedPodcast.acf.id), selectedPodcast);
+
+
+        Toast.show('Podcast Added to liabrary', Toast.LONG);
+        let courseName = responseData[0].favoritos_podcast?.map(itemxx => {
+          return itemxx
+        })
+        setfavoritePodcat_id(courseName)
+
+        // remove(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + JSON.stringify(selectedPodcast?.id)))
+        closeModal();
+      } else {
+        alert('Failed to add to liabrary !');
+      }
+    } catch (error) {
+      console.log('error => ', error);
+    }
+
+    // setLoading(false)
+  }
+
+
+  const RemovePodcastFromLiabrary = async () => {
+    try {
+      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/remove-libraryp.php?id_user=${UserData[0]?.user}&id_podcast=${podcast_id}`;
       const response = await fetch(baseUrl, {
         method: 'POST',
         headers: {
@@ -245,18 +333,25 @@ const ChannelDetails = ({ route }) => {
       });
       const responseData = await response.json();
       if (responseData[0].favoritos_podcast) {
-        Toast.show('Podcast Added to liabrary', Toast.LONG);
+        remove(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + JSON.stringify(selectedPodcast.acf.id)))
+
+
+        Toast.show('Podcast removed from liabrary', Toast.LONG);
         let courseName = responseData[0].favoritos_podcast?.map(itemxx => {
           return itemxx
         })
         setfavoritePodcat_id(courseName)
+        closeModal()
+
       } else {
-        alert('Failed to add to liabrary !');
+        alert('Failed to remove from liabrary !');
       }
     } catch (error) {
       console.log('error => ', error);
     }
-    // setLoading(false)
+
+    // setSelectedPodcast(null);
+
   }
 
 
@@ -267,11 +362,12 @@ const ChannelDetails = ({ route }) => {
   ) : (
     <ScrollView style={styles.mainBox}>
       <ListModals
-        navigatetolibrary={() => navigation.navigate(language?.Library)}
+        navigatetolibrary={() => (closeModal(), navigation.navigate(language?.Library))}
         isVisible={modalVisible}
-        onPressClose={() => setModalVisible(false)}
-        onClose={() => setModalVisible(false)}
+        onPressClose={closeModal}
+        onClose={closeModal}
         onPressaddTo={() => AddPodcastToLiabrary()}
+        onPressRemove={RemovePodcastFromLiabrary}
         onPressDownload={() => downloadPodcast()}
         onPressShare={() => onShare()}
       />

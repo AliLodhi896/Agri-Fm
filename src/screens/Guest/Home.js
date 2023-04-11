@@ -176,7 +176,7 @@ const Home = () => {
 
   const addtoliabrary = () => {
     setModalVisible(false);
-    Toast.show('Please first login to add to library', Toast.LONG);
+    Toast.show(language.registerationError, Toast.LONG);
 
   }
 
@@ -186,7 +186,7 @@ const Home = () => {
   }
 
   const downloadPodcast = (item) => {
-    Toast.show('Please first login to download', Toast.LONG);
+    Toast.show(language.registerationError, Toast.LONG);
   }
 
   const requestToPermissions = async () => {
@@ -363,7 +363,7 @@ const Home = () => {
                   // channelName={match?.channel_name}
                   podcastname={item.title?.rendered}
                   image={item?.acf?.imagen_podcast1}
-                  time={Object.values(item?.yoast_head_json?.twitter_misc)[0]}
+                  time={item?.yoast_head_json?.twitter_misc ? Object.values(item?.yoast_head_json?.twitter_misc)[0]: null}
 
                 />
               );

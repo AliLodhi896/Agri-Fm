@@ -54,6 +54,7 @@ const LoginEmail = () => {
       <View style={{marginVertical: 30}}>
         <Input
           name="email"
+          keyboardType="email-address"
           control={control}
           rules={{
             required: 'Email is required',

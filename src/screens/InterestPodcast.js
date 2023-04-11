@@ -24,6 +24,8 @@ import TrackPlayer, {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNFetchBlob from 'rn-fetch-blob';
 import ListModals from '../components/Cards/Modals/ListModals';
+import { ref, remove, set } from 'firebase/database';
+import database from '../../firebaseConfig';
 const InterestPodcast = ({ route }) => {
   const { interest_detail } = route.params
   const navigation = useNavigation();
@@ -35,6 +37,7 @@ const InterestPodcast = ({ route }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false)
   const [muusicUrl, setmuusicUrl] = useState(null)
+  const [selectedPodcast, setSelectedPodcast] = useState(null);
 
   const InterestPodcast = async () => {
     setLoading(true)
@@ -113,14 +116,20 @@ const InterestPodcast = ({ route }) => {
   }
 
   const download = (item) => {
-    // setModalVisible(true);
-    // setmuusicUrl(item?.acf?.link_podcast1)
-    // setpodcast_id(item?.ID)
-    // setmusicdatafordownload(item)
+    if (isSignin) {
+      setModalVisible(true);
+      setmuusicUrl(item?.link_podcast1)
+      setpodcast_id(item.id)
+      // setmusicdatafordownload(item)
+      setSelectedPodcast({ id: item.id, acf: { ...item }, title: { rendered: item.title }, channelName: item.channel_name[0] });
 
-    //for guest
-    setModalVisible(true);
-    setmuusicUrl(item?.acf?.link_podcast1)
+    } else {
+      //for guest
+      setModalVisible(true);
+      setmuusicUrl(item?.acf?.link_podcast1)
+    }
+
+
   }
 
   const requestpermissionforDownlaod = async () => {
@@ -205,10 +214,12 @@ const InterestPodcast = ({ route }) => {
     }
   };
   const AddPodcastToLiabrary = async () => {
-    setModalVisible(false);
+    // console.log(selectedPodcast);
+    // console.log(podcast_id);
+    // return;
     setLoading(true)
     try {
-      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/add-favp-app.php?id_user=${UserData[0]?.user}&id_podcast=${podcast_id}`;
+      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/add-favp-app.php?id_user=${UserData[0]?.user}&id_podcast=${selectedPodcast?.id}`;
       const response = await fetch(baseUrl, {
         method: 'POST',
         headers: {
@@ -217,6 +228,10 @@ const InterestPodcast = ({ route }) => {
       });
       const responseData = await response.json();
       if (responseData[0].favoritos_podcast) {
+        setModalVisible(false);
+        set(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + JSON.stringify(selectedPodcast?.id)), selectedPodcast);
+
+
         Toast.show('Podcast Added to liabrary', Toast.LONG);
         let courseName = responseData[0].favoritos_podcast?.map(itemxx => {
           return itemxx
@@ -232,7 +247,6 @@ const InterestPodcast = ({ route }) => {
   }
 
   const RemovePodcastFromLiabrary = async () => {
-    setModalVisible(false);
     setLoading(true)
     try {
       let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/remove-libraryp.php?id_user=${UserData[0]?.user}&id_podcast=${podcast_id}`;
@@ -245,6 +259,9 @@ const InterestPodcast = ({ route }) => {
       const responseData = await response.json();
       // console.log('responseData[0].favoritos_podcast', responseData);
       if (responseData) {
+        remove(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + JSON.stringify(selectedPodcast?.id)))
+
+
         Toast.show('Podcast removed from liabrary', Toast.LONG);
         let courseName = responseData[0].favoritos_podcast?.map(itemxx => {
           return itemxx
@@ -254,6 +271,7 @@ const InterestPodcast = ({ route }) => {
       } else {
         alert('Failed to remove from liabrary !');
       }
+      setModalVisible(false);
     } catch (error) {
       console.log('error => ', error);
     }
@@ -266,6 +284,7 @@ const InterestPodcast = ({ route }) => {
         isVisible={modalVisible}
         onPressClose={() => setModalVisible(false)}
         onPressaddTo={() => isSignin ? AddPodcastToLiabrary() : Toast.show('Please first login to add to library', Toast.LONG)}
+        onPressRemove={() => isSignin ? RemovePodcastFromLiabrary() : Toast.show('Please first login to add to library', Toast.LONG)}
         onClose={() => setModalVisible(false)}
         onPressDownload={() => isSignin ? downloadPodcast() : Toast.show('Please first login to download', Toast.LONG)}
         onPressShare={() => onShare()}

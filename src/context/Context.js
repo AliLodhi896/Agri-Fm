@@ -1,7 +1,7 @@
-import React, {createContext, useCallback, useEffect, useState} from 'react';
+import React, { createContext, useCallback, useEffect, useState } from 'react';
 import Colors from '../constant/Colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {english, spain, brazil} from '../constant/language';
+import { english, spain, brazil } from '../constant/language';
 
 export const AuthContext = createContext({});
 
@@ -30,15 +30,14 @@ export const AuthProvider = props => {
   //   setdownloadedPodcastID(courseName)
   //   setdownloadedPodcast(parseMusics)
   // }
-const getData = async () => {
-  const value = await AsyncStorage.getItem('userDetails')
-  const parseUserDetails = JSON.parse(value)
-  if(parseUserDetails.length !== 0)
-  {
-    setUserData(parseUserDetails)
-    setIsSignin(true)
+  const getData = async () => {
+    const value = await AsyncStorage.getItem('userDetails')
+    const parseUserDetails = JSON.parse(value)
+    if (parseUserDetails.length !== 0) {
+      setUserData(parseUserDetails)
+      setIsSignin(true)
+    }
   }
-}
   useEffect(() => {
     getData();
   }, [isSignin])
@@ -71,7 +70,7 @@ const getData = async () => {
         phoneNumber,
         setPhoneNmber,
         trackForMiniPlayer,
-  settrackForMiniPlayer
+        settrackForMiniPlayer
       }}>
       {props.children}
     </AuthContext.Provider>

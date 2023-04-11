@@ -87,6 +87,7 @@ const LoginPassword = () => {
           }}
           placeholder={language?.YourPassword}
           //   onChangeText={(username) => setPass(username)}
+          secureTextEntry
           defaultValue={pass}
         />
         {errors.password && (

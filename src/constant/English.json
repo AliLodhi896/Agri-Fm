@@ -43,6 +43,7 @@
 
     "Download": "Download",
     "AddToMyLibrary": "Add to my library",
+    "MyLibrary": "My library",
 
     "Name": "Name",
     "Surname": "Surname",
@@ -92,9 +93,9 @@
     "Welfare": "Welfare",
     "YourInterest": "Your Interest",
     "channelofInterest":"Channel of Interest",
-    "RelatedPodcast":"Related Podcast"
+    "RelatedPodcast":"Related Podcast",
 
-    
+    "registerationError": "To use this function you must register or log in with your email"
 
 
 

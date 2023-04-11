@@ -9,6 +9,18 @@ const ListModals = (props) => {
     const { language, podcast_id, favoritePodcat_id, downloadedPodcastID } = useContext(AuthContext);
     const navigation = useNavigation();
 
+    function convertToString(value) {
+        if (typeof value === 'string') {
+            return value;
+        } else if (typeof value === 'number') {
+            return value.toString();
+        } else {
+            return value;
+        }
+    }
+
+    const strPodcastID = convertToString(podcast_id);
+
     return (
         <Modal
             animationType="slide"
@@ -23,7 +35,7 @@ const ListModals = (props) => {
                         <MaterialIcons name='close' color={Colors.primary} size={27} />
                     </TouchableOpacity>
                     <View style={{ alignSelf: 'center', marginHorizontal: 30, width: '100%' }}>
-                        <TouchableOpacity onPress={() => props.navigatetolibrary ? props.navigatetolibrary() : navigation.navigate('MyLibrary')} style={styles.second_view} >
+                        <TouchableOpacity onPress={() => props.navigatetolibrary ? props.navigatetolibrary() : (props.onClose(), navigation.navigate('MyLibrary'))} style={styles.second_view} >
                             <Text style={{ color: Colors.primary, fontSize: 16 }}>
                                 {language?.GoToLibrary}
                             </Text>
@@ -55,7 +67,7 @@ const ListModals = (props) => {
                             <Image style={{ width: '12%', height: 20 }} source={require('../../../assets/Images/shares.png')} />
                         </TouchableOpacity>
                         <View style={{ height: 1, backgroundColor: Colors.primary, opacity: 0.5, marginTop: 15 }}></View>
-                        {favoritePodcat_id?.includes(podcast_id) && podcast_id === podcast_id ?
+                        {favoritePodcat_id?.includes(strPodcastID) && strPodcastID === strPodcastID ?
                             <TouchableOpacity style={styles.second_view} onPress={props.onPressRemove}  >
                                 <Text style={{ color: Colors.primary, fontSize: 16 }}>
                                     {language?.RemoveFromLibrary}

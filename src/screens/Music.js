@@ -25,6 +25,8 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import Toast from 'react-native-simple-toast';
 import RNFetchBlob from 'rn-fetch-blob';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import database from '../../firebaseConfig';
+import { ref, remove, set } from 'firebase/database';
 
 const Music = ({ route }) => {
   const { selectedlang, language, setTracks, setSate, sate, favoritePodcat_id, UserData, setfavoritePodcat_id, settrackForMiniPlayer, setpodcast_id, setdownloadedPodcast, setdownloadedPodcastID } = useContext(AuthContext);
@@ -49,6 +51,12 @@ const Music = ({ route }) => {
   const navigation = useNavigation();
   const { position, buffered, duration } = useProgress()
   const [muusicUrl, setmuusicUrl] = useState(null)
+  const [selectedPodcast, setSelectedPodcast] = useState(null);
+
+  const closeModal = () => {
+    setModalVisible(false);
+    setSelectedPodcast(null);
+  }
 
   const track = {
     id: podcastDetails?.id,
@@ -139,7 +147,7 @@ const Music = ({ route }) => {
 
   const fetchData = async () => {
     try {
-      let baseUrl = `https://socialagri.com/agriFM/wp-json/wp/v2/podcast?lang=${selectedlang}`;
+      let baseUrl = `https://socialagri.com/agriFM/wp-json/wp/v2/podcast?lang=${selectedlang == "pt" ? "pt-br" : selectedlang}`;
       const response = await fetch(baseUrl, {
         method: 'Get',
         headers: {
@@ -191,24 +199,32 @@ const Music = ({ route }) => {
     try {
       let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/add-favp-app.php?id_user=${UserData[0]?.user}&id_podcast=${Fromlibrary == false ? podcastDetails?.id : podcastDetails?.ID}`;
       const response = await fetch(baseUrl, {
-        method: 'POST',
+        method: 'GET',
         headers: {
           Accept: 'application/json',
         },
       });
       const responseData = await response.json();
       if (responseData[0].favoritos_podcast) {
+        delete selectedPodcast.yoast_head_json.twitter_misc;
+
+        set(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + JSON.stringify(selectedPodcast?.id)), selectedPodcast);
+
         Toast.show('Podcast Added to liabrary', Toast.LONG);
         let courseName = responseData[0].favoritos_podcast?.map(itemxx => {
           return itemxx
         })
         setfavoritePodcat_id(courseName)
+        closeModal()
       } else {
         alert('Failed to add to liabrary !');
       }
     } catch (error) {
       console.log('error => ', error);
     }
+
+    setSelectedPodcast(null);
+
   }
 
   const RemovePodcastFromLiabrary = async () => {
@@ -222,17 +238,25 @@ const Music = ({ route }) => {
       });
       const responseData = await response.json();
       if (responseData[0].favoritos_podcast) {
+        remove(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + JSON.stringify(selectedPodcast?.id)))
+
+
         Toast.show('Podcast removed from liabrary', Toast.LONG);
         let courseName = responseData[0].favoritos_podcast?.map(itemxx => {
           return itemxx
         })
         setfavoritePodcat_id(courseName)
+        closeModal()
+
       } else {
         alert('Failed to remove from liabrary !');
       }
     } catch (error) {
       console.log('error => ', error);
     }
+
+    setSelectedPodcast(null);
+
   }
 
   const requestpermissionforDownlaod = async () => {
@@ -345,7 +369,10 @@ const Music = ({ route }) => {
       alert(error.message);
     }
   };
-  const download = (item) => {
+  const download = (item, channelName) => {
+    // console.log({ ...item, channelName: channelName.channel_name });
+    setSelectedPodcast({ ...item, channelName: channelName.channel_name });
+
     setModalVisible(true);
     setmuusicUrl(item?.acf?.link_podcast1)
     setpodcast_id(JSON.stringify(item?.id))
@@ -355,11 +382,11 @@ const Music = ({ route }) => {
     <ScrollView style={styles.mainBox}>
       <ListModals
         isVisible={modalVisible}
-        onPressClose={() => setModalVisible(false)}
-        onPressaddTo={() => AddPodcastToLiabrary()}
-        onClose={() => setModalVisible(false)}
+        onPressClose={closeModal}
+        onClose={closeModal}
         onPressDownload={() => downloadPodcast()}
         onPressShare={() => onShare()}
+        onPressaddTo={() => AddPodcastToLiabrary()}
         onPressRemoveDownload={() => RemoveDownload()}
         onPressRemove={() => RemovePodcastFromLiabrary()}
       />
@@ -431,7 +458,7 @@ const Music = ({ route }) => {
               <FeaturedCard
 
                 onPressDownload={() => downloadPodcast(item)}
-                onPressIcon={() => download(item)}
+                onPressIcon={() => download(item, match)}
                 onPress={() => trackResetAndNavgate(item)}
                 channelName={match?.channel_name}
                 podcastname={item.title?.rendered}

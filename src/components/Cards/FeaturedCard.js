@@ -62,7 +62,7 @@ const FeaturedCard = (props) => {
                         />
                         <Text style={{ color: 'white', marginLeft: 5 }}>{language?.Play}</Text>
                     </TouchableOpacity>
-                    <Text style={[styles.timeText, props.timeText]}>{props.time}</Text>
+                    {props.time ? <Text style={[styles.timeText, props.timeText]}>{props.time}</Text> : null}
                 </View>
             </View>
             <View style={{ flexDirection: 'column', justifyContent: 'space-between', width: '10%' }}>
@@ -100,7 +100,7 @@ const FeaturedCard = (props) => {
     )
 }
 const styles = StyleSheet.create({
-    channelname:{
+    channelname: {
         color: "white"
     },
     description: {

@@ -38,6 +38,7 @@
 
     "Download": "Descargar",
     "AddToMyLibrary": "Añadir a mi librería",
+    "MyLibrary": "mi biblioteca",
     "closesession": "Cerrar sesión",
     "Cancel": "Cerrar",
 
@@ -91,8 +92,9 @@
     "Welfare": "Bienestar",
     "YourInterest": "Tu interés",
     "channelofInterest":"Canales de su interés",
-    "RelatedPodcast":"Podcasts relacionados"
+    "RelatedPodcast":"Podcasts relacionados",
 
 
+    "registerationError": "Para utilizar esta función debe registrarse o iniciar sesión con su correo"
 
 }

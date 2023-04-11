@@ -14,7 +14,7 @@ import {
 import ChannelCard from '../components/Cards/ChannelCard';
 import Colors from '../constant/Colors';
 import FeaturedCard from '../components/Cards/FeaturedCard';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useNavigation, useFocusEffect, useIsFocused } from '@react-navigation/native';
 import ListModals from '../components/Cards/Modals/ListModals';
 import InterestCard from '../components/Cards/InterestCard';
 import AntDesign from 'react-native-vector-icons/AntDesign'
@@ -36,6 +36,8 @@ import TrackPlayer, {
 import RNFetchBlob from 'rn-fetch-blob';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Podcast from '../components/Sections/Podcast';
+import { child, onValue, push, ref, remove, set } from 'firebase/database';
+import database from '../../firebaseConfig';
 
 const Home = () => {
 
@@ -48,8 +50,11 @@ const Home = () => {
   const [channelsdata, setchannelsdata] = useState([])
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
+  const [libLoading, setLibLoading] = useState(false);
   const [muusicUrl, setmuusicUrl] = useState(null)
   const [favoritePodcast, setfavoritePodcast] = useState()
+
+  const [selectedPodcast, setSelectedPodcast] = useState(null);
 
   const [loaderwhileLoader, setloaderwhileLoader] = useState(false)
   console.log('musicdatafordownload', musicdatafordownload)
@@ -88,6 +93,8 @@ const Home = () => {
   const [categories, setCategories] = useState([]);
   // console.log('selectedlang',selectedlang)
 
+  const focus = useIsFocused();
+
   const fetchCategories = async () => {
     try {
       let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/category-app-end.php?lang=${selectedlang}`;
@@ -100,7 +107,7 @@ const Home = () => {
       const responseData = await response.json();
       setCategories(responseData);
       // console.log("🚀 ~ file: Home.js:101 ~ fetchCategories ~ responseData:", responseData)
-      
+
     } catch (error) {
       console.log('error => ', error);
     }
@@ -207,23 +214,36 @@ const Home = () => {
   }
 
   const AddPodcastToLiabrary = async () => {
-    setModalVisible(false);
-    setLoading(true)
+    // console.log(podcast_id);
+    // console.log(UserData[0]?.user);
+    // console.log(selectedPodcast);
+
+
+
+    // setLoading(true)
     try {
       let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/add-favp-app.php?id_user=${UserData[0]?.user}&id_podcast=${podcast_id}`;
       const response = await fetch(baseUrl, {
-        method: 'POST',
+        method: 'GET',
         headers: {
           Accept: 'application/json',
         },
       });
       const responseData = await response.json();
+      setModalVisible(false);
+
       if (responseData[0].favoritos_podcast) {
+        delete selectedPodcast.yoast_head_json.twitter_misc;
+
+        set(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + podcast_id), selectedPodcast);
+
         Toast.show('Podcast Added to liabrary', Toast.LONG);
         let courseName = responseData[0].favoritos_podcast?.map(itemxx => {
           return itemxx
         })
         setfavoritePodcat_id(courseName)
+
+        setSelectedPodcast(null);
         // navigation.navigate('MyLibrary')
       } else {
         alert('Failed to add to liabrary !');
@@ -235,8 +255,8 @@ const Home = () => {
   }
 
   const RemovePodcastFromLiabrary = async () => {
-    setModalVisible(false);
-    setLoading(true)
+
+    // setLoading(true)
     try {
       let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/remove-libraryp.php?id_user=${UserData[0]?.user}&id_podcast=${podcast_id}`;
       const response = await fetch(baseUrl, {
@@ -246,12 +266,18 @@ const Home = () => {
         },
       });
       const responseData = await response.json();
+      setModalVisible(false);
+
       if (responseData[0].favoritos_podcast) {
+        remove(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + podcast_id))
+
         Toast.show('Podcast removed from liabrary', Toast.LONG);
         let courseName = responseData[0].favoritos_podcast?.map(itemxx => {
           return itemxx
         })
         setfavoritePodcat_id(courseName)
+        setSelectedPodcast(null);
+
         // navigation.navigate('MyLibrary')
       } else {
         alert('Failed to remove from liabrary !');
@@ -278,6 +304,7 @@ const Home = () => {
           return itemxx.ID
         })
         setfavoritePodcat_id(courseName)
+
       } else {
         // alert('failed to get fav fav');
       }
@@ -286,12 +313,28 @@ const Home = () => {
     }
   }
 
-  useEffect(() => {
-    fetchFavoritePodcast();
-  }, [podcast_id])
 
-  const download = (item) => {
-    console.log('item', item)
+  const fetchFavoritePodcast1 = () => {
+    setLibLoading(true);
+    const dbRef = ref(database, `Library/Podcasts/${UserData[0]?.user}`);
+    onValue(dbRef, (snapshot) => {
+      let data = snapshot.val();
+      setfavoritePodcast(data || data?.length ? Object.values(data) : []);
+      setLibLoading(false);
+    })
+  }
+
+  useEffect(() => {
+    if (focus) fetchFavoritePodcast1();
+  }, [focus])
+
+  // useEffect(() => {
+  //   fetchFavoritePodcast();
+  // }, [podcast_id])
+
+  const download = (item, channelName) => {
+    setSelectedPodcast({ ...item, channelName: channelName });
+
     setModalVisible(true);
     setmuusicUrl(item?.acf?.link_podcast1)
     setpodcast_id(JSON.stringify(item?.id))
@@ -400,9 +443,9 @@ const Home = () => {
           <View style={{ backgroundColor: Colors.primary, paddingHorizontal: 20 }}>
             <ListModals
               isVisible={modalVisible}
-              onPressClose={() => setModalVisible(false)}
+              onPressClose={() => (setModalVisible(false), setSelectedPodcast(null))}
               onPressaddTo={() => AddPodcastToLiabrary()}
-              onClose={() => setModalVisible(false)}
+              onClose={() => (setModalVisible(false), setSelectedPodcast(null))}
               onPressDownload={() => download()}
               onPressShare={() => onShare()}
               onPressRemoveDownload={() => RemoveDownload()}
@@ -446,7 +489,7 @@ const Home = () => {
               {categories.map(item => {
                 return (
                   <TouchableOpacity
-                    style={[styles.categories, { marginRight:3}]}
+                    style={[styles.categories, { marginRight: 3 }]}
                     onPress={() => {
                       navigation.navigate('CategoriesDetail', { details: item.id })
 
@@ -510,7 +553,7 @@ const Home = () => {
                   return (
                     <FeaturedCard
                       onPressDownload={() => downloadPodcast(item)}
-                      onPressIcon={() => download(item)}
+                      onPressIcon={() => download(item, match)}
                       onPress={() => trackResetAndNavgate(item)}
                       // channelName={match?.channel_name == undefined ? 'Chatting with poultry experts' : match?.channel_name}
                       channelName={match}
@@ -562,7 +605,7 @@ const Home = () => {
             <View style={styles.headingBox}>
               <Text style={{ fontSize: 18, fontWeight: '700', color: Colors.primary }}>{language?.YourLiabrary}</Text>
             </View>
-            {loading == true ?
+            {libLoading == true ?
               <View style={{ padding: 100, marginLeft: 20 }}>
                 <ActivityIndicator size="large" color={Colors.primary} />
               </View>
@@ -580,9 +623,9 @@ const Home = () => {
                       onPressIcon={() => download(item)}
                       onPress={() => trackResetAndNavgate(item)}
                       purpleIcon={true}
-                      channelName=' '
-                      podcastname={item.TITLE}
-                      image={item?.image}
+                      channelName={item?.channelName}
+                      podcastname={item.title?.rendered}
+                      image={item?.acf?.imagen_podcast1}
                     />
                   );
                 })}
