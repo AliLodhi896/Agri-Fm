@@ -38,8 +38,9 @@ const CategoriesDetail = ({ props, route }) => {
   const [loading, setLoading] = useState(false);
 
   const fetchFavoritePodcast = async () => {
+    setLoading(true);
     try {
-      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/category-post-app.php?category_id=${details}`;
+      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/category-post-app.php?category_id=${details}&lang=${selectedlang == "pt" ? "pt-br" : selectedlang}`;
       const response = await fetch(baseUrl, {
         method: 'Get',
         headers: {
@@ -49,12 +50,14 @@ const CategoriesDetail = ({ props, route }) => {
       const responseData = await response.json();
       if (responseData) {
         setPodcastData(responseData)
-
+        
       } else {
         // alert('failed to get fav fav');
       }
-    } catch (error) {
-      console.log('error => ', error);
+        setLoading(false);
+      } catch (error) {
+        console.log('error => ', error);
+        setLoading(false);
     }
   }
 
@@ -62,16 +65,16 @@ const CategoriesDetail = ({ props, route }) => {
     fetchFavoritePodcast();
   }, [])
   const getChannels = () => {
-    setLoading(true);
+    // setLoading(true);
     return fetch(`https://socialagri.com/agriFM/wp-json/wp/v2/canales/?lang=${selectedlang}`)
       .then((response) => response.json())
       .then((data) => {
         setchannelsdata(data);
-        setLoading(false)
+        // setLoading(false)
       })
       .catch((err) => {
         console.log(err, 'API Failed');
-        setLoading(false);
+        // setLoading(false);
       });
   }
   useEffect(() => {
@@ -82,9 +85,9 @@ const CategoriesDetail = ({ props, route }) => {
     setSate(0)
     navigation.navigate('Music', {
       podcastDetails: {
-        acf: { link_podcast1: item?.link_podcast1, imagen_podcast1: item?.imagen_podcast1 },
-        id: item.id,
-        title: { rendered: item.title },
+        acf: { link_podcast1: item?.LINK, imagen_podcast1: item?.IMG },
+        id: item.ID,
+        title: { rendered: item.TITLE },
       }, Fromlibrary: false
     });
   }
@@ -129,13 +132,14 @@ const CategoriesDetail = ({ props, route }) => {
                       // onPressIcon={()=>download(item)}
                       // onPressDownload={()=>downloadPodcast()}
                       onPress={() => trackResetAndNavgate(item)}
-                      channelName={item?.channel_name[0]}
-                      podcastname={item?.title}
+                      // channelName={item?.channel_name[0]}
+                      // podcastname={item?.title}
                       textstyle={{ color: Colors.primary }}
                       headingText={{ color: 'grey' }}
                       timeText={{ color: 'grey' }}
-                      image={item?.imagen_podcast1}
-                      time={item?.time}
+                      podcastname={item?.TITLE}
+                      image={item?.IMG}
+                    // time={item?.time}
                     />
                   );
                 })}

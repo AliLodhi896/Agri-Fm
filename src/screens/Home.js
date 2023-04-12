@@ -97,7 +97,7 @@ const Home = () => {
 
   const fetchCategories = async () => {
     try {
-      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/category-app-end.php?lang=${selectedlang}`;
+      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/category-app-end.php?lang=${selectedlang == "pt" ? "pt-br" : selectedlang}`;
       const response = await fetch(baseUrl, {
         method: 'Get',
         headers: {
@@ -491,14 +491,14 @@ const Home = () => {
                   <TouchableOpacity
                     style={[styles.categories, { marginRight: 3 }]}
                     onPress={() => {
-                      navigation.navigate('CategoriesDetail', { details: item.id })
+                      navigation.navigate('CategoriesDetail', { details: item.ID })
 
                     }}>
                     <Image
-                      source={item?.image}
+                      source={item?.IMG}
                       style={{ width: '80%', height: '75%', borderRadius: 100 }}
                     />
-                    <Text style={styles.categoriesName}>{item.name}</Text>
+                    <Text style={styles.categoriesName}>{item.NAME}</Text>
                   </TouchableOpacity>
                 );
               })}

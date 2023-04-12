@@ -77,7 +77,7 @@ const Home = () => {
 
   const fetchCategories = async () => {
     try {
-      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/category-app-end.php?lang=${selectedlang}`;
+      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/category-app-end.php?lang=${selectedlang == "pt" ? "pt-br" : selectedlang}`;
       const response = await fetch(baseUrl, {
         method: 'Get',
         headers: {
@@ -85,6 +85,7 @@ const Home = () => {
         },
       });
       const responseData = await response.json();
+      console.log("🚀 ~ file: Home.js:88 ~ fetchCategories ~ responseData:", responseData)
       setCategories(responseData);
       // console.log("🚀 ~ file: Home.js:101 ~ fetchCategories ~ responseData:", responseData)
 
@@ -299,12 +300,12 @@ const Home = () => {
             return (
               <TouchableOpacity
                 style={styles.categories}
-                onPress={() => { navigation.navigate('CategoriesDetail', { details: item.id }) }}>
+                onPress={() => { navigation.navigate('CategoriesDetail', { details: item.ID }) }}>
                 <Image
-                  source={item.image}
+                  source={item.IMG}
                   style={{ width: '80%', height: '75%', borderRadius: 100 }}
                 />
-                <Text style={styles.categoriesName}>{item.name}</Text>
+                <Text style={styles.categoriesName}>{item.NAME}</Text>
               </TouchableOpacity>
             );
           })}
