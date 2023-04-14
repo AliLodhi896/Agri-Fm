@@ -29,10 +29,13 @@ import database from '../../firebaseConfig';
 import { ref, remove, set } from 'firebase/database';
 
 const Music = ({ route }) => {
-  const { selectedlang, language, setTracks, setSate, sate, favoritePodcat_id, UserData, setfavoritePodcat_id, settrackForMiniPlayer, setpodcast_id, setdownloadedPodcast, setdownloadedPodcastID } = useContext(AuthContext);
+  const { setmusicdatafordownload,musicdatafordownload,selectedlang, language, setTracks, setSate, sate, favoritePodcat_id, UserData, setfavoritePodcat_id, settrackForMiniPlayer, setpodcast_id, setdownloadedPodcast, setdownloadedPodcastID } = useContext(AuthContext);
   const { podcastDetails, Fromlibrary } = route.params
+<<<<<<< Updated upstream
   // console.log("🚀 ~ file: Music.js:32 ~ Music ~ Fromlibrary:", Fromlibrary)
   // console.log("🚀 ~ file: Music.js:32 ~ Music ~ podcastDetails:", podcastDetails)
+=======
+>>>>>>> Stashed changes
 
   const [channelsdata, setchannelsdata] = useState([])
 
@@ -265,97 +268,67 @@ const Music = ({ route }) => {
 
   }
 
-  const requestpermissionforDownlaod = async () => {
-
-  };
 
   const downloadPodcast = async (item) => {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+      {
+        title: 'Music',
+        message:
+          'App needs access to your Files... ',
+        buttonNeutral: 'Ask Me Later',
+        buttonNegative: 'Cancel',
+        buttonPositive: 'OK',
+      },
+    );
+    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      let url = item?.acf?.link_podcast1;
+      let name = item?.title?.rendered;
+      const path = RNFetchBlob.fs.dirs.DownloadDir + `/${name}.mp3`;
 
-    if (!item) {
-      item = podcastDetails;
-    };
-
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-        {
-          title: 'Music',
-          message:
-            'App needs access to your Files... ',
-          buttonNeutral: 'Ask Me Later',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        },
-      );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        let url = item?.acf?.link_podcast1;
-        let name = item?.title?.rendered;
-        const path = RNFetchBlob.fs.dirs.DownloadDir + `/${name}.mp3`;
-
-        const newObject = {
-          ID: item?.id,
-          TITLE: item?.title?.rendered,
-          image: item?.acf?.imagen_podcast1,
-          LINK: path
-        }
-
-        const requestpermissionforDownlaod = async () => {
-          try {
-            const granted = await PermissionsAndroid.request(
-              PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-              {
-                title: 'Music',
-                message:
-                  'App needs access to your Files... ',
-                buttonNeutral: 'Ask Me Later',
-                buttonNegative: 'Cancel',
-                buttonPositive: 'OK',
-              },
-            );
-            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-              console.log('startDownload...');
-              this.startDownload();
-            }
-          } catch (err) {
-            console.log(err);
-          }
-        };
-
-        data.push(newObject);
-        const dataString = JSON.stringify(data);
-        await AsyncStorage.setItem('musics', dataString);
-        RNFetchBlob.config({
-          fileCache: true,
-          appendExt: 'mp3',
-          addAndroidDownloads: {
-            useDownloadManager: true,
-            notification: true,
-            title: name,
-            path: path, // Android platform
-            description: 'Downloading the file',
-          },
-        })
-          .fetch('GET', url)
-          .then(res => {
-            console.log('res', res);
-            Toast.show('Successfully Downloaded at ' + res.path(), Toast.LONG);
-          });
+      const newObject = {
+        ID: item?.id,
+        TITLE: item?.title?.rendered,
+        image: item?.acf?.imagen_podcast1,
+        LINK: path
       }
-    } catch (err) {
-      console.log(err);
+      const previousData = await AsyncStorage.getItem('musics');
+      let data = [];
+      if (previousData !== null) {
+        data = JSON.parse(previousData);
+      }
+      data.push(newObject);
+      const dataString = JSON.stringify(data);
+      await AsyncStorage.setItem('musics', dataString);
+      RNFetchBlob.config({
+        fileCache: true,
+        appendExt: 'mp3',
+        addAndroidDownloads: {
+          useDownloadManager: true,
+          notification: true,
+          title: name,
+          path: path, // Android platform
+          description: 'Downloading the file',
+        },
+      })
+        .fetch('GET', url)
+        .then(res => {
+          console.log('res', res);
+          getDownloadMusic();
+          Toast.show('Successfully Downloaded at ' + res.path(), Toast.LONG);
+          navigation.navigate('MyLibrary')
+        });
+    } else {
+      alert('Permission Not Granted !')
     }
-
   }
   const RemoveDownload = async () => {
     let newItems = downloadedPodcast.filter(e => e?.ID !== podcast_id);
-
     setdownloadedPodcast(newItems)
     const dataString = JSON.stringify(downloadedPodcast);
     await AsyncStorage.setItem('musics', dataString);
     let newItemsID = downloadedPodcastID.filter(e => e !== podcast_id);
     setdownloadedPodcastID(newItemsID)
-    // downloadedPodcastID
-    // setdownloadedPodcastID()
   }
   const onShare = async () => {
     try {
@@ -376,12 +349,13 @@ const Music = ({ route }) => {
     }
   };
   const download = (item, channelName) => {
-    // console.log({ ...item, channelName: channelName.channel_name });
+    console.log('item',item)
+    // console.log({... item, channelName: channelName.channel_name });
     setSelectedPodcast({ ...item, channelName: channelName.channel_name });
-
     setModalVisible(true);
     setmuusicUrl(item?.acf?.link_podcast1)
-    setpodcast_id(JSON.stringify(item?.id))
+    setpodcast_id(item?.id)
+    setmusicdatafordownload(item)
   }
 
   return (
@@ -390,7 +364,7 @@ const Music = ({ route }) => {
         isVisible={modalVisible}
         onPressClose={closeModal}
         onClose={closeModal}
-        onPressDownload={() => downloadPodcast()}
+        onPressDownload={() => downloadPodcast(musicdatafordownload)}
         onPressShare={() => onShare()}
         onPressaddTo={() => AddPodcastToLiabrary()}
         onPressRemoveDownload={() => RemoveDownload()}
@@ -473,7 +447,6 @@ const Music = ({ route }) => {
             const match = newpodcast.find(item2 => item2?.id == item?.id);
             return (
               <FeaturedCard
-
                 onPressDownload={() => downloadPodcast(item)}
                 onPressIcon={() => download(item, match)}
                 onPress={() => trackResetAndNavgate(item)}

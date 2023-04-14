@@ -57,7 +57,6 @@ const Home = () => {
   const [selectedPodcast, setSelectedPodcast] = useState(null);
 
   const [loaderwhileLoader, setloaderwhileLoader] = useState(false)
-  console.log('musicdatafordownload', musicdatafordownload)
   // const categories = [
   //   {
   //     id: 2,
@@ -334,10 +333,10 @@ const Home = () => {
 
   const download = (item, channelName) => {
     setSelectedPodcast({ ...item, channelName: channelName });
-
+console.log('item?.id',item?.id)
     setModalVisible(true);
     setmuusicUrl(item?.acf?.link_podcast1)
-    setpodcast_id(JSON.stringify(item?.id))
+    setpodcast_id(item?.id)
     setmusicdatafordownload(item)
     // downloadPodcast(item)s
   }
@@ -446,7 +445,11 @@ const Home = () => {
               onPressClose={() => (setModalVisible(false), setSelectedPodcast(null))}
               onPressaddTo={() => AddPodcastToLiabrary()}
               onClose={() => (setModalVisible(false), setSelectedPodcast(null))}
+<<<<<<< Updated upstream
               onPressDownload={() => downloadPodcast(selectedPodcast)}
+=======
+              onPressDownload={() => downloadPodcast(musicdatafordownload)}
+>>>>>>> Stashed changes
               onPressShare={() => onShare()}
               onPressRemoveDownload={() => RemoveDownload()}
               onPressRemove={() => RemovePodcastFromLiabrary()}

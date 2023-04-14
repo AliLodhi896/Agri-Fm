@@ -182,6 +182,7 @@ const Home = () => {
   }
 
   const download = (item) => {
+    console.log('item,',item)
     setModalVisible(true);
     setmuusicUrl(item?.acf?.link_podcast1)
   }

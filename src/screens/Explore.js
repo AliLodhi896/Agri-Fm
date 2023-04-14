@@ -19,7 +19,7 @@ import { ref, remove, set } from 'firebase/database';
 import database from '../../firebaseConfig';
 
 const Explore = ({ navigation }) => {
-  const { language, selectedlang, setSelectedlang, setSate, UserData, podcast_id, setfavoritePodcat_id, setpodcast_id } = useContext(AuthContext);
+  const {setmusicdatafordownload,musicdatafordownload, language, selectedlang, setSelectedlang, setSate, UserData, podcast_id, setfavoritePodcat_id, setpodcast_id } = useContext(AuthContext);
 
   const [loading, setLoading] = useState(false)
   const [interest, setInterest] = useState([])
@@ -211,11 +211,8 @@ const Explore = ({ navigation }) => {
     setSelectedPodcast({ ...item, channelName: channelName });
     setModalVisible(true);
     setmuusicUrl(item?.acf?.link_podcast1)
-
-    setpodcast_id(JSON.stringify(item?.id))
-
-
-    // setPodcastID(item?.id)
+    setpodcast_id(item?.id)
+    setmusicdatafordownload(item)
   }
 
 
@@ -429,7 +426,7 @@ const Explore = ({ navigation }) => {
         onPressaddTo={() => AddPodcastToLiabrary()}
         onPressRemove={() => RemovePodcastFromLiabrary()}
         onClose={() => setModalVisible(false)}
-        onPressDownload={() => downloadPodcast()}
+        onPressDownload={() => downloadPodcast(musicdatafordownload)}
         onPressShare={() => onShare()}
       />
 

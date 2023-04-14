@@ -106,9 +106,14 @@ const Podcast = (props) => {
 
   const download = (item) => {
     // console.log("🚀 ~ file: Podcast.js:108 ~ download ~ item:", item)
+    console.log('item',item?.ID)
     setModalVisible(true);
     setmuusicUrl(item?.acf?.link_podcast1)
+<<<<<<< Updated upstream
     setpodcast_id(item?.acf.id)
+=======
+    setpodcast_id(item?.ID)
+>>>>>>> Stashed changes
     setmusicdatafordownload(item)
   }
 
