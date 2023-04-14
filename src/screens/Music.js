@@ -31,8 +31,8 @@ import { ref, remove, set } from 'firebase/database';
 const Music = ({ route }) => {
   const { selectedlang, language, setTracks, setSate, sate, favoritePodcat_id, UserData, setfavoritePodcat_id, settrackForMiniPlayer, setpodcast_id, setdownloadedPodcast, setdownloadedPodcastID } = useContext(AuthContext);
   const { podcastDetails, Fromlibrary } = route.params
-  console.log("🚀 ~ file: Music.js:32 ~ Music ~ Fromlibrary:", Fromlibrary)
-  console.log("🚀 ~ file: Music.js:32 ~ Music ~ podcastDetails:", podcastDetails)
+  // console.log("🚀 ~ file: Music.js:32 ~ Music ~ Fromlibrary:", Fromlibrary)
+  // console.log("🚀 ~ file: Music.js:32 ~ Music ~ podcastDetails:", podcastDetails)
 
   const [channelsdata, setchannelsdata] = useState([])
 
@@ -57,6 +57,12 @@ const Music = ({ route }) => {
     setModalVisible(false);
     setSelectedPodcast(null);
   }
+
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60).toString().padStart(2, '0');
+    const remainingSeconds = Math.floor(seconds % 60).toString().padStart(2, '0');
+    return `${minutes}:${remainingSeconds}`;
+  };
 
   const track = {
     id: podcastDetails?.id,
@@ -397,8 +403,8 @@ const Music = ({ route }) => {
           {/* <Text>50 min</Text> */}
           <Text style={{ width: '45%', color: 'white', fontWeight: 'bold' }}>{Fromlibrary == false ? podcastDetails?.title?.rendered : podcastDetails?.TITLE} </Text>
           <View style={{ flexDirection: 'row' }}>
-            <View style={{ marginTop: '5%', justifyContent: 'center', width: 50, justifyContent: 'center', alignItems: 'center' }}>
-              <TouchableOpacity onPress={() => onShare()}>
+            <View style={{ marginTop: '5%', justifyContent: 'center', width: 70, alignItems: "center", justifyContent: 'center', alignItems: 'center' }}>
+              <TouchableOpacity onPress={() => onShare()} style={{ alignItems: "center"}} >
                 <Image style={{ height: 22, width: 30 }} source={require('../assets/Images/whiteshare.png')} />
                 <Text style={{ fontSize: 12, color: 'white' }}>{language?.Share}</Text>
               </TouchableOpacity>
@@ -435,6 +441,17 @@ const Music = ({ route }) => {
         </TouchableOpacity>
       </View>
       <View style={{ marginHorizontal: 10, marginTop: 20 }}>
+        <View style={{ flexDirection: 'row', justifyContent: "space-between", marginHorizontal: 10 }}>
+          <Text style={{ color: 'white', fontWeight: 'bold' }}>
+            {/* {position_minutes} minutes */}
+            {formatTime(position)}
+          </Text>
+
+          <Text style={{ color: 'white', fontWeight: 'bold' }}>
+            {/* {duration_minutes} minutes */}
+            {formatTime(duration)}
+          </Text>
+        </View>
         <Slider
           style={{ width: '100%', height: 40 }}
           minimumValue={0}

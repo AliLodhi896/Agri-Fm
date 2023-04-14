@@ -434,7 +434,8 @@ const Home = () => {
           })}
         </View>
       </ScrollView>
-      <View style={{ marginTop: 20 }}>
+      {/* <View style={{ marginTop: 20 }}> */}
+      <View>
         {sate !== 0 ?
           <MiniPlayerCard />
           :

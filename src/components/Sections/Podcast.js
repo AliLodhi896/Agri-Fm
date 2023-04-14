@@ -108,7 +108,7 @@ const Podcast = (props) => {
     // console.log("🚀 ~ file: Podcast.js:108 ~ download ~ item:", item)
     setModalVisible(true);
     setmuusicUrl(item?.acf?.link_podcast1)
-    setpodcast_id(item?.id)
+    setpodcast_id(item?.acf.id)
     setmusicdatafordownload(item)
   }
 

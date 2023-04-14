@@ -71,7 +71,10 @@ const MiniPlayerCard = (props) => {
   }
   const navigation = useNavigation();
   return (
-    <TouchableOpacity onPress={() => navigation.navigate('Music', { Fromlibrary: false, podcastDetails: trackForMiniPlayer, miniPlayer: true })} style={{ backgroundColor: 'white', padding: 10, flexDirection: 'row', alignContent: "center", alignItems: 'center', justifyContent: "space-between" }}>
+    <TouchableOpacity
+      onPress={() => navigation.navigate('Music', { Fromlibrary: false, podcastDetails: trackForMiniPlayer, miniPlayer: true })}
+      style={{ backgroundColor: 'white', padding: 10, flexDirection: 'row', alignContent: "center", alignItems: 'center', justifyContent: "space-between" }}
+    >
       <View style={styles.imageBox}>
         <Image
           source={{ uri: trackForMiniPlayer?.acf?.imagen_podcast1 }}
@@ -91,12 +94,12 @@ const MiniPlayerCard = (props) => {
       <View style={{ width: '50%' }}>
         <Text numberOfLines={1} style={{ color: Colors.primary, fontSize: 16 }}>{trackForMiniPlayer?.title?.rendered}</Text>
       </View>
-      <View style={{ flexDirection: "row", alignItems: "center"}}>
-        <TouchableOpacity style={{ marginRight: 3}} onPress={() => toogle()} >
+      <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <TouchableOpacity style={{ marginRight: 3 }} onPress={() => toogle()} >
           <AntDesign name={sate == 2 || sate == 0 ? "play" : "pause"} size={33} color={Colors.primary} />
         </TouchableOpacity>
-        <TouchableOpacity style={{ marginLeft: 3}} onPress={() => pauseAndCloseMiniPlayer()} >
-          <AntDesign name={"close"} size={40} color={Colors.primary} />
+        <TouchableOpacity style={{ marginLeft: 3 }} onPress={() => pauseAndCloseMiniPlayer()} >
+          <AntDesign name={"close"} size={30} color={Colors.lightPurple} />
         </TouchableOpacity>
       </View>
     </TouchableOpacity>
@@ -105,8 +108,8 @@ const MiniPlayerCard = (props) => {
 const styles = StyleSheet.create({
   mainBox: {
     height: 'auto',
-    width: 190,
-    marginTop: 20,
+    // width: 190,
+    // marginTop: 20,
   },
   subBox: {
     marginHorizontal: 10,

@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, ActivityIndicator } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, ActivityIndicator, PermissionsAndroid, Share } from 'react-native'
 import ChannelCard from '../components/Cards/ChannelCard';
 import Colors from '../constant/Colors'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FeaturedCard from '../components/Cards/FeaturedCard';
+import Toast from 'react-native-simple-toast';
 
 
 import Podcast from '../components/Sections/Podcast';
@@ -24,6 +25,11 @@ import TrackPlayer, {
   AppKilledPlaybackBehavior
 } from 'react-native-track-player';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import RNFetchBlob from 'rn-fetch-blob';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import ListModals from '../components/Cards/Modals/ListModals';
+import { ref, remove, set } from 'firebase/database';
+import database from '../../firebaseConfig';
 
 const CategoriesDetail = ({ props, route }) => {
   const { details } = route.params
@@ -32,10 +38,15 @@ const CategoriesDetail = ({ props, route }) => {
   const [user, setUser] = useState([]);
   const [podcast, setPodcast] = useState(true)
   const [channels, setChannels] = useState(false)
-  const { language, setSate, selectedlang, setSelectedlang } = useContext(AuthContext);
+  const { language, setSate, selectedlang, setSelectedlang, setfavoritePodcat_id, setdownloadedPodcastID, setpodcast_id, setmusicdatafordownload, setdownloadedPodcast, UserData } = useContext(AuthContext);
   const [podCastData, setPodcastData] = useState([]);
   const [channelsdata, setchannelsdata] = useState([])
   const [loading, setLoading] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [downloadItem, setDownloadItem] = useState({});
+  const [loaderwhileLoader, setloaderwhileLoader] = useState(false)
+  const [selectedPodcast, setSelectedPodcast] = useState(null);
+  const [muusicUrl, setmuusicUrl] = useState(null)
 
   const fetchFavoritePodcast = async () => {
     try {
@@ -61,12 +72,85 @@ const CategoriesDetail = ({ props, route }) => {
   const trackResetAndNavgate = (item) => {
     TrackPlayer.reset();
     setSate(0)
-    navigation.navigate('Music', { podcastDetails: {
-      acf: { link_podcast1: item?.LINK, imagen_podcast1: item?.IMG },
-      id: item.ID,
-      title: { rendered: item.TITLE },
-    }, Fromlibrary: false });
+    navigation.navigate('Music', {
+      podcastDetails: {
+        acf: { link_podcast1: item?.LINK, imagen_podcast1: item?.IMG },
+        id: item.ID,
+        title: { rendered: item.TITLE },
+      }, Fromlibrary: false
+    });
   }
+
+  const getDownloadMusic = async () => {
+    const value = await AsyncStorage.getItem('musics')
+    const parseMusics = JSON.parse(value)
+    let courseName = parseMusics?.map(itemxx => {
+      return itemxx.ID
+    })
+    setdownloadedPodcastID(courseName)
+    setdownloadedPodcast(parseMusics)
+  }
+
+  const downloadPodcast = async (item) => {
+    console.log('download by button ', item)
+    setloaderwhileLoader(true)
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+      {
+        title: 'Music',
+        message:
+          'App needs access to your Files... ',
+        buttonNeutral: 'Ask Me Later',
+        buttonNegative: 'Cancel',
+        buttonPositive: 'OK',
+      },
+    );
+    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      let url = item?.LINK;
+      let name = item?.TITLE;
+      const path = RNFetchBlob.fs.dirs.DownloadDir + `/${name}.mp3`;
+
+      const newObject = {
+        ID: item?.ID,
+        TITLE: name,
+        image: item?.IMG,
+        LINK: path
+      }
+      const previousData = await AsyncStorage.getItem('musics');
+      let data = [];
+      if (previousData !== null) {
+        data = JSON.parse(previousData);
+      }
+      data.push(newObject);
+      const dataString = JSON.stringify(data);
+      await AsyncStorage.setItem('musics', dataString);
+      RNFetchBlob.config({
+        fileCache: true,
+        appendExt: 'mp3',
+        addAndroidDownloads: {
+          useDownloadManager: true,
+          notification: true,
+          title: name,
+          path: path, // Android platform
+          description: 'Downloading the file',
+        },
+      })
+        .fetch('GET', url)
+        .then(res => {
+          console.log('res', res);
+          getDownloadMusic();
+          Toast.show('Successfully Downloaded at ' + res.path(), Toast.LONG);
+          setloaderwhileLoader(false)
+          navigation.navigate('MyLibrary')
+        })
+        .catch(err => {
+          console.log('error', err);
+        })
+    } else {
+      alert('Permission Not Granted !')
+    }
+  }
+
   useEffect(() => {
     fetchFavoritePodcast();
   }, [])
@@ -87,8 +171,134 @@ const CategoriesDetail = ({ props, route }) => {
     getChannels()
   }, [])
 
+  const download = (item, channelName) => {
+    setModalVisible(true);
+    setSelectedPodcast({
+      acf: {
+        id: item.ID,
+        imagen_podcast1: item.IMG,
+        link_podcast1: item.LINK,
+        content: null,
+        time: null,
+      }, title: { rendered: item.TITLE }, channelName: ""
+    });
+
+    setDownloadItem(item)
+
+    setmuusicUrl(item?.LINK)
+    setpodcast_id(JSON.stringify(item?.ID))
+    setmusicdatafordownload(item)
+    // downloadPodcast(item)s
+  }
+
+
+  const onShare = async () => {
+    try {
+      const result = await Share.share({
+        message:
+          selectedPodcast?.LINK + 'This Channel has been share form AgriFM app',
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+    setSelectedPodcast(null);
+  }
+
+
+  const AddPodcastToLiabrary = async () => {
+    try {
+      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/add-favp-app.php?id_user=${UserData[0]?.user}&id_podcast=${selectedPodcast.acf.id}`;
+      const response = await fetch(baseUrl, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+      const string = await response.text();
+      console.log("🚀 ~ file: ChannelDetails.js:256 ~ AddPodcastToLiabrary ~ response:", response)
+      const responseData = string === "" ? {} : JSON.parse(string);
+      console.log("🚀 ~ file: ChannelDetails.js:256 ~ AddPodcastToLiabrary ~ responseData:", responseData)
+      if (responseData[0]?.favoritos_podcast) {
+
+        set(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + selectedPodcast.acf.id), selectedPodcast);
+
+
+        Toast.show('Podcast Added to liabrary', Toast.LONG);
+        let courseName = responseData[0].favoritos_podcast?.map(itemxx => {
+          return itemxx
+        })
+        setfavoritePodcat_id(courseName)
+
+        // remove(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + JSON.stringify(selectedPodcast?.id)))
+        closeModal();
+      } else {
+        alert('Failed to add to liabrary !');
+      }
+    } catch (error) {
+      console.log('error => ', error);
+    }
+
+    // setLoading(false)
+  }
+
+  const RemovePodcastFromLiabrary = async () => {
+
+    // setLoading(true)
+    try {
+      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/remove-libraryp.php?id_user=${UserData[0]?.user}&id_podcast=${selectedPodcast.acf.id}`;
+      const response = await fetch(baseUrl, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+      const responseData = await response.json();
+      setModalVisible(false);
+
+      if (responseData[0].favoritos_podcast) {
+        remove(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + selectedPodcast.acf.id))
+
+        Toast.show('Podcast removed from liabrary', Toast.LONG);
+        let courseName = responseData[0].favoritos_podcast?.map(itemxx => {
+          return itemxx
+        })
+        setfavoritePodcat_id(courseName)
+        setSelectedPodcast(null);
+
+        // navigation.navigate('MyLibrary')
+      } else {
+        alert('Failed to remove from liabrary !');
+      }
+    } catch (error) {
+      console.log('error => ', error);
+    }
+    setLoading(false)
+  }
+
   return (
     <ScrollView style={styles.mainBox}>
+      <ListModals
+        isVisible={modalVisible}
+        onPressClose={() => (setModalVisible(false), setSelectedPodcast(null))}
+        onPressaddTo={() => AddPodcastToLiabrary()}
+        onPressRemove={() => RemovePodcastFromLiabrary()}
+        onClose={() => (setModalVisible(false), setSelectedPodcast(null))}
+        onPressDownload={() => downloadPodcast(downloadItem)}
+        onPressShare={() => onShare()}
+        onPressRemoveDownload={() => RemoveDownload()}
+      />
       <View style={styles.imageBox}>
         <Image
           source={require('../assets/Images/water.png')}
@@ -122,17 +332,20 @@ const CategoriesDetail = ({ props, route }) => {
               podCastData?.map((item) => {
                 return (
                   <FeaturedCard
-                    // onPressIcon={()=>download(item)}
+                    onPressDownload={() => downloadPodcast(item)}
+                    purpleIcon
+                    onPressIcon={() => download(item)}
                     // onPressDownload={()=>downloadPodcast()}
                     onPress={() => trackResetAndNavgate(item)}
                     // channelName={item?.channel_name[0]}
                     // podcastname={item?.title}
                     textstyle={{ color: Colors.primary }}
+                    downloadLoading={loaderwhileLoader}
                     headingText={{ color: 'grey' }}
                     timeText={{ color: 'grey' }}
                     podcastname={item?.TITLE}
                     image={item?.IMG}
-                    // time={item?.time}
+                  // time={item?.time}
                   />
                 );
               })}

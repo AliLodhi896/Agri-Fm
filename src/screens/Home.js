@@ -395,7 +395,7 @@ const Home = () => {
           description: 'Downloading the file',
         },
       })
-        .fetch('GET', url)
+        .fetch('GET', url, { 'Cache-Control': 'no-store' })
         .then(res => {
           console.log('res', res);
           getDownloadMusic();
@@ -438,7 +438,7 @@ const Home = () => {
 
   return (
     <View style={{ backgroundColor: Colors.primary, flex: 1 }}>
-      <View style={{ height: sate !== 0 ? '85%' : '100%', backgroundColor: 'white' }}>
+      <View style={{ height: '100%', backgroundColor: 'white' }}>
         <ScrollView style={styles.mainBox}>
           <View style={{ backgroundColor: Colors.primary, paddingHorizontal: 20 }}>
             <ListModals
@@ -446,7 +446,7 @@ const Home = () => {
               onPressClose={() => (setModalVisible(false), setSelectedPodcast(null))}
               onPressaddTo={() => AddPodcastToLiabrary()}
               onClose={() => (setModalVisible(false), setSelectedPodcast(null))}
-              onPressDownload={() => download()}
+              onPressDownload={() => downloadPodcast(selectedPodcast)}
               onPressShare={() => onShare()}
               onPressRemoveDownload={() => RemoveDownload()}
               onPressRemove={() => RemovePodcastFromLiabrary()}
@@ -642,7 +642,8 @@ const Home = () => {
           </View>
         </ScrollView>
       </View>
-      <View style={{ backgroundColor: Colors.primary, bottom: -15 }}>
+      {/* <View style={{ backgroundColor: Colors.primary, bottom: -15 }}> */}
+      <View style={{ position: "absolute", bottom: 0, width: "100%"}}>
         {sate !== 0 ?
           <MiniPlayerCard />
           :

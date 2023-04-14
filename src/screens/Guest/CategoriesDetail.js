@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, ActivityIndicator } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, ActivityIndicator, Share } from 'react-native'
 import ChannelCard from '../../components/Cards/ChannelCard';
 import Colors from '../../constant/Colors'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FeaturedCard from '../../components/Cards/FeaturedCard';
+import Toast from 'react-native-simple-toast';
 
 
 import Podcast from '../../components/Sections/Podcast';
@@ -25,6 +26,7 @@ import TrackPlayer, {
   AppKilledPlaybackBehavior
 } from 'react-native-track-player';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import ListModals from '../../components/Cards/Modals/ListModals';
 const CategoriesDetail = ({ props, route }) => {
   const navigation = useNavigation();
   const { details } = route.params
@@ -32,10 +34,12 @@ const CategoriesDetail = ({ props, route }) => {
   const [user, setUser] = useState([]);
   const [podcast, setPodcast] = useState(true)
   const [channels, setChannels] = useState(false)
-  const { language, selectedlang, setSelectedlang, setSate } = useContext(AuthContext);
+  const { language, selectedlang, setSelectedlang, setSate, } = useContext(AuthContext);
   const [podCastData, setPodcastData] = useState([]);
+  const [muusicUrl, setmuusicUrl] = useState(null)
   const [channelsdata, setchannelsdata] = useState([])
   const [loading, setLoading] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const fetchFavoritePodcast = async () => {
     setLoading(true);
@@ -50,14 +54,14 @@ const CategoriesDetail = ({ props, route }) => {
       const responseData = await response.json();
       if (responseData) {
         setPodcastData(responseData)
-        
+
       } else {
         // alert('failed to get fav fav');
       }
-        setLoading(false);
-      } catch (error) {
-        console.log('error => ', error);
-        setLoading(false);
+      setLoading(false);
+    } catch (error) {
+      console.log('error => ', error);
+      setLoading(false);
     }
   }
 
@@ -92,8 +96,36 @@ const CategoriesDetail = ({ props, route }) => {
     });
   }
 
+  const onShare = async () => {
+    try {
+      const result = await Share.share({
+        message:
+          muusicUrl + 'This Podcast has been share from AgriFM app',
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
   return (
     <ScrollView style={styles.mainBox}>
+      <ListModals
+        isVisible={modalVisible}
+        onPressClose={() => setModalVisible(false)}
+        navigatetolibrary={() => (setModalVisible(false), navigation.navigate(language?.Library))}
+        onPressaddTo={() => Toast.show(language.registerationError, Toast.LONG)}
+        onClose={() => setModalVisible(false)}
+        onPressDownload={() => Toast.show(language.registerationError, Toast.LONG)}
+        onPressShare={() => onShare()}
+      />
       <View style={styles.imageBox}>
         <Image
           source={require('../../assets/Images/water.png')}
@@ -129,8 +161,12 @@ const CategoriesDetail = ({ props, route }) => {
                 podCastData?.map((item) => {
                   return (
                     <FeaturedCard
-                      // onPressIcon={()=>download(item)}
-                      // onPressDownload={()=>downloadPodcast()}
+                      purpleIcon
+                      onPressIcon={() => {
+                        setModalVisible(true);
+                        setmuusicUrl(item?.LINK)
+                      }}
+                      onPressDownload={() => Toast.show(language.registerationError, Toast.LONG)}
                       onPress={() => trackResetAndNavgate(item)}
                       // channelName={item?.channel_name[0]}
                       // podcastname={item?.title}
