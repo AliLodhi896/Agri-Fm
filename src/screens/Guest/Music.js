@@ -246,7 +246,7 @@ const Music = ({ route }) => {
               </TouchableOpacity>
             </View>
             <View style={{ marginTop: '5%', justifyContent: 'center', width: 80, justifyContent: 'center', alignItems: 'center' }}>
-              <TouchableOpacity onPress={() => {
+              <TouchableOpacity style={{ alignItems: "center"}} onPress={() => {
                 Toast.show('Please first login to download', Toast.LONG);
               }}>
                 <Image style={{ height: 27, width: 30 }} source={require('../../assets/Images/downloadwhite.png')} />

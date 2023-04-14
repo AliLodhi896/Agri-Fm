@@ -109,11 +109,8 @@ const Podcast = (props) => {
     console.log('item',item?.ID)
     setModalVisible(true);
     setmuusicUrl(item?.acf?.link_podcast1)
-<<<<<<< Updated upstream
-    setpodcast_id(item?.acf.id)
-=======
+    // setpodcast_id(item?.acf.id)
     setpodcast_id(item?.ID)
->>>>>>> Stashed changes
     setmusicdatafordownload(item)
   }
 

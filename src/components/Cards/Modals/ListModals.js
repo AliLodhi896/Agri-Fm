@@ -24,7 +24,6 @@ const ListModals = (props) => {
     }
 
     const strPodcastID = convertToString(podcast_id);
-<<<<<<< Updated upstream
 
     useEffect(() => {
         const dbRef = ref(database, `Library/Podcasts/${UserData[0]?.user}`);
@@ -41,9 +40,7 @@ const ListModals = (props) => {
         console.log(favouritePodcasts?.includes(strPodcastID));
     }, [props.isVisible]);
 
-=======
-console.log('downloadedPodcastID',downloadedPodcastID,podcast_id)
->>>>>>> Stashed changes
+    console.log('downloadedPodcastID', downloadedPodcastID, podcast_id)
     return (
         <Modal
             animationType="slide"

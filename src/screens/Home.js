@@ -104,7 +104,9 @@ const Home = () => {
         },
       });
       const responseData = await response.json();
-      setCategories(responseData);
+      const modifiedData = responseData?.map(item => ({ ...item, error: false }))
+
+      setCategories(modifiedData);
       // console.log("🚀 ~ file: Home.js:101 ~ fetchCategories ~ responseData:", responseData)
 
     } catch (error) {
@@ -333,7 +335,7 @@ const Home = () => {
 
   const download = (item, channelName) => {
     setSelectedPodcast({ ...item, channelName: channelName });
-console.log('item?.id',item?.id)
+    console.log('item?.id', item?.id)
     setModalVisible(true);
     setmuusicUrl(item?.acf?.link_podcast1)
     setpodcast_id(item?.id)
@@ -445,11 +447,7 @@ console.log('item?.id',item?.id)
               onPressClose={() => (setModalVisible(false), setSelectedPodcast(null))}
               onPressaddTo={() => AddPodcastToLiabrary()}
               onClose={() => (setModalVisible(false), setSelectedPodcast(null))}
-<<<<<<< Updated upstream
-              onPressDownload={() => downloadPodcast(selectedPodcast)}
-=======
               onPressDownload={() => downloadPodcast(musicdatafordownload)}
->>>>>>> Stashed changes
               onPressShare={() => onShare()}
               onPressRemoveDownload={() => RemoveDownload()}
               onPressRemove={() => RemovePodcastFromLiabrary()}
@@ -463,6 +461,7 @@ console.log('item?.id',item?.id)
               <View></View>
               <View style={styles.logoBox}>
                 <Image
+                  resizeMode='contain'
                   source={require('../assets/Images/logo.png')}
                   style={{ width: '60%', height: '65%' }}
                 />
@@ -488,24 +487,39 @@ console.log('item?.id',item?.id)
                 }
               </TouchableOpacity>
             </View>
-            <ScrollView showsHorizontalScrollIndicator={false} style={styles.categoryBox} horizontal>
-              {categories.map(item => {
-                return (
-                  <TouchableOpacity
-                    style={[styles.categories, { marginRight: 3 }]}
-                    onPress={() => {
-                      navigation.navigate('CategoriesDetail', { details: item.ID })
 
-                    }}>
-                    <Image
-                      source={item?.IMG}
-                      style={{ width: '80%', height: '75%', borderRadius: 100 }}
-                    />
-                    <Text style={styles.categoriesName}>{item.NAME}</Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </ScrollView>
+            <View style={{ flex: 1, alignItems: "center" }}>
+              <ScrollView showsHorizontalScrollIndicator={false} style={styles.categoryBox} horizontal>
+                {categories.map(item => {
+                  return (
+                    <TouchableOpacity
+                      style={[styles.categories, { marginRight: 3 }]}
+                      onPress={() => {
+                        navigation.navigate('CategoriesDetail', { details: item.ID })
+
+                      }}>
+                      {
+                        item.error ?
+                          <Image
+                            source={{
+                              uri: "https://www.cams-it.com/wp-content/uploads/2015/05/default-placeholder-250x200.png",
+                            }}
+                            style={{ width: '80%', height: '80%', borderRadius: 100 }}
+                          /> : <Image
+                            onError={() => { setCategories(prevCategoryState => prevCategoryState.map(c => c.ID === item.ID ? { ...c, error: true } : c)) }}
+                            source={{
+                              uri: item.IMG,
+                            }}
+                            style={{ width: '80%', height: '80%', borderRadius: 100 }}
+                          />
+                      }
+                      <Text style={styles.categoriesName}>{item.NAME}</Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </ScrollView>
+            </View>
+
             <View style={styles.cardBox}>
               <View style={styles.headingBox}>
                 <Text style={styles.mainHeading}>{language?.LastChannels}</Text>
@@ -646,7 +660,7 @@ console.log('item?.id',item?.id)
         </ScrollView>
       </View>
       {/* <View style={{ backgroundColor: Colors.primary, bottom: -15 }}> */}
-      <View style={{ position: "absolute", bottom: 0, width: "100%"}}>
+      <View style={{ position: "absolute", bottom: 0, width: "100%" }}>
         {sate !== 0 ?
           <MiniPlayerCard />
           :
@@ -686,10 +700,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   categories: {
-    height: 70,
-    width: 70,
+    height: 80,
+    width: 80,
     alignContent: 'center',
     alignItems: 'center',
+    marginHorizontal: 3
   },
   categoriesName: {
     color: Colors.secondary,

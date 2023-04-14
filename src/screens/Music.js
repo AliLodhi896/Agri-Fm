@@ -31,11 +31,8 @@ import { ref, remove, set } from 'firebase/database';
 const Music = ({ route }) => {
   const { setmusicdatafordownload,musicdatafordownload,selectedlang, language, setTracks, setSate, sate, favoritePodcat_id, UserData, setfavoritePodcat_id, settrackForMiniPlayer, setpodcast_id, setdownloadedPodcast, setdownloadedPodcastID } = useContext(AuthContext);
   const { podcastDetails, Fromlibrary } = route.params
-<<<<<<< Updated upstream
   // console.log("🚀 ~ file: Music.js:32 ~ Music ~ Fromlibrary:", Fromlibrary)
   // console.log("🚀 ~ file: Music.js:32 ~ Music ~ podcastDetails:", podcastDetails)
-=======
->>>>>>> Stashed changes
 
   const [channelsdata, setchannelsdata] = useState([])
 
@@ -384,7 +381,7 @@ const Music = ({ route }) => {
               </TouchableOpacity>
             </View>
             <View style={{ marginTop: '5%', justifyContent: 'center', width: 80, justifyContent: 'center', alignItems: 'center' }}>
-              <TouchableOpacity onPress={downloadPodcast} >
+              <TouchableOpacity onPress={downloadPodcast} style={{ alignItems: "center"}}>
                 <Image style={{ height: 27, width: 30 }} source={require('../assets/Images/downloadwhite.png')} />
                 <Text style={{ fontSize: 12, color: 'white' }}>{language?.Download}</Text>
               </TouchableOpacity>

@@ -85,8 +85,9 @@ const Home = () => {
         },
       });
       const responseData = await response.json();
-      console.log("🚀 ~ file: Home.js:88 ~ fetchCategories ~ responseData:", responseData)
-      setCategories(responseData);
+      const modifiedData = responseData?.map(item => ({ ...item, error: false }))
+      // console.log("🚀 ~ file: Home.js:88 ~ fetchCategories ~ responseData:", modifiedData)
+      setCategories([...modifiedData]);
       // console.log("🚀 ~ file: Home.js:101 ~ fetchCategories ~ responseData:", responseData)
 
     } catch (error) {
@@ -182,7 +183,7 @@ const Home = () => {
   }
 
   const download = (item) => {
-    console.log('item,',item)
+    console.log('item,', item)
     setModalVisible(true);
     setmuusicUrl(item?.acf?.link_podcast1)
   }
@@ -270,6 +271,7 @@ const Home = () => {
           <View></View>
           <View style={styles.logoBox}>
             <Image
+              resizeMode='contain'
               source={require('../../assets/Images/logo.png')}
               style={{ width: '60%', height: '65%' }}
             />
@@ -296,21 +298,34 @@ const Home = () => {
           </TouchableOpacity>
         </View>
 
-        <ScrollView style={styles.categoryBox} horizontal>
-          {categories.map(item => {
-            return (
-              <TouchableOpacity
-                style={styles.categories}
-                onPress={() => { navigation.navigate('CategoriesDetail', { details: item.ID }) }}>
-                <Image
-                  source={item.IMG}
-                  style={{ width: '80%', height: '75%', borderRadius: 100 }}
-                />
-                <Text style={styles.categoriesName}>{item.NAME}</Text>
-              </TouchableOpacity>
-            );
-          })}
-        </ScrollView>
+        <View style={{ flex: 1, alignItems: "center" }}>
+          <ScrollView showsHorizontalScrollIndicator={false} style={styles.categoryBox} horizontal>
+            {categories.map(item => {
+              return (
+                <TouchableOpacity
+                  style={styles.categories}
+                  onPress={() => { navigation.navigate('CategoriesDetail', { details: item.ID }) }}>
+                  {
+                    item.error ?
+                      <Image
+                        source={{
+                          uri: "https://www.cams-it.com/wp-content/uploads/2015/05/default-placeholder-250x200.png",
+                        }}
+                        style={{ width: '80%', height: '80%', borderRadius: 100 }}
+                      /> : <Image
+                        onError={() => { setCategories(prevCategoryState => prevCategoryState.map(c => c.ID === item.ID ? { ...c, error: true } : c)) }}
+                        source={{
+                          uri: item.IMG,
+                        }}
+                        style={{ width: '80%', height: '80%', borderRadius: 100 }}
+                      />
+                  }
+                  <Text style={styles.categoriesName}>{item.NAME}</Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        </View>
         <View style={styles.cardBox}>
           <View style={styles.headingBox}>
             <Text style={styles.mainHeading}>{language?.LastChannels}</Text>
@@ -365,7 +380,7 @@ const Home = () => {
                   // channelName={match?.channel_name}
                   podcastname={item.title?.rendered}
                   image={item?.acf?.imagen_podcast1}
-                  time={item?.yoast_head_json?.twitter_misc ? Object.values(item?.yoast_head_json?.twitter_misc)[0]: null}
+                  time={item?.yoast_head_json?.twitter_misc ? Object.values(item?.yoast_head_json?.twitter_misc)[0] : null}
 
                 />
               );
@@ -476,10 +491,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   categories: {
-    height: 70,
-    width: 70,
+    height: 80,
+    width: 80,
     alignContent: 'center',
     alignItems: 'center',
+    marginHorizontal: 3
   },
   categoriesName: {
     color: Colors.secondary,
