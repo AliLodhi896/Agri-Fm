@@ -381,7 +381,7 @@ const Music = ({ route }) => {
               </TouchableOpacity>
             </View>
             <View style={{ marginTop: '5%', justifyContent: 'center', width: 80, justifyContent: 'center', alignItems: 'center' }}>
-              <TouchableOpacity onPress={downloadPodcast} style={{ alignItems: "center"}}>
+              <TouchableOpacity onPress={()=>downloadPodcast(podcastDetails)} style={{ alignItems: "center"}}>
                 <Image style={{ height: 27, width: 30 }} source={require('../assets/Images/downloadwhite.png')} />
                 <Text style={{ fontSize: 12, color: 'white' }}>{language?.Download}</Text>
               </TouchableOpacity>
