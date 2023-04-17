@@ -8,9 +8,9 @@ import { onValue, ref } from 'firebase/database';
 import database from '../../../../firebaseConfig';
 
 const ListModals = (props) => {
-    const { language, podcast_id, favoritePodcat_id, downloadedPodcastID, UserData } = useContext(AuthContext);
+    const { language, podcast_id, favoritePodcat_id, downloadedPodcastID, UserData, favouritePodcasts } = useContext(AuthContext);
     const navigation = useNavigation();
-    const [favouritePodcasts, setfavouritePodcasts] = useState([]);
+    // const [favouritePodcasts, setfavouritePodcasts] = useState([]);
 
 
     function convertToString(value) {
@@ -25,19 +25,20 @@ const ListModals = (props) => {
 
     const strPodcastID = convertToString(podcast_id);
 
-    useEffect(() => {
-        const dbRef = ref(database, `Library/Podcasts/${UserData[0]?.user}`);
-        onValue(dbRef, (snapshot) => {
-            let data = snapshot.val();
-            let arr = data || data?.length ? Object.values(data) : [];
-            let arr1 = arr.map(ch => convertToString(ch.acf.id));
-            setfavouritePodcasts(arr1)
-        })
-    }, []);
+    // useEffect(() => {
+    //     const dbRef = ref(database, `Library/Podcasts/${UserData[0]?.user}`);
+    //     onValue(dbRef, (snapshot) => {
+    //         let data = snapshot.val();
+    //         let arr = data || data?.length ? Object.values(data) : [];
+    //         let arr1 = arr.map(ch => convertToString(ch.acf.id));
+    //         setfavouritePodcasts(arr1)
+    //     })
+    // }, []);
 
     useEffect(() => {
-        console.log("🚀 ~ file: ListModals.js:40 ~ useEffect ~ strPodcastID:", strPodcastID)
-        console.log(favouritePodcasts?.includes(strPodcastID));
+        console.log(UserData[0]?.user)
+        console.log(strPodcastID);
+        console.log(favouritePodcasts);
     }, [props.isVisible]);
 
     console.log('downloadedPodcastID', downloadedPodcastID, podcast_id)
@@ -87,7 +88,7 @@ const ListModals = (props) => {
                             <Image style={{ width: '12%', height: 20 }} source={require('../../../assets/Images/shares.png')} />
                         </TouchableOpacity>
                         <View style={{ height: 1, backgroundColor: Colors.primary, opacity: 0.5, marginTop: 15 }}></View>
-                        {favouritePodcasts?.includes(strPodcastID) && strPodcastID === strPodcastID ?
+                        {favouritePodcasts?.includes(strPodcastID) && strPodcastID === strPodcastID || props.removeOnlyLib ?
                             <TouchableOpacity style={styles.second_view} onPress={props.onPressRemove}  >
                                 <Text style={{ color: Colors.primary, fontSize: 16 }}>
                                     {language?.RemoveFromLibrary}

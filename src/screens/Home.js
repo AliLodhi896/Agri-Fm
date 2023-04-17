@@ -42,7 +42,7 @@ import database from '../../firebaseConfig';
 const Home = () => {
 
 
-  const { setmusicdatafordownload, musicdatafordownload, downloadedPodcast, downloadedPodcastID, language, selectedlang, sate, setSate, UserData, setpodcast_id, podcast_id, setfavoritePodcat_id, setdownloadedPodcastID, setdownloadedPodcast } = useContext(AuthContext);
+  const { setmusicdatafordownload, musicdatafordownload, downloadedPodcast, setfavouritePodcasts, downloadedPodcastID, language, selectedlang, sate, setSate, UserData, setpodcast_id, podcast_id, setfavoritePodcat_id, setdownloadedPodcastID, setdownloadedPodcast } = useContext(AuthContext);
   const navigation = useNavigation();
   const [podCastData, setPodcastData] = useState([]);
   const [interest, setInterest] = useState([])
@@ -149,7 +149,7 @@ const Home = () => {
         },
       });
       const responseData = await response.json();
-      console.log('responseData---------------------------->', responseData)
+      // console.log('responseData---------------------------->', responseData)
       if (responseData) {
         setnewpodcast(responseData)
       } else {
@@ -183,11 +183,18 @@ const Home = () => {
 
   useFocusEffect(
     useCallback(() => {
-      fetchData();
-      getChannels();
-      fetchNewPodcast()
+      if (focus) {
+        fetchData();
+        getChannels();
+        fetchNewPodcast()
+      }
     }, []),
   );
+  // useEffect(() => {
+  //   fetchData();
+  //   getChannels();
+  //   fetchNewPodcast()
+  // }, [])
 
   const onShare = async () => {
     try {
@@ -314,6 +321,16 @@ const Home = () => {
     }
   }
 
+  function convertToString(value) {
+    if (typeof value === 'string') {
+      return value;
+    } else if (typeof value === 'number') {
+      return value.toString();
+    } else {
+      return value;
+    }
+  }
+
 
   const fetchFavoritePodcast1 = () => {
     setLibLoading(true);
@@ -321,6 +338,7 @@ const Home = () => {
     onValue(dbRef, (snapshot) => {
       let data = snapshot.val();
       setfavoritePodcast(data || data?.length ? Object.values(data) : []);
+      setfavouritePodcasts(data || data?.length ? Object.keys(data) : []);
       setLibLoading(false);
     })
   }

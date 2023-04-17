@@ -106,11 +106,11 @@ const Podcast = (props) => {
 
   const download = (item) => {
     // console.log("🚀 ~ file: Podcast.js:108 ~ download ~ item:", item)
-    console.log('item',item?.ID)
+    console.log('item', item?.id || item.acf.id)
     setModalVisible(true);
     setmuusicUrl(item?.acf?.link_podcast1)
-    // setpodcast_id(item?.acf.id)
-    setpodcast_id(item?.ID)
+    setpodcast_id(item?.id || item.acf.id)
+    // setpodcast_id(item?.ID)
     setmusicdatafordownload(item)
   }
 
@@ -239,7 +239,7 @@ const Podcast = (props) => {
         },
       });
       const responseData = await response.json();
-      console.log('responseData[0].favoritos_podcast', responseData);
+      // console.log('responseData[0].favoritos_podcast', responseData);
       if (responseData) {
         remove(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + podcast_id))
 
@@ -262,6 +262,7 @@ const Podcast = (props) => {
   return (
     <View>
       <ListModals
+        removeOnlyLib
         isVisible={modalVisible}
         onPressClose={() => setModalVisible(false)}
         onPressaddTo={() => AddPodcastToLiabrary()}

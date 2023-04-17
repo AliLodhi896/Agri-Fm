@@ -180,7 +180,7 @@ const CategoriesDetail = ({ props, route }) => {
         link_podcast1: item.LINK,
         content: null,
         time: null,
-      }, title: { rendered: item.TITLE }, channelName: ""
+      }, title: { rendered: item.TITLE }, channelName: "", id: item.ID,
     });
 
     setDownloadItem(item)
