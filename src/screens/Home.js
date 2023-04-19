@@ -354,7 +354,6 @@ const Home = () => {
     setpodcast_id(item?.id)
     setchannelNamefordownload(channelName)
     setmusicdatafordownload(item)
-    // downloadPodcast(item)s
   }
 
   const getDownloadMusic = async () => {
@@ -385,8 +384,6 @@ const Home = () => {
       let url = item?.acf?.link_podcast1;
       let name = item?.title?.rendered;
       const path = RNFetchBlob.fs.dirs.DownloadDir + `/${name}.mp3`;
-
-
       RNFetchBlob.config({
         fileCache: true,
         appendExt: 'mp3',
@@ -434,19 +431,16 @@ const Home = () => {
       getDownloadMusic();
     }, []),
   );
-  // const RemoveDownload = async() => {
-  //   let newItems = downloadedPodcast.filter(e => e?.ID !== podcast_id);
 
   const RemoveDownload = async () => {
     let newItems = downloadedPodcast.filter(e => e?.ID !== podcast_id);
-
     setdownloadedPodcast(newItems)
-    const dataString = JSON.stringify(downloadedPodcast);
+    const dataString = JSON.stringify(newItems);
     await AsyncStorage.setItem('musics', dataString);
     let newItemsID = downloadedPodcastID.filter(e => e !== podcast_id);
+    Toast.show('Podcast has been removed from downloads', Toast.LONG);
+
     setdownloadedPodcastID(newItemsID)
-    // downloadedPodcastID
-    // setdownloadedPodcastID()
   }
 
   function obtenNombreCanal(value) {

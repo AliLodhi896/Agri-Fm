@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react'
+import React, { useState, useContext, useEffect,useCallback } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, ActivityIndicator, Share, PermissionsAndroid } from 'react-native'
 
 import Colors from '../constant/Colors'
@@ -17,10 +17,12 @@ import RNFetchBlob from 'rn-fetch-blob';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ref, remove, set } from 'firebase/database';
 import database from '../../firebaseConfig';
+import {useFocusEffect} from '@react-navigation/native';
 
 const Explore = ({ navigation }) => {
-  const {setmusicdatafordownload,musicdatafordownload, language, selectedlang, setSelectedlang, setSate, UserData, podcast_id, setfavoritePodcat_id, setpodcast_id } = useContext(AuthContext);
-
+  const {downloadedPodcastID,downloadedPodcast,setdownloadedPodcast,setdownloadedPodcastID,setmusicdatafordownload,musicdatafordownload, language, selectedlang, setSelectedlang, setSate, UserData, podcast_id, setfavoritePodcat_id, setpodcast_id } = useContext(AuthContext);
+  
+  
   const [loading, setLoading] = useState(false)
   const [interest, setInterest] = useState([])
   const [searchProduct, setSearchProduct] = useState([]);
@@ -36,10 +38,8 @@ const Explore = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [muusicUrl, setmuusicUrl] = useState(null)
   const [selectedPodcast, setSelectedPodcast] = useState(null);
-
   const [podcastID, setPodcastID] = useState(null);
-
-
+  const [channelNamefordownload, setchannelNamefordownload] = useState('')
   const [isSearch, setIsSearch] = useState(false);
 
   useEffect(() => {
@@ -212,6 +212,7 @@ const Explore = ({ navigation }) => {
     setModalVisible(true);
     setmuusicUrl(item?.acf?.link_podcast1)
     setpodcast_id(item?.id)
+    setchannelNamefordownload(channelName)
     setmusicdatafordownload(item)
   }
 
@@ -280,44 +281,80 @@ const Explore = ({ navigation }) => {
       console.log(err);
     }
   };
-
-  const downloadPodcast = async (item) => {
-    const permission = await requestpermissionforDownlaod();
-    if (!permission) return;
-    let url = item?.acf?.link_podcast1;
-    let name = item?.title?.rendered;
-    const path = RNFetchBlob.fs.dirs.DownloadDir + `/${name}.mp3`;
-    const newObject = {
-      TITLE: item?.title?.rendered,
-      image: item?.acf?.imagen_podcast1,
-      LINK: path
-    }
-    const previousData = await AsyncStorage.getItem('musics');
-    let data = [];
-    if (previousData !== null) {
-      data = JSON.parse(previousData);
-    }
-    data.push(newObject);
-    const dataString = JSON.stringify(data);
-    await AsyncStorage.setItem('musics', dataString);
-    RNFetchBlob.config({
-      fileCache: true,
-      appendExt: 'mp3',
-      addAndroidDownloads: {
-        useDownloadManager: true,
-        notification: true,
-        title: name,
-        path: path, // Android platform
-        description: 'Downloading the file',
-      },
+  const getDownloadMusic = async () => {
+    const value = await AsyncStorage.getItem('musics')
+    const parseMusics = JSON.parse(value)
+    let courseName = parseMusics?.map(itemxx => {
+      return itemxx.ID
     })
-      .fetch('GET', url)
-      .then(res => {
-        console.log('res', res);
-        Toast.show('Successfully Downloaded at ' + res.path(), Toast.LONG);
-      });
+    setdownloadedPodcastID(courseName)
+    setdownloadedPodcast(parseMusics)
   }
-
+  const downloadPodcast = async (item,channelName) => {
+    setchannelNamefordownload(channelName)
+    // setloaderwhileLoader(true)
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+      {
+        title: 'Music',
+        message:
+          'App needs access to your Files... ',
+        buttonNeutral: 'Ask Me Later',
+        buttonNegative: 'Cancel',
+        buttonPositive: 'OK',
+      },
+    );
+    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      let url = item?.acf?.link_podcast1;
+      let name = item?.title?.rendered;
+      const path = RNFetchBlob.fs.dirs.DownloadDir + `/${name}.mp3`;
+      RNFetchBlob.config({
+        fileCache: true,
+        appendExt: 'mp3',
+        addAndroidDownloads: {
+          useDownloadManager: true,
+          notification: true,
+          title: name,
+          path: path, // Android platform
+          description: 'Downloading the file',
+        },
+      })
+        .fetch('GET', url)
+        .then(async res => {
+          console.log('res', res);
+          const newObject = {
+            ID: item?.id,
+            TITLE: item?.title?.rendered,
+            image: item?.acf?.imagen_podcast1,
+            LINK: path,
+            CHANNEL_NAME: channelName
+          }
+          const previousData = await AsyncStorage.getItem('musics');
+          let data = [];
+          if (previousData !== null) {
+            data = JSON.parse(previousData);
+            data.push(newObject);
+            const dataString = JSON.stringify(data);
+            await AsyncStorage.setItem('musics', dataString);
+          }else{
+            data.push(newObject);
+            const dataString = JSON.stringify(data);
+            await AsyncStorage.setItem('musics', dataString);
+          }
+          getDownloadMusic()
+          Toast.show('Successfully Downloaded at ' + res.path(), Toast.LONG);
+          // setloaderwhileLoader(false)
+          navigation.navigate('MyLibrary')
+        });
+    } else {
+      alert('Permission Not Granted !')
+    }
+  }
+  useFocusEffect(
+    useCallback(() => {
+      getDownloadMusic();
+    }, []),
+  );
   const renderPodcasts = () => {
     const temp = serachText == '' ? searchProduct : searchProduct.slice(0, 10);
 
@@ -416,7 +453,15 @@ const Explore = ({ navigation }) => {
     setSelectedPodcast(null);
 
   }
-
+  const RemoveDownload = async () => {
+    let newItems = downloadedPodcast.filter(e => e?.ID !== podcast_id);
+    setdownloadedPodcast(newItems)
+    const dataString = JSON.stringify(newItems);
+    await AsyncStorage.setItem('musics', dataString);
+    let newItemsID = downloadedPodcastID.filter(e => e !== podcast_id);
+    Toast.show('Podcast has been removed from downloads', Toast.LONG);
+    setdownloadedPodcastID(newItemsID)
+  }
   return (
     <ScrollView style={styles.mainBox}  >
       <ListModals
@@ -424,6 +469,7 @@ const Explore = ({ navigation }) => {
         isVisible={modalVisible}
         onPressClose={() => setModalVisible(false)}
         onPressaddTo={() => AddPodcastToLiabrary()}
+        onPressRemoveDownload={() => RemoveDownload()}
         onPressRemove={() => RemovePodcastFromLiabrary()}
         onClose={() => setModalVisible(false)}
         onPressDownload={() => downloadPodcast(musicdatafordownload)}

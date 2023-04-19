@@ -29,11 +29,12 @@ import database from '../../firebaseConfig';
 import { ref, remove, set } from 'firebase/database';
 
 const Music = ({ route }) => {
-  const { setmusicdatafordownload,musicdatafordownload,selectedlang, language, setTracks, setSate, sate, favoritePodcat_id, UserData, setfavoritePodcat_id, settrackForMiniPlayer, setpodcast_id, setdownloadedPodcast, setdownloadedPodcastID } = useContext(AuthContext);
+  const {downloadedPodcast,downloadedPodcastID, podcast_id,setmusicdatafordownload,musicdatafordownload,selectedlang, language, setTracks, setSate, sate, favoritePodcat_id, UserData, setfavoritePodcat_id, settrackForMiniPlayer, setpodcast_id, setdownloadedPodcast, setdownloadedPodcastID } = useContext(AuthContext);
   const { podcastDetails, Fromlibrary } = route.params
   // console.log("🚀 ~ file: Music.js:32 ~ Music ~ Fromlibrary:", Fromlibrary)
   // console.log("🚀 ~ file: Music.js:32 ~ Music ~ podcastDetails:", podcastDetails)
 
+  const [channelNamefordownload, setchannelNamefordownload] = useState('')
   const [channelsdata, setchannelsdata] = useState([])
 
   const getChannels = () => {
@@ -265,8 +266,18 @@ const Music = ({ route }) => {
 
   }
 
-
-  const downloadPodcast = async (item) => {
+  const getDownloadMusic = async () => {
+    const value = await AsyncStorage.getItem('musics')
+    const parseMusics = JSON.parse(value)
+    let courseName = parseMusics?.map(itemxx => {
+      return itemxx.ID
+    })
+    setdownloadedPodcastID(courseName)
+    setdownloadedPodcast(parseMusics)
+  }
+  const downloadPodcast = async (item,channelName) => {
+    setchannelNamefordownload(channelName)
+    // setloaderwhileLoader(true)
     const granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
       {
@@ -282,21 +293,6 @@ const Music = ({ route }) => {
       let url = item?.acf?.link_podcast1;
       let name = item?.title?.rendered;
       const path = RNFetchBlob.fs.dirs.DownloadDir + `/${name}.mp3`;
-
-      const newObject = {
-        ID: item?.id,
-        TITLE: item?.title?.rendered,
-        image: item?.acf?.imagen_podcast1,
-        LINK: path
-      }
-      const previousData = await AsyncStorage.getItem('musics');
-      let data = [];
-      if (previousData !== null) {
-        data = JSON.parse(previousData);
-      }
-      data.push(newObject);
-      const dataString = JSON.stringify(data);
-      await AsyncStorage.setItem('musics', dataString);
       RNFetchBlob.config({
         fileCache: true,
         appendExt: 'mp3',
@@ -309,24 +305,42 @@ const Music = ({ route }) => {
         },
       })
         .fetch('GET', url)
-        .then(res => {
+        .then(async res => {
           console.log('res', res);
-          getDownloadMusic();
+          const newObject = {
+            ID: item?.id,
+            TITLE: item?.title?.rendered,
+            image: item?.acf?.imagen_podcast1,
+            LINK: path,
+            CHANNEL_NAME: channelName
+          }
+          const previousData = await AsyncStorage.getItem('musics');
+          let data = [];
+          if (previousData !== null) {
+            data = JSON.parse(previousData);
+            data.push(newObject);
+            const dataString = JSON.stringify(data);
+            await AsyncStorage.setItem('musics', dataString);
+          }else{
+            data.push(newObject);
+            const dataString = JSON.stringify(data);
+            await AsyncStorage.setItem('musics', dataString);
+          }
+          getDownloadMusic()
           Toast.show('Successfully Downloaded at ' + res.path(), Toast.LONG);
+          // setloaderwhileLoader(false)
           navigation.navigate('MyLibrary')
         });
     } else {
       alert('Permission Not Granted !')
     }
   }
-  const RemoveDownload = async () => {
-    let newItems = downloadedPodcast.filter(e => e?.ID !== podcast_id);
-    setdownloadedPodcast(newItems)
-    const dataString = JSON.stringify(downloadedPodcast);
-    await AsyncStorage.setItem('musics', dataString);
-    let newItemsID = downloadedPodcastID.filter(e => e !== podcast_id);
-    setdownloadedPodcastID(newItemsID)
-  }
+  useFocusEffect(
+    useCallback(() => {
+      getDownloadMusic();
+    }, []),
+  );
+
   const onShare = async () => {
     try {
       const result = await Share.share({
@@ -346,13 +360,23 @@ const Music = ({ route }) => {
     }
   };
   const download = (item, channelName) => {
-    setSelectedPodcast({ ...item, channelName: channelName.channel_name });
+    setSelectedPodcast({ ...item, channelName: channelName });
     setModalVisible(true);
     setmuusicUrl(item?.acf?.link_podcast1)
     setpodcast_id(item?.id)
+    setchannelNamefordownload(channelName)
     setmusicdatafordownload(item)
   }
+  const RemoveDownload = async () => {
+    let newItems = downloadedPodcast.filter(e => e?.ID !== podcast_id);
+    setdownloadedPodcast(newItems)
+    const dataString = JSON.stringify(newItems);
+    await AsyncStorage.setItem('musics', dataString);
+    let newItemsID = downloadedPodcastID.filter(e => e !== podcast_id);
+    Toast.show('Podcast has been removed from downloads', Toast.LONG);
 
+    setdownloadedPodcastID(newItemsID)
+  }
   return (
     <ScrollView style={styles.mainBox}>
       <ListModals
@@ -448,6 +472,7 @@ const Music = ({ route }) => {
                 channelName={match?.channel_name}
                 podcastname={item.title?.rendered}
                 image={item?.acf?.imagen_podcast1}
+                id={item?.id}
               />
             );
           })}

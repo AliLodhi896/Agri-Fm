@@ -50,7 +50,6 @@ const LoginPassword = () => {
         },
       });
       const responseData = await response.json();
-      console.log('responseData',responseData)
       if (responseData[0].validation  === "No hemos encontrado ningún usuario con este email, por favor cree una cuenta." || responseData[0].validation === 'Revise su email y contraseña' ) {
         alert(responseData[0].validation);
       } else {

@@ -103,11 +103,12 @@ const Podcast = (props) => {
     setSate(0)
     navigation.navigate('Music', { podcastDetails: item, Fromlibrary: true });
   }
+  console.log('item',podcast_id)
 
   const download = (item) => {
     setModalVisible(true);
     setmuusicUrl(item?.acf?.link_podcast1)
-    setpodcast_id(item?.id || item?.acf?.id)
+    setpodcast_id(item?.ID || item?.acf?.id)
     setmusicdatafordownload(item)
   }
 
@@ -170,6 +171,7 @@ const Podcast = (props) => {
   }
   const RemoveDownload = async () => {
     let newItems = downloadedPodcast.filter(e => e?.ID !== podcast_id);
+
     setdownloadedPodcast(newItems)
     const dataString = JSON.stringify(newItems);
     await AsyncStorage.setItem('musics', dataString);
@@ -255,7 +257,15 @@ const Podcast = (props) => {
     }
     setLoading(false)
   }
-
+  // const download = (item, channelName) => {
+  //   setModalVisible(true);
+  //   setmuusicUrl(item?.acf?.link_podcast1)
+  //   setpodcast_id(item?.id)
+  //   // setchannelNamefordownload(channelName)
+  //   setmusicdatafordownload(item)
+  //   // downloadPodcast(item)s
+  // }
+  console.log('downloadedPodcast',downloadedPodcast)
   return (
     <View>
       <ListModals
@@ -271,10 +281,11 @@ const Podcast = (props) => {
       />
       <View style={styles.cardBox}>
         <Text style={{ fontSize: 20, color: Colors.primary, fontWeight: 'bold' }}>Your Downloads</Text>
-        {downloadedPodcast == null ?
+        {downloadedPodcast?.length == 0 || downloadedPodcast == null ?
           <Text style={{ fontSize: 16, color: Colors.primary, fontWeight: 'bold', marginVertical: '20%', textAlign: 'center' }}>No Podcasts In your Downloads !</Text>
           :
           downloadedPodcast?.map((item) => {
+            console.log('item',item)
             return (
               <FeaturedCard
                 // onPressDownload={()=>downloadPodcast(item)}
@@ -287,6 +298,7 @@ const Podcast = (props) => {
                 channelName={item?.CHANNEL_NAME}
                 podcastname={item.TITLE}
                 image={item?.image}
+                id={item?.ID}
               />
             );
           })}
