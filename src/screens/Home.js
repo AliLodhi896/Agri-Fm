@@ -53,10 +53,11 @@ const Home = () => {
   const [libLoading, setLibLoading] = useState(false);
   const [muusicUrl, setmuusicUrl] = useState(null)
   const [favoritePodcast, setfavoritePodcast] = useState()
-
+  const [newpodcast, setnewpodcast] = useState([])
   const [selectedPodcast, setSelectedPodcast] = useState(null);
-
+  const [categories, setCategories] = useState([]);
   const [loaderwhileLoader, setloaderwhileLoader] = useState(false)
+  const [channelNamefordownload, setchannelNamefordownload] = useState('')
   // const categories = [
   //   {
   //     id: 2,
@@ -89,7 +90,6 @@ const Home = () => {
   //     image: require('../assets/Images/aqua.png'),
   //   },
   // ];
-  const [categories, setCategories] = useState([]);
   // console.log('selectedlang',selectedlang)
 
   const focus = useIsFocused();
@@ -105,10 +105,7 @@ const Home = () => {
       });
       const responseData = await response.json();
       const modifiedData = responseData?.map(item => ({ ...item, error: false }))
-
       setCategories(modifiedData);
-      // console.log("🚀 ~ file: Home.js:101 ~ fetchCategories ~ responseData:", responseData)
-
     } catch (error) {
       console.log('error => ', error);
     }
@@ -132,7 +129,6 @@ const Home = () => {
       console.log('error => ', error);
     }
   }
-  const [newpodcast, setnewpodcast] = useState([])
   const fetchNewPodcast = async () => {
     try {
       var baseUrl = ''
@@ -353,10 +349,10 @@ const Home = () => {
 
   const download = (item, channelName) => {
     setSelectedPodcast({ ...item, channelName: channelName });
-    console.log('item?.id', item?.id)
     setModalVisible(true);
     setmuusicUrl(item?.acf?.link_podcast1)
     setpodcast_id(item?.id)
+    setchannelNamefordownload(channelName)
     setmusicdatafordownload(item)
     // downloadPodcast(item)s
   }
@@ -370,8 +366,9 @@ const Home = () => {
     setdownloadedPodcastID(courseName)
     setdownloadedPodcast(parseMusics)
   }
-  const downloadPodcast = async (item) => {
-    console.log('download by button ', item)
+
+  const downloadPodcast = async (item,channelName) => {
+    setchannelNamefordownload(channelName)
     setloaderwhileLoader(true)
     const granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
@@ -389,20 +386,7 @@ const Home = () => {
       let name = item?.title?.rendered;
       const path = RNFetchBlob.fs.dirs.DownloadDir + `/${name}.mp3`;
 
-      const newObject = {
-        ID: item?.id,
-        TITLE: item?.title?.rendered,
-        image: item?.acf?.imagen_podcast1,
-        LINK: path
-      }
-      const previousData = await AsyncStorage.getItem('musics');
-      let data = [];
-      if (previousData !== null) {
-        data = JSON.parse(previousData);
-      }
-      data.push(newObject);
-      const dataString = JSON.stringify(data);
-      await AsyncStorage.setItem('musics', dataString);
+
       RNFetchBlob.config({
         fileCache: true,
         appendExt: 'mp3',
@@ -414,10 +398,29 @@ const Home = () => {
           description: 'Downloading the file',
         },
       })
-        .fetch('GET', url, { 'Cache-Control': 'no-store' })
-        .then(res => {
+        .fetch('GET', url)
+        .then(async res => {
           console.log('res', res);
-          getDownloadMusic();
+          const newObject = {
+            ID: item?.id,
+            TITLE: item?.title?.rendered,
+            image: item?.acf?.imagen_podcast1,
+            LINK: path,
+            CHANNEL_NAME: channelName
+          }
+          const previousData = await AsyncStorage.getItem('musics');
+          let data = [];
+          if (previousData !== null) {
+            data = JSON.parse(previousData);
+            data.push(newObject);
+            const dataString = JSON.stringify(data);
+            await AsyncStorage.setItem('musics', dataString);
+          }else{
+            data.push(newObject);
+            const dataString = JSON.stringify(data);
+            await AsyncStorage.setItem('musics', dataString);
+          }
+          getDownloadMusic()
           Toast.show('Successfully Downloaded at ' + res.path(), Toast.LONG);
           setloaderwhileLoader(false)
           navigation.navigate('MyLibrary')
@@ -587,7 +590,7 @@ const Home = () => {
                   const match = obtenNombreCanal(item.canales);
                   return (
                     <FeaturedCard
-                      onPressDownload={() => downloadPodcast(item)}
+                      onPressDownload={() => downloadPodcast(item,match)}
                       onPressIcon={() => download(item, match)}
                       onPress={() => trackResetAndNavgate(item)}
                       // channelName={match?.channel_name == undefined ? 'Chatting with poultry experts' : match?.channel_name}

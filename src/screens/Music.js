@@ -346,8 +346,6 @@ const Music = ({ route }) => {
     }
   };
   const download = (item, channelName) => {
-    console.log('item',item)
-    // console.log({... item, channelName: channelName.channel_name });
     setSelectedPodcast({ ...item, channelName: channelName.channel_name });
     setModalVisible(true);
     setmuusicUrl(item?.acf?.link_podcast1)

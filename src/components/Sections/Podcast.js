@@ -105,12 +105,9 @@ const Podcast = (props) => {
   }
 
   const download = (item) => {
-    // console.log("🚀 ~ file: Podcast.js:108 ~ download ~ item:", item)
-    console.log('item', item?.id || item.acf.id)
     setModalVisible(true);
     setmuusicUrl(item?.acf?.link_podcast1)
-    setpodcast_id(item?.id || item.acf.id)
-    // setpodcast_id(item?.ID)
+    setpodcast_id(item?.id || item?.acf?.id)
     setmusicdatafordownload(item)
   }
 
@@ -287,7 +284,7 @@ const Podcast = (props) => {
                 onPressIcon={() => download(item)}
                 onPress={() => trackResetAndNavgate(item)}
                 purpleIcon={true}
-                channelName='Channel Name'
+                channelName={item?.CHANNEL_NAME}
                 podcastname={item.TITLE}
                 image={item?.image}
               />
