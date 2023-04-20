@@ -99,16 +99,28 @@ const Podcast = (props) => {
   // }, [focus])
 
   const trackResetAndNavgate = (item) => {
+    const itemID = item?.acf?.id ? item?.acf?.id : item?.ID ? item?.ID : item?.id;
+
     TrackPlayer.reset();
     setSate(0)
-    navigation.navigate('Music', { podcastDetails: item, Fromlibrary: true });
+    navigation.navigate('Music', {
+      podcastDetails: {
+        acf: { link_podcast1: item?.acf.link_podcast1, imagen_podcast1: item?.acf.imagen_podcast1 },
+        id: itemID,
+        title: { rendered: item.title.rendered },
+      }, Fromlibrary: false
+    });
+    // navigation.navigate('Music', { podcastDetails: item, Fromlibrary: true });
   }
-  console.log('item',podcast_id)
+  // console.log('item', podcast_id)
 
   const download = (item) => {
+    const itemID = item?.acf?.id ? item?.acf?.id : item?.ID ? item?.ID : item?.id;
+    // console.log(itemID);
+    // return;
     setModalVisible(true);
     setmuusicUrl(item?.acf?.link_podcast1)
-    setpodcast_id(item?.ID || item?.acf?.id)
+    setpodcast_id(itemID)
     setmusicdatafordownload(item)
   }
 
@@ -227,8 +239,15 @@ const Podcast = (props) => {
   }
 
   const RemovePodcastFromLiabrary = async () => {
+    // console.log(UserData[0]?.user);
+    // console.log(podcast_id);
+    // return;
     setModalVisible(false);
     setLoading(true)
+
+    remove(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + podcast_id))
+    setLoading(false)
+
     try {
       let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/remove-libraryp.php?id_user=${UserData[0]?.user}&id_podcast=${podcast_id}`;
       const response = await fetch(baseUrl, {
@@ -240,8 +259,6 @@ const Podcast = (props) => {
       const responseData = await response.json();
       // console.log('responseData[0].favoritos_podcast', responseData);
       if (responseData) {
-        remove(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + podcast_id))
-
 
         Toast.show('Podcast removed from liabrary', Toast.LONG);
         let courseName = responseData[0].favoritos_podcast?.map(itemxx => {
@@ -255,7 +272,6 @@ const Podcast = (props) => {
     } catch (error) {
       console.log('error => ', error);
     }
-    setLoading(false)
   }
   // const download = (item, channelName) => {
   //   setModalVisible(true);
@@ -265,7 +281,7 @@ const Podcast = (props) => {
   //   setmusicdatafordownload(item)
   //   // downloadPodcast(item)s
   // }
-  console.log('downloadedPodcast',downloadedPodcast)
+  console.log('downloadedPodcast', downloadedPodcast)
   return (
     <View>
       <ListModals
@@ -285,7 +301,7 @@ const Podcast = (props) => {
           <Text style={{ fontSize: 16, color: Colors.primary, fontWeight: 'bold', marginVertical: '20%', textAlign: 'center' }}>No Podcasts In your Downloads !</Text>
           :
           downloadedPodcast?.map((item) => {
-            console.log('item',item)
+            console.log('item', item)
             return (
               <FeaturedCard
                 // onPressDownload={()=>downloadPodcast(item)}

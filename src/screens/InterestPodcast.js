@@ -218,6 +218,11 @@ const InterestPodcast = ({ route }) => {
     // console.log(podcast_id);
     // return;
     setLoading(true)
+
+    set(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + JSON.stringify(selectedPodcast?.id)), selectedPodcast);
+    Toast.show('Podcast Added to liabrary', Toast.LONG);
+    setModalVisible(false);
+
     try {
       let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/add-favp-app.php?id_user=${UserData[0]?.user}&id_podcast=${selectedPodcast?.id}`;
       const response = await fetch(baseUrl, {
@@ -228,11 +233,8 @@ const InterestPodcast = ({ route }) => {
       });
       const responseData = await response.json();
       if (responseData[0].favoritos_podcast) {
-        setModalVisible(false);
-        set(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + JSON.stringify(selectedPodcast?.id)), selectedPodcast);
 
 
-        Toast.show('Podcast Added to liabrary', Toast.LONG);
         let courseName = responseData[0].favoritos_podcast?.map(itemxx => {
           return itemxx
         })
@@ -247,6 +249,11 @@ const InterestPodcast = ({ route }) => {
   }
 
   const RemovePodcastFromLiabrary = async () => {
+    remove(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + JSON.stringify(selectedPodcast?.id)))
+    Toast.show('Podcast removed from liabrary', Toast.LONG);
+    setModalVisible(false);
+
+
     setLoading(true)
     try {
       let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/remove-libraryp.php?id_user=${UserData[0]?.user}&id_podcast=${podcast_id}`;
@@ -259,10 +266,8 @@ const InterestPodcast = ({ route }) => {
       const responseData = await response.json();
       // console.log('responseData[0].favoritos_podcast', responseData);
       if (responseData) {
-        remove(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + JSON.stringify(selectedPodcast?.id)))
 
 
-        Toast.show('Podcast removed from liabrary', Toast.LONG);
         let courseName = responseData[0].favoritos_podcast?.map(itemxx => {
           return itemxx
         })
@@ -271,7 +276,6 @@ const InterestPodcast = ({ route }) => {
       } else {
         alert('Failed to remove from liabrary !');
       }
-      setModalVisible(false);
     } catch (error) {
       console.log('error => ', error);
     }

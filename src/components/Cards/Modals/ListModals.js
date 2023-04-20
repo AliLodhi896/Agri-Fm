@@ -41,7 +41,7 @@ const ListModals = (props) => {
         console.log(favouritePodcasts);
     }, [props.isVisible]);
 
-    console.log('downloadedPodcastID', downloadedPodcastID, podcast_id)
+    // console.log('downloadedPodcastID', downloadedPodcastID, podcast_id)
     return (
         <Modal
             animationType="slide"

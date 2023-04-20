@@ -218,6 +218,10 @@ const CategoriesDetail = ({ props, route }) => {
 
 
   const AddPodcastToLiabrary = async () => {
+    set(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + selectedPodcast.acf.id), selectedPodcast);
+    Toast.show('Podcast Added to liabrary', Toast.LONG);
+    setModalVisible(false);
+
     try {
       let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/add-favp-app.php?id_user=${UserData[0]?.user}&id_podcast=${selectedPodcast.acf.id}`;
       const response = await fetch(baseUrl, {
@@ -227,15 +231,11 @@ const CategoriesDetail = ({ props, route }) => {
         },
       });
       const string = await response.text();
-      console.log("🚀 ~ file: ChannelDetails.js:256 ~ AddPodcastToLiabrary ~ response:", response)
       const responseData = string === "" ? {} : JSON.parse(string);
-      console.log("🚀 ~ file: ChannelDetails.js:256 ~ AddPodcastToLiabrary ~ responseData:", responseData)
       if (responseData[0]?.favoritos_podcast) {
 
-        set(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + selectedPodcast.acf.id), selectedPodcast);
 
 
-        Toast.show('Podcast Added to liabrary', Toast.LONG);
         let courseName = responseData[0].favoritos_podcast?.map(itemxx => {
           return itemxx
         })
@@ -256,6 +256,11 @@ const CategoriesDetail = ({ props, route }) => {
   const RemovePodcastFromLiabrary = async () => {
 
     // setLoading(true)
+
+    remove(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + selectedPodcast.acf.id))
+    setModalVisible(false);
+    Toast.show('Podcast removed from liabrary', Toast.LONG);
+
     try {
       let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/remove-libraryp.php?id_user=${UserData[0]?.user}&id_podcast=${selectedPodcast.acf.id}`;
       const response = await fetch(baseUrl, {
@@ -265,12 +270,9 @@ const CategoriesDetail = ({ props, route }) => {
         },
       });
       const responseData = await response.json();
-      setModalVisible(false);
 
       if (responseData[0].favoritos_podcast) {
-        remove(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + selectedPodcast.acf.id))
 
-        Toast.show('Podcast removed from liabrary', Toast.LONG);
         let courseName = responseData[0].favoritos_podcast?.map(itemxx => {
           return itemxx
         })

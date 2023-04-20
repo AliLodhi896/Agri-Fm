@@ -29,7 +29,7 @@ import database from '../../firebaseConfig';
 import { ref, remove, set } from 'firebase/database';
 
 const Music = ({ route }) => {
-  const {downloadedPodcast,downloadedPodcastID, podcast_id,setmusicdatafordownload,musicdatafordownload,selectedlang, language, setTracks, setSate, sate, favoritePodcat_id, UserData, setfavoritePodcat_id, settrackForMiniPlayer, setpodcast_id, setdownloadedPodcast, setdownloadedPodcastID } = useContext(AuthContext);
+  const { downloadedPodcast, downloadedPodcastID, podcast_id, setmusicdatafordownload, favouritePodcasts, musicdatafordownload, selectedlang, language, setTracks, setSate, sate, favoritePodcat_id, UserData, setfavoritePodcat_id, settrackForMiniPlayer, setpodcast_id, setdownloadedPodcast, setdownloadedPodcastID } = useContext(AuthContext);
   const { podcastDetails, Fromlibrary } = route.params
   // console.log("🚀 ~ file: Music.js:32 ~ Music ~ Fromlibrary:", Fromlibrary)
   // console.log("🚀 ~ file: Music.js:32 ~ Music ~ podcastDetails:", podcastDetails)
@@ -202,9 +202,28 @@ const Music = ({ route }) => {
   }
 
 
-  const AddPodcastToLiabrary = async () => {
+  const AddPodcastToLiabrary = async (directBtn) => {
+    // console.log(favouritePodcasts);
+    // console.log(stringID);
+    // return;
+    let reqData = {};
+    if (directBtn) {
+      reqData = podcastDetails;
+    } else {
+      reqData = selectedPodcast;
+    }
+    const itemID = reqData?.acf?.id ? reqData?.acf?.id : reqData?.ID ? reqData?.ID : reqData?.id;
+    // console.log(itemID);
+
+    // return;
+    if (reqData?.yoast_head_json?.twitter_misc) delete reqData.yoast_head_json.twitter_misc;
+    set(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + JSON.stringify(itemID)), reqData);
+    Toast.show('Podcast Added to liabrary', Toast.LONG);
+    setModalVisible(false);
+
+
     try {
-      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/add-favp-app.php?id_user=${UserData[0]?.user}&id_podcast=${Fromlibrary == false ? podcastDetails?.id : podcastDetails?.ID}`;
+      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/add-favp-app.php?id_user=${UserData[0]?.user}&id_podcast=${itemID}`;
       const response = await fetch(baseUrl, {
         method: 'GET',
         headers: {
@@ -213,11 +232,8 @@ const Music = ({ route }) => {
       });
       const responseData = await response.json();
       if (responseData[0].favoritos_podcast) {
-        delete selectedPodcast.yoast_head_json.twitter_misc;
 
-        set(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + JSON.stringify(selectedPodcast?.id)), selectedPodcast);
 
-        Toast.show('Podcast Added to liabrary', Toast.LONG);
         let courseName = responseData[0].favoritos_podcast?.map(itemxx => {
           return itemxx
         })
@@ -234,9 +250,21 @@ const Music = ({ route }) => {
 
   }
 
-  const RemovePodcastFromLiabrary = async () => {
+  const RemovePodcastFromLiabrary = async (directBtn) => {
+    let reqData = {};
+    if (directBtn) {
+      reqData = podcastDetails;
+    } else {
+      reqData = selectedPodcast;
+    }
+    const itemID = reqData?.acf?.id ? reqData?.acf?.id : reqData?.ID ? reqData?.ID : reqData?.id;
+
+    remove(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + JSON.stringify(itemID)))
+    Toast.show('Podcast removed from liabrary', Toast.LONG);
+    closeModal()
+
     try {
-      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/remove-libraryp.php?id_user=${UserData[0]?.user}&id_podcast=${Fromlibrary == false ? podcastDetails?.id : podcastDetails?.ID}`;
+      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/remove-libraryp.php?id_user=${UserData[0]?.user}&id_podcast=${itemID}`;
       const response = await fetch(baseUrl, {
         method: 'POST',
         headers: {
@@ -245,15 +273,12 @@ const Music = ({ route }) => {
       });
       const responseData = await response.json();
       if (responseData[0].favoritos_podcast) {
-        remove(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + JSON.stringify(selectedPodcast?.id)))
 
 
-        Toast.show('Podcast removed from liabrary', Toast.LONG);
         let courseName = responseData[0].favoritos_podcast?.map(itemxx => {
           return itemxx
         })
         setfavoritePodcat_id(courseName)
-        closeModal()
 
       } else {
         alert('Failed to remove from liabrary !');
@@ -275,8 +300,8 @@ const Music = ({ route }) => {
     setdownloadedPodcastID(courseName)
     setdownloadedPodcast(parseMusics)
   }
-  const downloadPodcast = async (item,channelName) => {
-    setchannelNamefordownload(channelName)
+
+  const downloadPodcast = async (item, channelName) => {
     // setloaderwhileLoader(true)
     const granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
@@ -286,7 +311,7 @@ const Music = ({ route }) => {
           'App needs access to your Files... ',
         buttonNeutral: 'Ask Me Later',
         buttonNegative: 'Cancel',
-        buttonPositive: 'OK',
+        buttonPositive: 'OK'
       },
     );
     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
@@ -300,7 +325,7 @@ const Music = ({ route }) => {
           useDownloadManager: true,
           notification: true,
           title: name,
-          path: path, // Android platform
+          path: path,
           description: 'Downloading the file',
         },
       })
@@ -312,7 +337,7 @@ const Music = ({ route }) => {
             TITLE: item?.title?.rendered,
             image: item?.acf?.imagen_podcast1,
             LINK: path,
-            CHANNEL_NAME: channelName
+            CHANNEL_NAME: channelName ? channelName : ""
           }
           const previousData = await AsyncStorage.getItem('musics');
           let data = [];
@@ -321,7 +346,7 @@ const Music = ({ route }) => {
             data.push(newObject);
             const dataString = JSON.stringify(data);
             await AsyncStorage.setItem('musics', dataString);
-          }else{
+          } else {
             data.push(newObject);
             const dataString = JSON.stringify(data);
             await AsyncStorage.setItem('musics', dataString);
@@ -330,11 +355,16 @@ const Music = ({ route }) => {
           Toast.show('Successfully Downloaded at ' + res.path(), Toast.LONG);
           // setloaderwhileLoader(false)
           navigation.navigate('MyLibrary')
-        });
+        })
+        .catch(err => {
+          alert('Error: ')
+          console.log(err);
+        })
     } else {
       alert('Permission Not Granted !')
     }
   }
+
   useFocusEffect(
     useCallback(() => {
       getDownloadMusic();
@@ -360,10 +390,12 @@ const Music = ({ route }) => {
     }
   };
   const download = (item, channelName) => {
-    setSelectedPodcast({ ...item, channelName: channelName });
+    const itemID = item?.acf?.id ? item?.acf?.id : item?.ID ? item?.ID : item?.id;
+
+    setSelectedPodcast({ ...item, channelName: channelName.channel_name });
     setModalVisible(true);
     setmuusicUrl(item?.acf?.link_podcast1)
-    setpodcast_id(item?.id)
+    setpodcast_id(itemID)
     setchannelNamefordownload(channelName)
     setmusicdatafordownload(item)
   }
@@ -397,13 +429,13 @@ const Music = ({ route }) => {
           <Text style={{ width: '45%', color: 'white', fontWeight: 'bold' }}>{Fromlibrary == false ? podcastDetails?.title?.rendered : podcastDetails?.TITLE} </Text>
           <View style={{ flexDirection: 'row' }}>
             <View style={{ marginTop: '5%', justifyContent: 'center', width: 70, alignItems: "center", justifyContent: 'center', alignItems: 'center' }}>
-              <TouchableOpacity onPress={() => onShare()} style={{ alignItems: "center"}} >
+              <TouchableOpacity onPress={() => onShare()} style={{ alignItems: "center" }} >
                 <Image style={{ height: 22, width: 30 }} source={require('../assets/Images/whiteshare.png')} />
                 <Text style={{ fontSize: 12, color: 'white' }}>{language?.Share}</Text>
               </TouchableOpacity>
             </View>
             <View style={{ marginTop: '5%', justifyContent: 'center', width: 80, justifyContent: 'center', alignItems: 'center' }}>
-              <TouchableOpacity onPress={()=>downloadPodcast(podcastDetails)} style={{ alignItems: "center"}}>
+              <TouchableOpacity onPress={() => downloadPodcast(podcastDetails)} style={{ alignItems: "center" }}>
                 <Image style={{ height: 27, width: 30 }} source={require('../assets/Images/downloadwhite.png')} />
                 <Text style={{ fontSize: 12, color: 'white' }}>{language?.Download}</Text>
               </TouchableOpacity>
@@ -411,13 +443,14 @@ const Music = ({ route }) => {
           </View>
         </View>
       </View>
-      {favoritePodcat_id.includes(stringID) && stringID === stringID ?
-        <TouchableOpacity onPress={() => RemovePodcastFromLiabrary()} style={{ backgroundColor: Colors.button, padding: 10, marginHorizontal: '20%', flexDirection: 'row', borderRadius: 10, alignItems: 'center', marginTop: '10%', justifyContent: 'center' }}>
+      {/* {favoritePodcat_id.includes(stringID) && stringID === stringID ? */}
+      {favouritePodcasts.includes(stringID) && stringID === stringID ?
+        <TouchableOpacity onPress={() => RemovePodcastFromLiabrary(true)} style={{ backgroundColor: Colors.button, padding: 10, marginHorizontal: '20%', flexDirection: 'row', borderRadius: 10, alignItems: 'center', marginTop: '10%', justifyContent: 'center' }}>
           <AntDesign name="hearto" size={25} color={'white'} />
           <Text style={{ fontSize: 15, color: 'white', marginLeft: 10, fontWeight: '900' }}>{language?.RemoveFromLibrary}</Text>
         </TouchableOpacity>
         :
-        <TouchableOpacity onPress={() => AddPodcastToLiabrary()} style={{ backgroundColor: Colors.button, padding: 10, marginHorizontal: '20%', flexDirection: 'row', borderRadius: 10, alignItems: 'center', marginTop: '10%', justifyContent: 'center' }}>
+        <TouchableOpacity onPress={() => AddPodcastToLiabrary(true)} style={{ backgroundColor: Colors.button, padding: 10, marginHorizontal: '20%', flexDirection: 'row', borderRadius: 10, alignItems: 'center', marginTop: '10%', justifyContent: 'center' }}>
           <AntDesign name="hearto" size={25} color={'white'} />
           <Text style={{ fontSize: 15, color: 'white', marginLeft: 10, fontWeight: '900' }}>{language?.AddToMyLibrary}</Text>
         </TouchableOpacity>

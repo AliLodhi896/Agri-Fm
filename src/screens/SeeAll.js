@@ -180,6 +180,10 @@ const SeeAll = (props) => {
   }
 
   const RemovePodcastFromLiabrary = async () => {
+    remove(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + podcast_id))
+    setModalVisible(false);
+    Toast.show('Podcast removed from liabrary', Toast.LONG);
+
     setLoading(true)
     try {
       let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/remove-libraryp.php?id_user=${UserData[0]?.user}&id_podcast=${podcast_id}`;
@@ -190,12 +194,9 @@ const SeeAll = (props) => {
         },
       });
       const responseData = await response.json();
-      setModalVisible(false);
       if (responseData[0].favoritos_podcast) {
-        remove(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + podcast_id))
 
 
-        Toast.show('Podcast removed from liabrary', Toast.LONG);
         let courseName = responseData[0].favoritos_podcast?.map(itemxx => {
           return itemxx
         })

@@ -15,7 +15,7 @@ import { ActivityIndicator } from 'react-native-paper';
 
 const FeaturedCard = (props) => {
     const { language, downloadedPodcast, downloadedPodcastID } = useContext(AuthContext);
-console.log('props.id',props.ID)
+// console.log('props.id',props.ID)
     return (
         <TouchableOpacity onPress={props.onPress} style={{ justifyContent: 'space-between', flexDirection: 'row', paddingVertical: 10 }}>
             <View style={{ width: '30%', height: 100 }}>

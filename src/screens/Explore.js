@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect,useCallback } from 'react'
+import React, { useState, useContext, useEffect, useCallback } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, ActivityIndicator, Share, PermissionsAndroid } from 'react-native'
 
 import Colors from '../constant/Colors'
@@ -17,12 +17,12 @@ import RNFetchBlob from 'rn-fetch-blob';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ref, remove, set } from 'firebase/database';
 import database from '../../firebaseConfig';
-import {useFocusEffect} from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 
 const Explore = ({ navigation }) => {
-  const {downloadedPodcastID,downloadedPodcast,setdownloadedPodcast,setdownloadedPodcastID,setmusicdatafordownload,musicdatafordownload, language, selectedlang, setSelectedlang, setSate, UserData, podcast_id, setfavoritePodcat_id, setpodcast_id } = useContext(AuthContext);
-  
-  
+  const { downloadedPodcastID, downloadedPodcast, setdownloadedPodcast, setdownloadedPodcastID, setmusicdatafordownload, musicdatafordownload, language, selectedlang, setSelectedlang, setSate, UserData, podcast_id, setfavoritePodcat_id, setpodcast_id } = useContext(AuthContext);
+
+
   const [loading, setLoading] = useState(false)
   const [interest, setInterest] = useState([])
   const [searchProduct, setSearchProduct] = useState([]);
@@ -290,7 +290,7 @@ const Explore = ({ navigation }) => {
     setdownloadedPodcastID(courseName)
     setdownloadedPodcast(parseMusics)
   }
-  const downloadPodcast = async (item,channelName) => {
+  const downloadPodcast = async (item, channelName) => {
     setchannelNamefordownload(channelName)
     // setloaderwhileLoader(true)
     const granted = await PermissionsAndroid.request(
@@ -336,7 +336,7 @@ const Explore = ({ navigation }) => {
             data.push(newObject);
             const dataString = JSON.stringify(data);
             await AsyncStorage.setItem('musics', dataString);
-          }else{
+          } else {
             data.push(newObject);
             const dataString = JSON.stringify(data);
             await AsyncStorage.setItem('musics', dataString);
@@ -389,6 +389,13 @@ const Explore = ({ navigation }) => {
     // console.log(podcast_id);
     // return;
     // setLoading(true)
+    if (selectedPodcast?.yoast_head_json?.twitter_misc) {
+      delete selectedPodcast?.yoast_head_json?.twitter_misc;
+    }
+    set(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + podcast_id), selectedPodcast);
+    Toast.show('Podcast Added to liabrary', Toast.LONG);
+    setModalVisible(false);
+
     try {
       let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/add-favp-app.php?id_user=${UserData[0]?.user}&id_podcast=${podcast_id}`;
       const response = await fetch(baseUrl, {
@@ -398,14 +405,9 @@ const Explore = ({ navigation }) => {
         },
       });
       const responseData = await response.json();
-      setModalVisible(false);
       if (responseData[0].favoritos_podcast) {
-        if(selectedPodcast?.yoast_head_json?.twitter_misc){
-          delete selectedPodcast?.yoast_head_json?.twitter_misc;
-        }
-        set(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + podcast_id), selectedPodcast);
+     
 
-        Toast.show('Podcast Added to liabrary', Toast.LONG);
         let courseName = responseData[0].favoritos_podcast?.map(itemxx => {
           return itemxx
         })
@@ -420,6 +422,11 @@ const Explore = ({ navigation }) => {
   }
 
   const RemovePodcastFromLiabrary = async () => {
+    remove(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + podcast_id))
+    Toast.show('Podcast removed from liabrary', Toast.LONG);
+    setModalVisible(false);
+
+
     try {
       let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/remove-libraryp.php?id_user=${UserData[0]?.user}&id_podcast=${podcast_id}`;
       const response = await fetch(baseUrl, {
@@ -430,10 +437,8 @@ const Explore = ({ navigation }) => {
       });
       const responseData = await response.json();
       if (responseData[0].favoritos_podcast) {
-        remove(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + podcast_id))
 
 
-        Toast.show('Podcast removed from liabrary', Toast.LONG);
         let courseName = responseData[0].favoritos_podcast?.map(itemxx => {
           return itemxx
         })
@@ -444,7 +449,6 @@ const Explore = ({ navigation }) => {
       } else {
         alert('Failed to remove from liabrary !');
       }
-      setModalVisible(false);
 
     } catch (error) {
       console.log('error => ', error);
