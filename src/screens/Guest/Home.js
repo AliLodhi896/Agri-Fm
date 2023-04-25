@@ -221,7 +221,7 @@ const Home = () => {
     try {
       const result = await Share.share({
         message:
-          muusicUrl + 'This Podcast has been share from AgriFM app',
+          muusicUrl + ' This Podcast has been share from AgriFM app',
       });
       if (result.action === Share.sharedAction) {
         if (result.activityType) {
@@ -304,7 +304,15 @@ const Home = () => {
               return (
                 <TouchableOpacity
                   style={styles.categories}
-                  onPress={() => { navigation.navigate('CategoriesDetail', { details: item.ID }) }}>
+                  onPress={() => {
+                    navigation.navigate('CategoriesDetail', {
+                      details: item.ID,
+                      image: item.error ?
+                        "https://www.cams-it.com/wp-content/uploads/2015/05/default-placeholder-250x200.png" :
+                        item.IMG,
+                      name: item.NAME
+                    })
+                  }}>
                   {
                     item.error ?
                       <Image
@@ -449,8 +457,8 @@ const Home = () => {
             return <InterestCard onPress={() => navigation.navigate('InterestPodcast', { interest_detail: item })} mainStyle={{ width: 170 }} description={item.name} img_intereses={item.acf.img_intereses} id={item.id} />;
           })}
         </View>
+        {/* <View style={{ height: 80 }} /> */}
       </ScrollView>
-      {/* <View style={{ marginTop: 20 }}> */}
       <View>
         {sate !== 0 ?
           <MiniPlayerCard />

@@ -196,7 +196,7 @@ const Home = () => {
     try {
       const result = await Share.share({
         message:
-          muusicUrl + ' ' + 'This Podcast has been share from AgriFM app',
+          muusicUrl + ' ' + ' This Podcast has been share from AgriFM app',
       });
       if (result.action === Share.sharedAction) {
         if (result.activityType) {
@@ -225,7 +225,7 @@ const Home = () => {
     delete selectedPodcast.yoast_head_json.twitter_misc;
     set(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + podcast_id), selectedPodcast);
     Toast.show('Podcast Added to liabrary', Toast.LONG);
-    
+
     setModalVisible(false);
 
     // setLoading(true)
@@ -261,7 +261,7 @@ const Home = () => {
   const RemovePodcastFromLiabrary = async () => {
     remove(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + podcast_id))
     Toast.show('Podcast removed from liabrary', Toast.LONG);
-    
+
     setModalVisible(false);
 
     // setLoading(true)
@@ -367,7 +367,7 @@ const Home = () => {
     setdownloadedPodcast(parseMusics)
   }
 
-  const downloadPodcast = async (item,channelName) => {
+  const downloadPodcast = async (item, channelName) => {
     setchannelNamefordownload(channelName)
     setloaderwhileLoader(true)
     const granted = await PermissionsAndroid.request(
@@ -413,7 +413,7 @@ const Home = () => {
             data.push(newObject);
             const dataString = JSON.stringify(data);
             await AsyncStorage.setItem('musics', dataString);
-          }else{
+          } else {
             data.push(newObject);
             const dataString = JSON.stringify(data);
             await AsyncStorage.setItem('musics', dataString);
@@ -511,7 +511,13 @@ const Home = () => {
                     <TouchableOpacity
                       style={[styles.categories, { marginRight: 3 }]}
                       onPress={() => {
-                        navigation.navigate('CategoriesDetail', { details: item.ID })
+                        navigation.navigate('CategoriesDetail', {
+                          details: item.ID,
+                          image: item.error ?
+                            "https://www.cams-it.com/wp-content/uploads/2015/05/default-placeholder-250x200.png" :
+                            item.IMG,
+                          name: item.NAME
+                        })
 
                       }}>
                       {
@@ -585,7 +591,7 @@ const Home = () => {
                   const match = obtenNombreCanal(item.canales);
                   return (
                     <FeaturedCard
-                      onPressDownload={() => downloadPodcast(item,match)}
+                      onPressDownload={() => downloadPodcast(item, match)}
                       onPressIcon={() => download(item, match)}
                       onPress={() => trackResetAndNavgate(item)}
                       // channelName={match?.channel_name == undefined ? 'Chatting with poultry experts' : match?.channel_name}
@@ -673,9 +679,10 @@ const Home = () => {
               })}
             </ScrollView>
           </View>
+          <View style={{ height: 80 }} />
+
         </ScrollView>
       </View>
-      {/* <View style={{ backgroundColor: Colors.primary, bottom: -15 }}> */}
       <View style={{ position: "absolute", bottom: 0, width: "100%" }}>
         {sate !== 0 ?
           <MiniPlayerCard />

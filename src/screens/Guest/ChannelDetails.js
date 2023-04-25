@@ -27,6 +27,7 @@ const ChannelDetails = ({ route }) => {
 
   const [modalVisible, setModalVisible] = useState(false);
   const [muusicUrl, setmuusicUrl] = useState(null)
+  const [views, setviews] = useState(0);
 
   // alert(route.params.details.id)
 
@@ -47,15 +48,41 @@ const ChannelDetails = ({ route }) => {
       });
   }
 
+  const fetchViews = async () => {
+    const url = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/views-app.php?id_podcast=${route.params.details.id}`;
+
+    fetch(url)
+      .then((response) => response.json())
+      .then((str) => {
+
+        if (str) {
+          let regex = /VIEWS:\s*(\d+)/;
+          let match = str.match(regex);
+
+          if (match) {
+            let number = parseInt(match[1]);
+            setviews(number);
+          }
+        } else {
+          setviews(0);
+        }
+
+      })
+      .catch((ex) => {
+        console.log("🚀 ~ file: ChannelDetails.js:122 ~ fetchViews ~ ex:", ex)
+      })
+  };
+
   useEffect(() => {
     fetchData();
+    fetchViews();
   }, [])
 
   const onShare = async () => {
     try {
       const result = await Share.share({
         message:
-          details?.link + 'This Channel has been share form AgriFM app',
+          details?.link + ' This Channel has been share form AgriFM app',
       });
       if (result.action === Share.sharedAction) {
         if (result.activityType) {
@@ -110,12 +137,10 @@ const ChannelDetails = ({ route }) => {
               <Text style={{ fontSize: 12, color: 'white' }}>{language?.Share}</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => onShare()}>
-            <View style={{ marginTop: '20%', width: 80, justifyContent: 'center', alignItems: 'center' }}>
-              <Image style={{ height: 26, width: 28 }} source={require('../../assets/Images/with.png')} />
-              <Text style={{ fontSize: 12, color: 'white' }}>123</Text>
-            </View>
-          </TouchableOpacity>
+          <View style={{ marginTop: '20%', width: 80, justifyContent: 'center', alignItems: 'center' }}>
+            <Image style={{ height: 26, width: 28 }} source={require('../../assets/Images/with.png')} />
+            <Text style={{ fontSize: 12, color: 'white' }}>{views}</Text>
+          </View>
 
         </View>
       </View>

@@ -221,7 +221,7 @@ const Explore = ({ navigation }) => {
     try {
       const result = await Share.share({
         message:
-          muusicUrl + 'This Podcast has been share from AgriFM app',
+          muusicUrl + ' This Podcast has been share from AgriFM app',
       });
       if (result.action === Share.sharedAction) {
         if (result.activityType) {

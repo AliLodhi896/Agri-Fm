@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, ActivityIndicator, Share } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, ActivityIndicator, Share, ImageBackground } from 'react-native'
 import ChannelCard from '../../components/Cards/ChannelCard';
 import Colors from '../../constant/Colors'
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -27,9 +27,11 @@ import TrackPlayer, {
 } from 'react-native-track-player';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import ListModals from '../../components/Cards/Modals/ListModals';
+import Fontisto from 'react-native-vector-icons/Fontisto'
+
 const CategoriesDetail = ({ props, route }) => {
   const navigation = useNavigation();
-  const { details } = route.params
+  const { details, image, name } = route.params
   console.log('details-------------------->', details)
   const [user, setUser] = useState([]);
   const [podcast, setPodcast] = useState(true)
@@ -100,7 +102,7 @@ const CategoriesDetail = ({ props, route }) => {
     try {
       const result = await Share.share({
         message:
-          muusicUrl + 'This Podcast has been share from AgriFM app',
+          muusicUrl + ' This Podcast has been share from AgriFM app',
       });
       if (result.action === Share.sharedAction) {
         if (result.activityType) {
@@ -127,10 +129,21 @@ const CategoriesDetail = ({ props, route }) => {
         onPressShare={() => onShare()}
       />
       <View style={styles.imageBox}>
-        <Image
+        {/* <Image
           source={require('../../assets/Images/water.png')}
           style={{ width: '100%', height: '100%' }}
-        />
+        /> */}
+        <ImageBackground
+          source={{ uri: image }}
+          style={{ width: '100%', height: '100%', position: "relative" }}
+        >
+          <TouchableOpacity style={{ paddingLeft: 15, paddingTop: 20 }} onPress={() => navigation.goBack()}>
+            <Fontisto name="angle-left" color={"white"} size={15} />
+          </TouchableOpacity>
+          <View style={{ position: "absolute", bottom: 0, left: 0, right: 0, backgroundColor: "rgba(0,0,0,0.4)" }}>
+            <Text style={{ color: "white", fontWeight: "700", fontSize: 20, marginVertical: 10, textAlign: "center" }}>{name}</Text>
+          </View>
+        </ImageBackground>
       </View>
       <View style={styles.switchComponentsBox}>
         {/* <TouchableOpacity style={podcast == true ? styles.playButtonActive : styles.playButton} onPress={() => [setPodcast(true), setChannels(false)]}>

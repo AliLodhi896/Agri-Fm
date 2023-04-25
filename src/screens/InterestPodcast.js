@@ -199,7 +199,7 @@ const InterestPodcast = ({ route }) => {
     try {
       const result = await Share.share({
         message:
-          muusicUrl + 'This Podcast has been share form AgriFM app',
+          muusicUrl + ' This Podcast has been share form AgriFM app',
       });
       if (result.action === Share.sharedAction) {
         if (result.activityType) {

@@ -375,7 +375,7 @@ const Music = ({ route }) => {
     try {
       const result = await Share.share({
         message:
-          Fromlibrary == false ? podcastDetails?.acf?.link_podcast1 : podcastDetails?.LINK + 'This Podcast has been share form AgriFM app',
+          Fromlibrary == false ? podcastDetails?.acf?.link_podcast1 : podcastDetails?.LINK + ' This Podcast has been share form AgriFM app',
       });
       if (result.action === Share.sharedAction) {
         if (result.activityType) {
