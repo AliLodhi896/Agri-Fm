@@ -58,7 +58,7 @@ const FeaturedCard = (props) => {
                     <TouchableOpacity style={styles.playButton} onPress={props.onPress}>
                         <Image
                             source={require('../../assets/Images/playbtn.png')}
-                            style={{ width: '20%', height: 15, marginLeft: 10 }}
+                            style={{ width: 15, height: 15, marginLeft: 10 }}
                         />
                         <Text style={{ color: 'white', marginLeft: 5 }}>{language?.Play}</Text>
                     </TouchableOpacity>
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.button,
         padding: 5,
         borderRadius: 50,
-        width: 90,
+        width: 100,
         alignItems: 'center',
         flexDirection: 'row'
     },

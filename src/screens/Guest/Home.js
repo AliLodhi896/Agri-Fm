@@ -271,9 +271,9 @@ const Home = () => {
           <View></View>
           <View style={styles.logoBox}>
             <Image
-              resizeMode='contain'
-              source={require('../../assets/Images/logo.png')}
-              style={{ width: '60%', height: '65%' }}
+              resizeMode='cover'
+              source={require('../../assets/Images/agrim3.png')}
+              style={{ width: 100, height: "100%" }}
             />
           </View>
           <TouchableOpacity
@@ -486,7 +486,9 @@ const styles = StyleSheet.create({
   logoBox: {
     width: '70%',
     height: 60,
-    marginLeft: 80,
+    // marginLeft: 80,
+    alignItems: "center",
+    // backgroundColor: "red"
   },
   iconBox: {
     width: 20,

@@ -24,8 +24,8 @@ const Profile = () => {
                         <MaterialIcons name='close' color={Colors.primary} size={35} />
                     </TouchableOpacity>
                     <View style={{ alignSelf: 'center', marginHorizontal: 30, justifyContent: 'center', alignItems: 'center', width: '100%' }}>
-                        <Pressable style={{ paddingBottom: 20, padding: 15 }} >
-                            <Image source={require('../../assets/Images/agrim1.png')} resizeMode='stretch' style={{ width: 70, height: 70 }} />
+                        <Pressable style={{ paddingBottom: 0, padding: 15 }} >
+                            <Image source={require('../../assets/Images/agrim3.png')} resizeMode='cover' style={{ width: 110, height: 110}} />
                         </Pressable>
                         <Text style={{ fontSize: 16, color: Colors.primary, fontWeight: '600' , width : '85%' , textAlign : 'center'}}> {language?.youhavetologin}</Text>
                         <CommonButton onPress={()=>navigation.navigate('VerifyPassword')} green={true} title={language?.Register} />
