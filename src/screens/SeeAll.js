@@ -32,6 +32,8 @@ import ListModals from '../components/Cards/Modals/ListModals';
 import { ref, remove, set } from 'firebase/database';
 import database from '../../firebaseConfig';
 import Toast from 'react-native-simple-toast';
+import Header from '../components/Header/Header';
+import downloadFile from '../constant/download';
 
 const SeeAll = (props) => {
 
@@ -157,21 +159,21 @@ const SeeAll = (props) => {
       const responseData = await response.json();
       setModalVisible(false);
       if (responseData[0].favoritos_podcast) {
-        if(selectedPodcast?.yoast_head_json?.twitter_misc){
+        if (selectedPodcast?.yoast_head_json?.twitter_misc) {
           delete selectedPodcast?.yoast_head_json?.twitter_misc;
         }
 
         set(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + podcast_id), selectedPodcast);
 
 
-        Toast.show('Podcast Added to liabrary', Toast.LONG);
+        Toast.show('Podcast Added to library', Toast.LONG);
         let courseName = responseData[0].favoritos_podcast?.map(itemxx => {
           return itemxx
         })
         setfavoritePodcat_id(courseName)
         // navigation.navigate('MyLibrary')
       } else {
-        alert('Failed to add to liabrary !');
+        alert('Failed to add to library !');
       }
     } catch (error) {
       console.log('error => ', error);
@@ -182,7 +184,7 @@ const SeeAll = (props) => {
   const RemovePodcastFromLiabrary = async () => {
     remove(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + podcast_id))
     setModalVisible(false);
-    Toast.show('Podcast removed from liabrary', Toast.LONG);
+    Toast.show('Podcast removed from library', Toast.LONG);
 
     setLoading(true)
     try {
@@ -203,7 +205,7 @@ const SeeAll = (props) => {
         setfavoritePodcat_id(courseName)
         // navigation.navigate('MyLibrary')
       } else {
-        alert('Failed to remove from liabrary !');
+        alert('Failed to remove from library !');
       }
     } catch (error) {
       console.log('error => ', error);
@@ -241,6 +243,7 @@ const SeeAll = (props) => {
 
   const download = (item, channelName) => {
     console.log('item', item)
+    console.log('item', item.acf)
     setSelectedPodcast({ ...item, channelName: channelName });
 
     setModalVisible(true);
@@ -351,12 +354,23 @@ const SeeAll = (props) => {
         onPressClose={() => setModalVisible(false)}
         onPressaddTo={() => AddPodcastToLiabrary()}
         onClose={() => setModalVisible(false)}
-        onPressDownload={() => download()}
+        // onPressDownload={() => download()}
+        onPressDownload={() => {
+          downloadFile(
+            selectedPodcast.acf.link_podcast1,
+            selectedPodcast?.title?.rendered,
+            selectedPodcast.id,
+            selectedPodcast.acf.imagen_podcast1,
+            "",
+            getDownloadMusic)
+        }}
         onPressShare={() => onShare()}
         onPressRemoveDownload={() => RemoveDownload()}
         onPressRemove={() => RemovePodcastFromLiabrary()}
       />
-      <Text style={{ paddingTop: 20, paddingLeft: 20, fontSize: 22, fontWeight: "bold", color: "black" }}>{language?.Podcasts}</Text>
+      <Header title="All Podcasts" icon={true} style={{ backgroundColor: Colors.lightBackground, paddingHorizontal: 10 }} txtColor={Colors.primary} />
+
+      {/* <Text style={{ paddingTop: 20, paddingLeft: 20, fontSize: 22, fontWeight: "bold", color: "black" }}>{language?.Podcasts}</Text> */}
 
 
       {
@@ -384,7 +398,9 @@ const SeeAll = (props) => {
                       headingText={{ color: 'grey' }}
                       timeText={{ color: 'grey' }}
                       image={item?.acf?.imagen_podcast1}
-                      time={item?.yoast_head_json?.twitter_misc ? Object.values(item?.yoast_head_json?.twitter_misc)[0]: null}
+                      link={item?.acf?.link_podcast1}
+                      id={item?.id}
+                      time={item?.yoast_head_json?.twitter_misc ? Object.values(item?.yoast_head_json?.twitter_misc)[0] : null}
                     />
                   );
                 })}

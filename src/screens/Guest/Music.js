@@ -34,6 +34,7 @@ const Music = ({ route }) => {
   const { podcastDetails } = route.params
   // console.log("🚀 ~ file: Music.js:35 ~ Music ~ podcastDetails:", podcastDetails)
 
+
   const getChannels = () => {
     return fetch("https://socialagri.com/agriFM/wp-json/wp/v2/canales")
       .then((response) => response.json())
@@ -240,13 +241,13 @@ const Music = ({ route }) => {
           <Text style={{ width: '45%', color: 'white', fontWeight: 'bold' }}>{podcastDetails?.title?.rendered} </Text>
           <View style={{ flexDirection: 'row' }}>
             <View style={{ marginTop: '5%', justifyContent: 'center', width: 70, justifyContent: 'center', alignItems: 'center' }}>
-              <TouchableOpacity onPress={() => onShare()} style={{ alignItems: "center"}}>
+              <TouchableOpacity onPress={() => onShare()} style={{ alignItems: "center" }}>
                 <Image style={{ height: 22, width: 30 }} source={require('../../assets/Images/whiteshare.png')} />
                 <Text style={{ fontSize: 12, color: 'white' }}>{language?.Share}</Text>
               </TouchableOpacity>
             </View>
             <View style={{ marginTop: '5%', justifyContent: 'center', width: 80, justifyContent: 'center', alignItems: 'center' }}>
-              <TouchableOpacity style={{ alignItems: "center"}} onPress={() => {
+              <TouchableOpacity style={{ alignItems: "center" }} onPress={() => {
                 Toast.show('Please first login to download', Toast.LONG);
               }}>
                 <Image style={{ height: 27, width: 30 }} source={require('../../assets/Images/downloadwhite.png')} />

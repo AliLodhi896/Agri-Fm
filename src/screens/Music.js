@@ -27,13 +27,13 @@ import RNFetchBlob from 'rn-fetch-blob';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import database from '../../firebaseConfig';
 import { ref, remove, set } from 'firebase/database';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import downloadFile from '../constant/download';
+import removeDownloadFile from '../constant/removeDownload';
 
 const Music = ({ route }) => {
   const { downloadedPodcast, downloadedPodcastID, podcast_id, setmusicdatafordownload, favouritePodcasts, musicdatafordownload, selectedlang, language, setTracks, setSate, sate, favoritePodcat_id, UserData, setfavoritePodcat_id, settrackForMiniPlayer, setpodcast_id, setdownloadedPodcast, setdownloadedPodcastID } = useContext(AuthContext);
   const { podcastDetails, Fromlibrary } = route.params
-  // console.log("🚀 ~ file: Music.js:32 ~ Music ~ Fromlibrary:", Fromlibrary)
-  // console.log("🚀 ~ file: Music.js:32 ~ Music ~ podcastDetails:", podcastDetails)
-
   const [channelNamefordownload, setchannelNamefordownload] = useState('')
   const [channelsdata, setchannelsdata] = useState([])
 
@@ -218,7 +218,7 @@ const Music = ({ route }) => {
     // return;
     if (reqData?.yoast_head_json?.twitter_misc) delete reqData.yoast_head_json.twitter_misc;
     set(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + JSON.stringify(itemID)), reqData);
-    Toast.show('Podcast Added to liabrary', Toast.LONG);
+    Toast.show('Podcast Added to library', Toast.LONG);
     setModalVisible(false);
 
 
@@ -240,7 +240,7 @@ const Music = ({ route }) => {
         setfavoritePodcat_id(courseName)
         closeModal()
       } else {
-        alert('Failed to add to liabrary !');
+        alert('Failed to add to library !');
       }
     } catch (error) {
       console.log('error => ', error);
@@ -260,7 +260,7 @@ const Music = ({ route }) => {
     const itemID = reqData?.acf?.id ? reqData?.acf?.id : reqData?.ID ? reqData?.ID : reqData?.id;
 
     remove(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + JSON.stringify(itemID)))
-    Toast.show('Podcast removed from liabrary', Toast.LONG);
+    Toast.show('Podcast removed from library', Toast.LONG);
     closeModal()
 
     try {
@@ -281,7 +281,7 @@ const Music = ({ route }) => {
         setfavoritePodcat_id(courseName)
 
       } else {
-        alert('Failed to remove from liabrary !');
+        alert('Failed to remove from library !');
       }
     } catch (error) {
       console.log('error => ', error);
@@ -331,7 +331,7 @@ const Music = ({ route }) => {
       })
         .fetch('GET', url)
         .then(async res => {
-          console.log('res', res);
+          // console.log('res', res);
           const newObject = {
             ID: item?.id,
             TITLE: item?.title?.rendered,
@@ -415,7 +415,11 @@ const Music = ({ route }) => {
         isVisible={modalVisible}
         onPressClose={closeModal}
         onClose={closeModal}
-        onPressDownload={() => downloadPodcast(musicdatafordownload)}
+        // onPressDownload={() => downloadPodcast(musicdatafordownload)}
+        onPressDownload={() => {
+          downloadFile(musicdatafordownload.acf.link_podcast1, musicdatafordownload?.title?.rendered, musicdatafordownload.id, musicdatafordownload.acf.imagen_podcast1, musicdatafordownload?.channelName, getDownloadMusic)
+          // getDownloadMusic();
+        }}
         onPressShare={() => onShare()}
         onPressaddTo={() => AddPodcastToLiabrary()}
         onPressRemoveDownload={() => RemoveDownload()}
@@ -434,12 +438,32 @@ const Music = ({ route }) => {
                 <Text style={{ fontSize: 12, color: 'white' }}>{language?.Share}</Text>
               </TouchableOpacity>
             </View>
-            <View style={{ marginTop: '5%', justifyContent: 'center', width: 80, justifyContent: 'center', alignItems: 'center' }}>
-              <TouchableOpacity onPress={() => downloadPodcast(podcastDetails)} style={{ alignItems: "center" }}>
-                <Image style={{ height: 27, width: 30 }} source={require('../assets/Images/downloadwhite.png')} />
-                <Text style={{ fontSize: 12, color: 'white' }}>{language?.Download}</Text>
-              </TouchableOpacity>
-            </View>
+            {
+              downloadedPodcastID?.includes(podcastDetails.id) && podcastDetails.id === podcastDetails.id ? <>
+                <View style={{ marginTop: '5%', justifyContent: 'center', width: 80, justifyContent: 'center', alignItems: 'center' }}>
+                  <TouchableOpacity onPress={() => {
+                    removeDownloadFile(podcastDetails.id, getDownloadMusic)
+                  }} style={{ alignItems: "center", justifyContent: "center", }}>
+                    {/* <Image style={{ height: 27, width: 30 }} source={require('../assets/Images/downloadwhite.png')} /> */}
+                    <Ionicons
+                      name="ios-cloud-download-outline"
+                      color={'green'}
+                      size={27}
+                    />
+                    <Text style={{ fontSize: 12, color: 'green', textAlign: "center" }}>Remove download</Text>
+                  </TouchableOpacity>
+                </View>
+              </> :
+                <View style={{ marginTop: '5%', justifyContent: 'center', width: 80, justifyContent: 'center', alignItems: 'center' }}>
+                  <TouchableOpacity onPress={() => {
+                    downloadFile(podcastDetails.acf.link_podcast1, podcastDetails?.title?.rendered, podcastDetails.id, podcastDetails.acf.imagen_podcast1, podcastDetails?.channelName, getDownloadMusic)
+                    // getDownloadMusic();
+                  }} style={{ alignItems: "center" }}>
+                    <Image style={{ height: 27, width: 30 }} source={require('../assets/Images/downloadwhite.png')} />
+                    <Text style={{ fontSize: 12, color: 'white' }}>{language?.Download}</Text>
+                  </TouchableOpacity>
+                </View>
+            }
           </View>
         </View>
       </View>
@@ -499,12 +523,13 @@ const Music = ({ route }) => {
             const match = newpodcast.find(item2 => item2?.id == item?.id);
             return (
               <FeaturedCard
-                onPressDownload={() => downloadPodcast(item)}
+                // onPressDownload={() => downloadPodcast(item)}
                 onPressIcon={() => download(item, match)}
                 onPress={() => trackResetAndNavgate(item)}
                 channelName={match?.channel_name}
                 podcastname={item.title?.rendered}
                 image={item?.acf?.imagen_podcast1}
+                link={item.acf.link_podcast1}
                 id={item?.id}
               />
             );

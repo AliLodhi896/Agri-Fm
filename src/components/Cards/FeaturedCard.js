@@ -11,11 +11,25 @@ import ListModals from './Modals/ListModals';
 import { AuthContext } from '../../context/Context';
 import RenderHtml from 'react-native-render-html';
 import { ActivityIndicator } from 'react-native-paper';
-
+import downloadFile from '../../constant/download';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import removeDownloadFile from '../../constant/removeDownload';
+import Toast from 'react-native-simple-toast';
 
 const FeaturedCard = (props) => {
-    const { language, downloadedPodcast, downloadedPodcastID } = useContext(AuthContext);
-// console.log('props.id',props.ID)
+    const { language, downloadedPodcast, downloadedPodcastID, setdownloadedPodcastID, setdownloadedPodcast, isSignin } = useContext(AuthContext);
+    // console.log('props.id',props.ID)
+
+    const getDownloadMusic = async () => {
+        const value = await AsyncStorage.getItem('musics')
+        const parseMusics = JSON.parse(value)
+        let courseName = parseMusics?.map(itemxx => {
+            return itemxx.ID
+        })
+        setdownloadedPodcastID(courseName)
+        setdownloadedPodcast(parseMusics)
+    }
+
     return (
         <TouchableOpacity onPress={props.onPress} style={{ justifyContent: 'space-between', flexDirection: 'row', paddingVertical: 10 }}>
             <View style={{ width: '30%', height: 100 }}>
@@ -73,8 +87,10 @@ const FeaturedCard = (props) => {
                         size={25}
                     />
                 </TouchableOpacity>
-                {downloadedPodcastID?.includes(props.id) && props.id === props.id   ?
-                    <TouchableOpacity >
+                {downloadedPodcastID?.includes(props.id) && props.id === props.id ?
+                    <TouchableOpacity onPress={() => {
+                        removeDownloadFile(props.id, getDownloadMusic)
+                    }}>
                         <Ionicons
                             name="ios-cloud-download-outline"
                             color={'green'}
@@ -83,15 +99,22 @@ const FeaturedCard = (props) => {
                         />
                     </TouchableOpacity>
                     :
-                    <TouchableOpacity onPress={props.onPressDownload}>
-                        <Ionicons
-                            name="ios-cloud-download-outline"
-                            color={props.purpleIcon == true ? Colors.primary : 'white'}
-                            size={25}
-                            style={{}}
-                        />
-
-                    </TouchableOpacity>
+                    <>
+                        {/* <TouchableOpacity onPress={props.onPressDownload}> */}
+                        <TouchableOpacity onPress={() => {
+                            isSignin?
+                            downloadFile(props.link, props.podcastname, props.id, props.image, props.channelName ? props.channelName : "", getDownloadMusic):
+                            Toast.show('Login to use this feature', Toast.SHORT)
+                            // getDownloadMusic();
+                        }}>
+                            <Ionicons
+                                name="ios-cloud-download-outline"
+                                color={props.purpleIcon == true ? Colors.primary : 'white'}
+                                size={25}
+                                style={{}}
+                            />
+                        </TouchableOpacity>
+                    </>
 
                 }
 

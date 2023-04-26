@@ -38,6 +38,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Podcast from '../components/Sections/Podcast';
 import { child, onValue, push, ref, remove, set } from 'firebase/database';
 import database from '../../firebaseConfig';
+import downloadFile from '../constant/download';
 
 const Home = () => {
 
@@ -224,7 +225,7 @@ const Home = () => {
 
     delete selectedPodcast.yoast_head_json.twitter_misc;
     set(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + podcast_id), selectedPodcast);
-    Toast.show('Podcast Added to liabrary', Toast.LONG);
+    Toast.show('Podcast Added to library', Toast.LONG);
 
     setModalVisible(false);
 
@@ -250,7 +251,7 @@ const Home = () => {
         setSelectedPodcast(null);
         // navigation.navigate('MyLibrary')
       } else {
-        alert('Failed to add to liabrary !');
+        alert('Failed to add to library !');
       }
     } catch (error) {
       console.log('error => ', error);
@@ -260,7 +261,7 @@ const Home = () => {
 
   const RemovePodcastFromLiabrary = async () => {
     remove(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + podcast_id))
-    Toast.show('Podcast removed from liabrary', Toast.LONG);
+    Toast.show('Podcast removed from library', Toast.LONG);
 
     setModalVisible(false);
 
@@ -285,7 +286,7 @@ const Home = () => {
 
         // navigation.navigate('MyLibrary')
       } else {
-        alert('Failed to remove from liabrary !');
+        alert('Failed to remove from library !');
       }
     } catch (error) {
       console.log('error => ', error);
@@ -463,7 +464,11 @@ const Home = () => {
               onPressClose={() => (setModalVisible(false), setSelectedPodcast(null))}
               onPressaddTo={() => AddPodcastToLiabrary()}
               onClose={() => (setModalVisible(false), setSelectedPodcast(null))}
-              onPressDownload={() => downloadPodcast(musicdatafordownload)}
+              // onPressDownload={() => downloadPodcast(musicdatafordownload)}
+              onPressDownload={() => {
+                downloadFile(musicdatafordownload.acf.link_podcast1, musicdatafordownload?.title?.rendered, musicdatafordownload.id, musicdatafordownload.acf.imagen_podcast1, musicdatafordownload?.channelName, getDownloadMusic)
+                // getDownloadMusic();
+              }}
               onPressShare={() => onShare()}
               onPressRemoveDownload={() => RemoveDownload()}
               onPressRemove={() => RemovePodcastFromLiabrary()}
@@ -598,6 +603,7 @@ const Home = () => {
                       channelName={match}
                       downloadLoading={loaderwhileLoader}
                       podcastname={item.title?.rendered}
+                      link={item.acf.link_podcast1}
                       image={item?.acf?.imagen_podcast1}
                       id={item?.id}
                     />
@@ -663,8 +669,10 @@ const Home = () => {
                       onPress={() => trackResetAndNavgate(item)}
                       purpleIcon={true}
                       channelName={item?.channelName}
+                      link={item.acf.link_podcast1}
                       podcastname={item.title?.rendered}
                       image={item?.acf?.imagen_podcast1}
+                      id={item?.id}
                     />
                   );
                 })}

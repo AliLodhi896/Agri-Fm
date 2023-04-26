@@ -6,9 +6,12 @@ import { AuthContext } from '../../../context/Context';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { onValue, ref } from 'firebase/database';
 import database from '../../../../firebaseConfig';
+import removeDownloadFile from '../../../constant/removeDownload';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Toast from 'react-native-simple-toast';
 
 const ListModals = (props) => {
-    const { language, podcast_id, favoritePodcat_id, downloadedPodcastID, UserData, favouritePodcasts } = useContext(AuthContext);
+    const { language, podcast_id, favoritePodcat_id, downloadedPodcastID, UserData,isSignin, favouritePodcasts, setdownloadedPodcastID, setdownloadedPodcast } = useContext(AuthContext);
     const navigation = useNavigation();
     // const [favouritePodcasts, setfavouritePodcasts] = useState([]);
 
@@ -41,6 +44,16 @@ const ListModals = (props) => {
         console.log(favouritePodcasts);
     }, [props.isVisible]);
 
+    const getDownloadMusic = async () => {
+        const value = await AsyncStorage.getItem('musics')
+        const parseMusics = JSON.parse(value)
+        let courseName = parseMusics?.map(itemxx => {
+            return itemxx.ID
+        })
+        setdownloadedPodcastID(courseName)
+        setdownloadedPodcast(parseMusics)
+    }
+
     // console.log('downloadedPodcastID', downloadedPodcastID, podcast_id)
     return (
         <Modal
@@ -63,15 +76,17 @@ const ListModals = (props) => {
                             <Image style={{ width: '15%', height: 25 }} source={require('../../../assets/Images/asdsa.png')} />
                         </TouchableOpacity>
                         <View style={{ height: 1, backgroundColor: Colors.primary, opacity: 0.5, marginTop: 15 }}></View>
-                        {downloadedPodcastID?.includes(podcast_id) && podcast_id === podcast_id ?
-                            <TouchableOpacity style={styles.second_view} onPress={props.onPressRemoveDownload}>
+                        {downloadedPodcastID?.includes(JSON.parse(podcast_id)) && podcast_id === podcast_id ?
+                            <TouchableOpacity style={styles.second_view} onPress={() => {
+                                removeDownloadFile(JSON.parse(podcast_id), getDownloadMusic)
+                            }}>
                                 <Text style={{ color: Colors.primary, fontSize: 16 }}>
                                     {language?.removeDownload}
                                 </Text>
                                 <Image style={{ width: '12%', height: 27 }} source={require('../../../assets/Images/downlaod.png')} />
                             </TouchableOpacity>
                             :
-                            <TouchableOpacity style={styles.second_view} onPress={props.onPressDownload}>
+                            <TouchableOpacity style={styles.second_view} onPress={isSignin ? props.onPressDownload : () => Toast.show('Login to use this feature', Toast.SHORT)}>
                                 <Text style={{ color: Colors.primary, fontSize: 16 }}>
                                     {language?.DownloadPodcast}
                                 </Text>

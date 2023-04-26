@@ -31,6 +31,7 @@ import ListModals from '../components/Cards/Modals/ListModals';
 import { ref, remove, set } from 'firebase/database';
 import database from '../../firebaseConfig';
 import Fontisto from 'react-native-vector-icons/Fontisto'
+import downloadFile from '../constant/download';
 
 const CategoriesDetail = ({ props, route }) => {
   const { details, image, name } = route.params
@@ -220,7 +221,7 @@ const CategoriesDetail = ({ props, route }) => {
 
   const AddPodcastToLiabrary = async () => {
     set(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + selectedPodcast.acf.id), selectedPodcast);
-    Toast.show('Podcast Added to liabrary', Toast.LONG);
+    Toast.show('Podcast Added to library', Toast.LONG);
     setModalVisible(false);
 
     try {
@@ -245,7 +246,7 @@ const CategoriesDetail = ({ props, route }) => {
         // remove(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + JSON.stringify(selectedPodcast?.id)))
         closeModal();
       } else {
-        alert('Failed to add to liabrary !');
+        alert('Failed to add to library !');
       }
     } catch (error) {
       console.log('error => ', error);
@@ -260,7 +261,7 @@ const CategoriesDetail = ({ props, route }) => {
 
     remove(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + selectedPodcast.acf.id))
     setModalVisible(false);
-    Toast.show('Podcast removed from liabrary', Toast.LONG);
+    Toast.show('Podcast removed from library', Toast.LONG);
 
     try {
       let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/remove-libraryp.php?id_user=${UserData[0]?.user}&id_podcast=${selectedPodcast.acf.id}`;
@@ -282,7 +283,7 @@ const CategoriesDetail = ({ props, route }) => {
 
         // navigation.navigate('MyLibrary')
       } else {
-        alert('Failed to remove from liabrary !');
+        alert('Failed to remove from library !');
       }
     } catch (error) {
       console.log('error => ', error);
@@ -298,7 +299,10 @@ const CategoriesDetail = ({ props, route }) => {
         onPressaddTo={() => AddPodcastToLiabrary()}
         onPressRemove={() => RemovePodcastFromLiabrary()}
         onClose={() => (setModalVisible(false), setSelectedPodcast(null))}
-        onPressDownload={() => downloadPodcast(downloadItem)}
+        onPressDownload={() => {
+          downloadFile(downloadItem.LINK, downloadItem.TITLE, downloadItem.ID, downloadItem.IMG, "", getDownloadMusic);
+          // getDownloadMusic();
+        }}
         onPressShare={() => onShare()}
         onPressRemoveDownload={() => RemoveDownload()}
       />
@@ -311,7 +315,7 @@ const CategoriesDetail = ({ props, route }) => {
           source={{ uri: image }}
           style={{ width: '100%', height: '100%', position: "relative" }}
         >
-          <TouchableOpacity style={{ paddingLeft: 15, paddingTop: 20}} onPress={() => navigation.goBack()}>
+          <TouchableOpacity style={{ paddingLeft: 15, paddingTop: 20 }} onPress={() => navigation.goBack()}>
             <Fontisto name="angle-left" color={"white"} size={15} />
           </TouchableOpacity>
           <View style={{ position: "absolute", bottom: 0, left: 0, right: 0, backgroundColor: "rgba(0,0,0,0.4)" }}>
@@ -351,13 +355,15 @@ const CategoriesDetail = ({ props, route }) => {
                     onPressIcon={() => download(item)}
                     // onPressDownload={()=>downloadPodcast()}
                     onPress={() => trackResetAndNavgate(item)}
-                    // channelName={item?.channel_name[0]}
+                    channelName={item?.channel_name ? item?.channel_name[0] : null}
                     // podcastname={item?.title}
                     textstyle={{ color: Colors.primary }}
                     downloadLoading={loaderwhileLoader}
                     headingText={{ color: 'grey' }}
                     timeText={{ color: 'grey' }}
                     podcastname={item?.TITLE}
+                    link={item.LINK}
+                    id={item.ID}
                     image={item?.IMG}
                   // time={item?.time}
                   />

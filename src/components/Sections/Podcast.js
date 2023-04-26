@@ -112,6 +112,22 @@ const Podcast = (props) => {
     });
     // navigation.navigate('Music', { podcastDetails: item, Fromlibrary: true });
   }
+
+  const trackResetAndNavgateDownload = (item) => {
+    const itemID = item?.acf?.id ? item?.acf?.id : item?.ID ? item?.ID : item?.id;
+
+    TrackPlayer.reset();
+    setSate(0)
+    navigation.navigate('Music', {
+      podcastDetails: {
+        acf: { link_podcast1: item?.LINK, imagen_podcast1: item?.image },
+        id: itemID,
+        title: { rendered: item.TITLE },
+      }, Fromlibrary: false
+    });
+    // navigation.navigate('Music', { podcastDetails: item, Fromlibrary: true });
+  }
+
   // console.log('item', podcast_id)
 
   const download = (item) => {
@@ -224,13 +240,13 @@ const Podcast = (props) => {
       });
       const responseData = await response.json();
       if (responseData[0].favoritos_podcast) {
-        Toast.show('Podcast Added to liabrary', Toast.LONG);
+        Toast.show('Podcast Added to library', Toast.LONG);
         let courseName = responseData[0].favoritos_podcast?.map(itemxx => {
           return itemxx
         })
         setfavoritePodcat_id(courseName)
       } else {
-        alert('Failed to add to liabrary !');
+        alert('Failed to add to library !');
       }
     } catch (error) {
       console.log('error => ', error);
@@ -260,14 +276,14 @@ const Podcast = (props) => {
       // console.log('responseData[0].favoritos_podcast', responseData);
       if (responseData) {
 
-        Toast.show('Podcast removed from liabrary', Toast.LONG);
+        Toast.show('Podcast removed from library', Toast.LONG);
         let courseName = responseData[0].favoritos_podcast?.map(itemxx => {
           return itemxx
         })
         setfavoritePodcat_id(courseName)
 
       } else {
-        alert('Failed to remove from liabrary !');
+        alert('Failed to remove from library !');
       }
     } catch (error) {
       console.log('error => ', error);
@@ -309,7 +325,7 @@ const Podcast = (props) => {
                 headingText={{ color: 'grey' }}
                 timeText={{ color: 'grey' }}
                 onPressIcon={() => download(item)}
-                onPress={() => trackResetAndNavgate(item)}
+                onPress={() => trackResetAndNavgateDownload(item)}
                 purpleIcon={true}
                 channelName={item?.CHANNEL_NAME}
                 podcastname={item.TITLE}

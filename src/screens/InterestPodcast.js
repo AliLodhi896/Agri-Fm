@@ -26,6 +26,7 @@ import RNFetchBlob from 'rn-fetch-blob';
 import ListModals from '../components/Cards/Modals/ListModals';
 import { ref, remove, set } from 'firebase/database';
 import database from '../../firebaseConfig';
+import downloadFile from '../constant/download';
 const InterestPodcast = ({ route }) => {
   const { interest_detail } = route.params
   const navigation = useNavigation();
@@ -33,7 +34,7 @@ const InterestPodcast = ({ route }) => {
   const [podcast, setPodcast] = useState(true)
   const [channels, setChannels] = useState(false)
   const [interestPodcast, setInterestPodcast] = useState()
-  const { UserData, setSate, setpodcast_id, podcast_id, downloadedPodcast, favoritePodcat_id, setfavoritePodcat_id, language, isSignin, selectedlang } = useContext(AuthContext);
+  const { UserData, setSate, setpodcast_id, podcast_id, downloadedPodcast, favoritePodcat_id, setdownloadedPodcastID, setdownloadedPodcast, setfavoritePodcat_id, language, isSignin, selectedlang } = useContext(AuthContext);
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false)
   const [muusicUrl, setmuusicUrl] = useState(null)
@@ -220,7 +221,7 @@ const InterestPodcast = ({ route }) => {
     setLoading(true)
 
     set(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + JSON.stringify(selectedPodcast?.id)), selectedPodcast);
-    Toast.show('Podcast Added to liabrary', Toast.LONG);
+    Toast.show('Podcast Added to library', Toast.LONG);
     setModalVisible(false);
 
     try {
@@ -240,7 +241,7 @@ const InterestPodcast = ({ route }) => {
         })
         setfavoritePodcat_id(courseName)
       } else {
-        alert('Failed to add to liabrary !');
+        alert('Failed to add to library !');
       }
     } catch (error) {
       console.log('error => ', error);
@@ -250,7 +251,7 @@ const InterestPodcast = ({ route }) => {
 
   const RemovePodcastFromLiabrary = async () => {
     remove(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + JSON.stringify(selectedPodcast?.id)))
-    Toast.show('Podcast removed from liabrary', Toast.LONG);
+    Toast.show('Podcast removed from library', Toast.LONG);
     setModalVisible(false);
 
 
@@ -274,12 +275,22 @@ const InterestPodcast = ({ route }) => {
         setfavoritePodcat_id(courseName)
 
       } else {
-        alert('Failed to remove from liabrary !');
+        alert('Failed to remove from library !');
       }
     } catch (error) {
       console.log('error => ', error);
     }
     setLoading(false)
+  }
+
+  const getDownloadMusic = async () => {
+    const value = await AsyncStorage.getItem('musics')
+    const parseMusics = JSON.parse(value)
+    let courseName = parseMusics?.map(itemxx => {
+      return itemxx.ID
+    })
+    setdownloadedPodcastID(courseName)
+    setdownloadedPodcast(parseMusics)
   }
   return (
     <ScrollView style={styles.mainBox}>
@@ -290,7 +301,13 @@ const InterestPodcast = ({ route }) => {
         onPressaddTo={() => isSignin ? AddPodcastToLiabrary() : Toast.show('Please first login to add to library', Toast.LONG)}
         onPressRemove={() => isSignin ? RemovePodcastFromLiabrary() : Toast.show('Please first login to add to library', Toast.LONG)}
         onClose={() => setModalVisible(false)}
-        onPressDownload={() => isSignin ? downloadPodcast() : Toast.show('Please first login to download', Toast.LONG)}
+        onPressDownload={() => isSignin ? downloadFile(
+          selectedPodcast.acf.link_podcast1,
+          selectedPodcast?.title?.rendered,
+          selectedPodcast.id,
+          selectedPodcast.acf.imagen_podcast1,
+          "",
+          getDownloadMusic) : Toast.show('Please first login to download', Toast.LONG)}
         onPressShare={() => onShare()}
       />
 
@@ -324,9 +341,11 @@ const InterestPodcast = ({ route }) => {
                     //   onPressIcon={()=>download(item)}
                     //   onPress={()=>trackResetAndNavgate(item)}
                     purpleIcon={true}
-                    channelName={item?.channel_name[0]}
+                    channelName={item?.channel_name ? item?.channel_name[0] : ""}
                     podcastname={item.title}
                     image={item?.imagen_podcast1}
+                    link={item?.link_podcast1}
+                    id={item.id}
                   />
                 );
               })

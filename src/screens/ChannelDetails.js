@@ -22,10 +22,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import ListModals from '../components/Cards/Modals/ListModals';
 import { onValue, ref, remove, set } from 'firebase/database';
 import database from '../../firebaseConfig';
+import downloadFile from '../constant/download';
 
 const ChannelDetails = ({ route }) => {
   const navigation = useNavigation();
-  const { language, selectedlang, setSelectedlang, UserData, setSate, podcast_id, setfavoritePodcat_id, setpodcast_id } = useContext(AuthContext);
+  const { language, selectedlang, setSelectedlang, UserData, setSate, setdownloadedPodcast, setdownloadedPodcastID, podcast_id, setfavoritePodcat_id, setpodcast_id } = useContext(AuthContext);
   const [podCastData, setPodcastData] = useState([]);
   const { details } = route.params
   // console.log("🚀 ~ file: ChannelDetails.js:31 ~ ChannelDetails ~ details:", typeof(details.id))
@@ -298,6 +299,7 @@ const ChannelDetails = ({ route }) => {
   }
 
   const download = (item) => {
+    console.log(item);
     setSelectedPodcast({ acf: { ...item }, title: { rendered: item.title }, channelName: item.channel_name[0], id: item.id });
 
     setModalVisible(true);
@@ -315,7 +317,7 @@ const ChannelDetails = ({ route }) => {
     // return;
     delete selectedPodcast?.yoast_head_json?.twitter_misc;
     set(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + selectedPodcast.acf.id), selectedPodcast);
-    Toast.show('Podcast Added to liabrary', Toast.LONG);
+    Toast.show('Podcast Added to library', Toast.LONG);
 
     setModalVisible(false);
 
@@ -341,7 +343,7 @@ const ChannelDetails = ({ route }) => {
         // remove(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + JSON.stringify(selectedPodcast?.id)))
         closeModal();
       } else {
-        alert('Failed to add to liabrary !');
+        alert('Failed to add to library !');
       }
     } catch (error) {
       console.log('error => ', error);
@@ -353,7 +355,7 @@ const ChannelDetails = ({ route }) => {
 
   const RemovePodcastFromLiabrary = async () => {
     remove(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + JSON.stringify(selectedPodcast.acf.id)))
-    Toast.show('Podcast removed from liabrary', Toast.LONG);
+    Toast.show('Podcast removed from library', Toast.LONG);
     closeModal()
 
 
@@ -375,7 +377,7 @@ const ChannelDetails = ({ route }) => {
         setfavoritePodcat_id(courseName)
 
       } else {
-        alert('Failed to remove from liabrary !');
+        alert('Failed to remove from library !');
       }
     } catch (error) {
       console.log('error => ', error);
@@ -383,6 +385,16 @@ const ChannelDetails = ({ route }) => {
 
     // setSelectedPodcast(null);
 
+  }
+
+  const getDownloadMusic = async () => {
+    const value = await AsyncStorage.getItem('musics')
+    const parseMusics = JSON.parse(value)
+    let courseName = parseMusics?.map(itemxx => {
+      return itemxx.ID
+    })
+    setdownloadedPodcastID(courseName)
+    setdownloadedPodcast(parseMusics)
   }
 
 
@@ -399,7 +411,16 @@ const ChannelDetails = ({ route }) => {
         onClose={closeModal}
         onPressaddTo={() => AddPodcastToLiabrary()}
         onPressRemove={RemovePodcastFromLiabrary}
-        onPressDownload={() => downloadPodcast()}
+        // onPressDownload={() => downloadPodcast()}
+        onPressDownload={() => {
+          downloadFile(
+            selectedPodcast.acf.link_podcast1,
+            selectedPodcast?.title?.rendered,
+            selectedPodcast.id,
+            selectedPodcast.acf.imagen_podcast1,
+            selectedPodcast?.channelName,
+            getDownloadMusic)
+        }}
         onPressShare={() => onShare()}
       />
       <Header icon={true} />
@@ -457,6 +478,8 @@ const ChannelDetails = ({ route }) => {
                     // })}
                     podcastname={item?.title}
                     image={item?.imagen_podcast1}
+                    link={item?.link_podcast1}
+                    id={item?.id}
                   />
                 );
               })}

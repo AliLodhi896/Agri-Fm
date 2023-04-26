@@ -18,6 +18,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ref, remove, set } from 'firebase/database';
 import database from '../../firebaseConfig';
 import { useFocusEffect } from '@react-navigation/native';
+import downloadFile from '../constant/download';
 
 const Explore = ({ navigation }) => {
   const { downloadedPodcastID, downloadedPodcast, setdownloadedPodcast, setdownloadedPodcastID, setmusicdatafordownload, musicdatafordownload, language, selectedlang, setSelectedlang, setSate, UserData, podcast_id, setfavoritePodcat_id, setpodcast_id } = useContext(AuthContext);
@@ -378,6 +379,7 @@ const Explore = ({ navigation }) => {
             channelName={match?.channel_name}
             podcastname={item.title?.rendered}
             image={item?.acf?.imagen_podcast1}
+            link={item?.acf?.link_podcast1}
             id={item?.id}
           />
         </>
@@ -393,7 +395,7 @@ const Explore = ({ navigation }) => {
       delete selectedPodcast?.yoast_head_json?.twitter_misc;
     }
     set(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + podcast_id), selectedPodcast);
-    Toast.show('Podcast Added to liabrary', Toast.LONG);
+    Toast.show('Podcast Added to library', Toast.LONG);
     setModalVisible(false);
 
     try {
@@ -406,14 +408,14 @@ const Explore = ({ navigation }) => {
       });
       const responseData = await response.json();
       if (responseData[0].favoritos_podcast) {
-     
+
 
         let courseName = responseData[0].favoritos_podcast?.map(itemxx => {
           return itemxx
         })
         setfavoritePodcat_id(courseName)
       } else {
-        alert('Failed to add to liabrary !');
+        alert('Failed to add to library !');
       }
     } catch (error) {
       console.log('error => ', error);
@@ -423,7 +425,7 @@ const Explore = ({ navigation }) => {
 
   const RemovePodcastFromLiabrary = async () => {
     remove(ref(database, 'Library/Podcasts/' + UserData[0]?.user + "/" + podcast_id))
-    Toast.show('Podcast removed from liabrary', Toast.LONG);
+    Toast.show('Podcast removed from library', Toast.LONG);
     setModalVisible(false);
 
 
@@ -447,7 +449,7 @@ const Explore = ({ navigation }) => {
         // closeModal()
 
       } else {
-        alert('Failed to remove from liabrary !');
+        alert('Failed to remove from library !');
       }
 
     } catch (error) {
@@ -476,7 +478,16 @@ const Explore = ({ navigation }) => {
         onPressRemoveDownload={() => RemoveDownload()}
         onPressRemove={() => RemovePodcastFromLiabrary()}
         onClose={() => setModalVisible(false)}
-        onPressDownload={() => downloadPodcast(musicdatafordownload)}
+        // onPressDownload={() => downloadPodcast(musicdatafordownload)}
+        onPressDownload={() => {
+          downloadFile(
+            selectedPodcast.acf.link_podcast1,
+            selectedPodcast?.title?.rendered,
+            selectedPodcast.id,
+            selectedPodcast.acf.imagen_podcast1,
+            selectedPodcast?.channelName,
+            getDownloadMusic)
+        }}
         onPressShare={() => onShare()}
       />
 
