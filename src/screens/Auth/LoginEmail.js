@@ -1,4 +1,4 @@
-import React, {useState, useContext, useEffect} from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import {
   StyleSheet,
   View,
@@ -19,40 +19,41 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import WhiteButton from '../../components/Buttons/WhiteButton';
 import Input from '../../components/Input/Input';
 import CommonButton from '../../components/Buttons/CommonButton';
-import {useNavigation} from '@react-navigation/native';
-import {AuthContext} from '../../context/Context';
-import {useForm} from 'react-hook-form';
+import { useNavigation } from '@react-navigation/native';
+import { AuthContext } from '../../context/Context';
+import { useForm } from 'react-hook-form';
 
 const LoginEmail = () => {
   const {
     control,
     register,
     handleSubmit,
-    formState: {errors, isValid},
-  } = useForm({mode: 'all'});
+    formState: { errors, isValid },
+  } = useForm({ mode: 'all' });
 
   const navigation = useNavigation();
-  const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
+  const { language, selectedlang, setSelectedlang } = useContext(AuthContext);
   const [text, setText] = useState('');
   useEffect(() => {
     console.log(text, 'checkValueasa');
   }, [setText]);
 
   const onSubmit = data => {
-    navigation.navigate('LoginPassword', {email: data.email});
+    navigation.navigate('LoginPassword', { email: data.email });
   };
 
   return (
     <ScrollView style={styles.mainBox}>
       <Header
-        style={{backgroundColor: 'white', paddingHorizontal: 20}}
-        textStyle={{color: Colors.primary, fontWeight: 'Bold'}}
+        style={{ backgroundColor: 'white', paddingHorizontal: 20 }}
+        textStyle={{ color: Colors.primary, fontWeight: 'Bold' }}
         backgroundColor={'white'}
         icon={true}
         title={language?.Login}
       />
-      <View style={{marginVertical: 30}}>
+      <View style={{ marginVertical: 30 }}>
         <Input
+          autoCapitalize='none'
           name="email"
           keyboardType="email-address"
           control={control}
@@ -67,7 +68,7 @@ const LoginEmail = () => {
           <Text style={styles.errormessage}>* {errors.email.message}</Text>
         )}
 
-        <View style={{marginVertical: 30}}>
+        <View style={{ marginVertical: 30 }}>
           <CommonButton
             green={true}
             onPress={handleSubmit(onSubmit)}
@@ -95,7 +96,7 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     padding: 5,
   },
-  image: {width: 100, height: 100, borderRadius: 100},
+  image: { width: 100, height: 100, borderRadius: 100 },
   welcome: {
     color: Colors.secondary,
     fontSize: 25,

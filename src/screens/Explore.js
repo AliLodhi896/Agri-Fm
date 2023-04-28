@@ -17,7 +17,7 @@ import RNFetchBlob from 'rn-fetch-blob';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ref, remove, set } from 'firebase/database';
 import database from '../../firebaseConfig';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import downloadFile from '../constant/download';
 
 const Explore = ({ navigation }) => {
@@ -42,18 +42,24 @@ const Explore = ({ navigation }) => {
   const [podcastID, setPodcastID] = useState(null);
   const [channelNamefordownload, setchannelNamefordownload] = useState('')
   const [isSearch, setIsSearch] = useState(false);
+  const focus = useIsFocused();
 
   useEffect(() => {
-    setLoading(true)
-    fetch(`https://socialagri.com/agriFM/wp-json/wp/v2/intereses/?lang=${selectedlang == "pt" ? "pt-br" : selectedlang}`)
-      .then(res => res.json())
-      .then((data) => {
-        // console.log("🚀 ~ file: Explore.js:47 ~ .then ~ data:", data)
-        setInterest(data.length == 0 ? undefined || null : (data));
-        // setSearchProduct(data.length == 0 ? undefined || null : (data))
-        setLoading(false)
-      })
-  }, [])
+    if (focus) {
+    setIsSearch(false);
+
+      setLoading(true)
+      fetch(`https://socialagri.com/agriFM/wp-json/wp/v2/intereses/?lang=${selectedlang == "pt" ? "pt-br" : selectedlang}`)
+        .then(res => res.json())
+        .then((data) => {
+          // console.log("🚀 ~ file: Explore.js:47 ~ .then ~ data:", data)
+          setInterest(data.length == 0 ? undefined || null : (data));
+          // setSearchProduct(data.length == 0 ? undefined || null : (data))
+          setLoading(false)
+        })
+
+    }
+  }, [focus])
 
   const fetchData = async () => {
     try {
@@ -137,10 +143,13 @@ const Explore = ({ navigation }) => {
 
   useEffect(() => {
     // fetchData();
-    fetchData1();
-    fetchChannels();
-    fetchNewPodcast()
-  }, [])
+    if (focus) {
+      fetchData1();
+      fetchChannels();
+      fetchNewPodcast()
+
+    }
+  }, [focus])
 
   const setProducts = text => {
     // setSerachInpVal(text);
@@ -257,31 +266,6 @@ const Explore = ({ navigation }) => {
   }
 
 
-  const requestpermissionforDownlaod = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-        {
-          title: 'Music',
-          message:
-            'App needs access to your Files... ',
-          buttonNeutral: 'Ask Me Later',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        },
-      );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log('startDownload...');
-        // this.startDownload();
-        return true;
-      } else {
-        Toast.show('Permission denied.', Toast.LONG);
-        return false;
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
   const getDownloadMusic = async () => {
     const value = await AsyncStorage.getItem('musics')
     const parseMusics = JSON.parse(value)
@@ -356,6 +340,7 @@ const Explore = ({ navigation }) => {
       getDownloadMusic();
     }, []),
   );
+
   const renderPodcasts = () => {
     const temp = serachText == '' ? searchProduct : searchProduct.slice(0, 10);
 
@@ -391,6 +376,7 @@ const Explore = ({ navigation }) => {
     // console.log(podcast_id);
     // return;
     // setLoading(true)
+    selectedPodcast.channelName = selectedPodcast?.channelName ? selectedPodcast?.channelName : null;
     if (selectedPodcast?.yoast_head_json?.twitter_misc) {
       delete selectedPodcast?.yoast_head_json?.twitter_misc;
     }

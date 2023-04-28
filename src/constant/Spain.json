@@ -16,6 +16,7 @@
     "CreateProfile": "Crear Perfil",
     "TrendingInterest": "Tendencia de Interés",
     "seeAll": "ver todo",
+    "passRecovery": "Recuperacion de Contrasena",
 
     "ExploreOurPodcast": "Explorar podcasts",
     "Interests": "Intereses",
@@ -84,6 +85,7 @@
     "Home": "Casa",
     "Explore": "Explorar",
     "Library": "Biblioteca",
+    "Account": "cuenta",
     "MyAgriFm": "Registro",
     "UnFollow": "dejar de seguir",
     "RemoveFromLibrary":"Eliminar de la biblioteca",

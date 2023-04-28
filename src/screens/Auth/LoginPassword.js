@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, { useState, useContext } from 'react';
 import {
   StyleSheet,
   View,
@@ -18,27 +18,29 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import WhiteButton from '../../components/Buttons/WhiteButton';
 import Input from '../../components/Input/Input';
 import CommonButton from '../../components/Buttons/CommonButton';
-import {AuthContext} from '../../context/Context';
+import { AuthContext } from '../../context/Context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import {useRoute, useNavigation} from '@react-navigation/native';
-import {useForm} from 'react-hook-form';
-import {base_url} from '../../constant/Url';
+import { useRoute, useNavigation } from '@react-navigation/native';
+import { useForm } from 'react-hook-form';
+import { base_url } from '../../constant/Url';
 import Toast from 'react-native-simple-toast';
+import { openWebsite } from '../../constant/createChannelURLS';
+import { navigate } from '../../constant/navigationServices';
 const LoginPassword = () => {
   const navigation = useNavigation();
   const {
     control,
     register,
     handleSubmit,
-    formState: {errors, isValid},
-  } = useForm({mode: 'all'});
-  const {language, selectedlang, setSelectedlang, setUserData,setIsSignin} =
+    formState: { errors, isValid },
+  } = useForm({ mode: 'all' });
+  const { language, selectedlang, setSelectedlang, setUserData, setIsSignin } =
     useContext(AuthContext);
   const route = useRoute();
   const [loading, setLoading] = useState(false);
   const [pass, setPass] = useState('');
-  
+
   const onSubmit = async data => {
     setLoading(true);
     try {
@@ -50,12 +52,14 @@ const LoginPassword = () => {
         },
       });
       const responseData = await response.json();
-      if (responseData[0].validation  === "No hemos encontrado ningún usuario con este email, por favor cree una cuenta." || responseData[0].validation === 'Revise su email y contraseña' ) {
+      if (responseData[0].validation === "No hemos encontrado ningún usuario con este email, por favor cree una cuenta." || responseData[0].validation === 'Revise su email y contraseña') {
         alert(responseData[0].validation);
       } else {
         const jsonValue = JSON.stringify(responseData);
-        await AsyncStorage.setItem('userDetails',jsonValue)
+        await AsyncStorage.setItem('userDetails', jsonValue)
         setIsSignin(true)
+        navigate(language?.Home)
+
       }
 
       setLoading(false);
@@ -67,17 +71,17 @@ const LoginPassword = () => {
     }
   };
   // [{"validation": "No hemos encontrado ningún usuario con este email, por favor cree una cuenta."}]
-// [{"validation": "Revise su email y contraseña"}]
+  // [{"validation": "Revise su email y contraseña"}]
   return (
     <ScrollView style={styles.mainBox}>
       <Header
-        style={{backgroundColor: 'white', paddingHorizontal: 20}}
-        textStyle={{color: Colors.primary, fontWeight: 'Bold'}}
+        style={{ backgroundColor: 'white', paddingHorizontal: 20 }}
+        textStyle={{ color: Colors.primary, fontWeight: 'Bold' }}
         backgroundColor={'white'}
         icon={true}
         title={language?.Login}
       />
-      <View style={{marginVertical: 30}}>
+      <View style={{ marginVertical: 30 }}>
         <Input
           name="password"
           control={control}
@@ -92,8 +96,11 @@ const LoginPassword = () => {
         {errors.password && (
           <Text style={styles.errormessage}>* {errors.password.message}</Text>
         )}
+        <TouchableOpacity onPress={() => openWebsite(selectedlang)}>
+          <Text style={{ color: "white", alignSelf: "flex-end", paddingRight: 40 }}>{language?.passRecovery}</Text>
+        </TouchableOpacity>
 
-        <View style={{marginVertical: 30}}>
+        <View style={{ marginVertical: 30 }}>
           <CommonButton
             onPress={handleSubmit(onSubmit)}
             green={true}
@@ -122,7 +129,7 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     padding: 5,
   },
-  image: {width: 100, height: 100, borderRadius: 100},
+  image: { width: 100, height: 100, borderRadius: 100 },
   welcome: {
     color: Colors.secondary,
     fontSize: 25,

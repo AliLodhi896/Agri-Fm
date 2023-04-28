@@ -16,6 +16,7 @@
     "CreateProfile": "Create Profile",
     "TrendingInterest": "Trending Interest",
     "seeAll": "See All",
+    "passRecovery": "Password Recovery",
 
 
     "ExploreOurPodcast": "Explore our podcast",
@@ -84,6 +85,7 @@
     "Home": "Home",
     "Explore": "Explore",
     "Library": "Library",
+    "Account": "Account",
     "MyAgriFm": "Register",
     "UnFollow": "UnFollow",
     "RemoveFromLibrary":"Remove from Library",

@@ -29,7 +29,7 @@ import { onValue, ref, remove } from 'firebase/database';
 import database from '../../../firebaseConfig';
 
 const Podcast = (props) => {
-  const { UserData, setSate, setpodcast_id, podcast_id, downloadedPodcast, favoritePodcat_id, setfavoritePodcat_id, setdownloadedPodcastID, setdownloadedPodcast, downloadedPodcastID, language } = useContext(AuthContext);
+  const { UserData, setSate, setpodcast_id, podcast_id, setTracks, firstMusicPlay,downloadedPodcast, favoritePodcat_id, setfavoritePodcat_id, setdownloadedPodcastID, setdownloadedPodcast, downloadedPodcastID, language } = useContext(AuthContext);
   const navigation = useNavigation();
   const [podCastData, setPodcastData] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
@@ -110,22 +110,34 @@ const Podcast = (props) => {
         title: { rendered: item.title.rendered },
       }, Fromlibrary: false
     });
-    // navigation.navigate('Music', { podcastDetails: item, Fromlibrary: true });
+
+    const track = {
+      id: itemID,
+      url: item?.acf.link_podcast1,
+      title: item.title.rendered,
+      artist: 'deadmau5',
+      artwork: item?.acf.imagen_podcast1,
+      duration: 166
+    };
+
+    setTracks(track)
+    TrackPlayer.add([track])
+
   }
 
   const trackResetAndNavgateDownload = (item) => {
     const itemID = item?.acf?.id ? item?.acf?.id : item?.ID ? item?.ID : item?.id;
 
     TrackPlayer.reset();
-    setSate(0)
+    setSate(3)
     navigation.navigate('Music', {
       podcastDetails: {
         acf: { link_podcast1: item?.LINK, imagen_podcast1: item?.image },
         id: itemID,
         title: { rendered: item.TITLE },
-      }, Fromlibrary: false
+      }, Fromlibrary: false, pause: !firstMusicPlay ? true : false
     });
-    // navigation.navigate('Music', { podcastDetails: item, Fromlibrary: true });
+
   }
 
   // console.log('item', podcast_id)

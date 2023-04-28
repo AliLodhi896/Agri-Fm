@@ -74,10 +74,16 @@ export const UserStack = ({ navigation }) => {
     <MainStack.Navigator screenOptions={defaultStackNavOptions}>
 
       <MainStack.Screen
+        name='tabs'
+        component={AppNavigation}
+        options={{ headerShown: false }}
+      />
+
+      {/* <MainStack.Screen
         name="Home"
         component={Home}
         options={{ headerShown: false }}
-      />
+      /> */}
       <MainStack.Screen
         name="ChannelDetails"
         component={ChannelDetails}
@@ -181,11 +187,11 @@ export const AppNavigation = navigation => {
   };
   return (
     <Tab.Navigator
-      initialRouteName="Home"
+      initialRouteName={language?.Home}
       screenOptions={{ ...defaultTabNavOptions }}>
       <Tab.Screen
         name={language?.Home}
-        component={UserStack}
+        component={Home}
         options={{
           headerShown: false,
           tabBarShowLabel: true,
@@ -227,7 +233,7 @@ export const AppNavigation = navigation => {
         }}
       />
       <Tab.Screen
-        name={language?.MyAgriFm}
+        name={language?.Account}
         component={UserProfile}
         options={{
           headerShown: false,
@@ -243,8 +249,3 @@ export const AppNavigation = navigation => {
     </Tab.Navigator>
   );
 };
-
-
-const styles = StyleSheet.create({
-
-});

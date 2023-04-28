@@ -49,8 +49,9 @@ const downloadFile = async (
     const podcastname = fileName;
 
     if (fileName.length > 20) {
-        fileName = fileName.slice(0, 19).replace(":", "").replace("$", "").replace("&", "").replace("#", "");
+        fileName = fileName.slice(0, 19);
     };
+    fileName = fileName.replace(":", "").replace("$", "").replace("&", "").replace("#", "");
 
     const { config, fs } = RNFetchBlob;
     const downloads = fs.dirs.DownloadDir;

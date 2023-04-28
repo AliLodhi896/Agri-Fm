@@ -43,7 +43,7 @@ import downloadFile from '../constant/download';
 const Home = () => {
 
 
-  const { setmusicdatafordownload, musicdatafordownload, downloadedPodcast, setfavouritePodcasts, downloadedPodcastID, language, selectedlang, sate, setSate, UserData, setpodcast_id, podcast_id, setfavoritePodcat_id, setdownloadedPodcastID, setdownloadedPodcast } = useContext(AuthContext);
+  const { setmusicdatafordownload, musicdatafordownload, firstMusicPlay, downloadedPodcast, setfavouritePodcasts, downloadedPodcastID, language, selectedlang, sate, setSate, UserData, setpodcast_id, podcast_id, setfavoritePodcat_id, setdownloadedPodcastID, setdownloadedPodcast } = useContext(AuthContext);
   const navigation = useNavigation();
   const [podCastData, setPodcastData] = useState([]);
   const [interest, setInterest] = useState([])
@@ -215,7 +215,7 @@ const Home = () => {
   const trackResetAndNavgate = (item) => {
     TrackPlayer.reset();
     setSate(0)
-    navigation.navigate('Music', { podcastDetails: item, Fromlibrary: false });
+    navigation.navigate('Music', { podcastDetails: item, Fromlibrary: false, pause: !firstMusicPlay ? true : false });
   }
 
   const AddPodcastToLiabrary = async () => {
@@ -430,9 +430,20 @@ const Home = () => {
   }
   useFocusEffect(
     useCallback(() => {
-      getDownloadMusic();
+      // alert("working")
+      setTimeout(() => {
+        getDownloadMusic();
+      }, 200)
     }, []),
   );
+
+  useEffect(() => {
+    getDownloadMusic();
+  }, [])
+
+  // useEffect(() => {
+  //   if (focus) getDownloadMusic();
+  // }, [focus])
 
   const RemoveDownload = async () => {
     let newItems = downloadedPodcast.filter(e => e?.ID !== podcast_id);

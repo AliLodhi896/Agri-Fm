@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect, useCallback } from 'react'
-import { StyleSheet, View, Image, Text, ScrollView, Share, PermissionsAndroid } from "react-native"
+import { StyleSheet, View, Image, Text, ScrollView, Share, PermissionsAndroid, ActivityIndicator } from "react-native"
 import Header from "../components/Header/Header";
 import Colors from "../constant/Colors";
 
@@ -30,9 +30,10 @@ import { ref, remove, set } from 'firebase/database';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import downloadFile from '../constant/download';
 import removeDownloadFile from '../constant/removeDownload';
+import { navigate } from '../constant/navigationServices';
 
 const Music = ({ route }) => {
-  const { downloadedPodcast, downloadedPodcastID, podcast_id, setmusicdatafordownload, favouritePodcasts, musicdatafordownload, selectedlang, language, setTracks, setSate, sate, favoritePodcat_id, UserData, setfavoritePodcat_id, settrackForMiniPlayer, setpodcast_id, setdownloadedPodcast, setdownloadedPodcastID } = useContext(AuthContext);
+  const { downloadedPodcast, downloadedPodcastID, podcast_id, setmusicdatafordownload, favouritePodcasts, musicdatafordownload, selectedlang, language, setTracks, setSate, sate, favoritePodcat_id, UserData, setfavoritePodcat_id, settrackForMiniPlayer, setpodcast_id, setdownloadedPodcast, setdownloadedPodcastID, setFirstMusicPlay } = useContext(AuthContext);
   const { podcastDetails, Fromlibrary } = route.params
   const [channelNamefordownload, setchannelNamefordownload] = useState('')
   const [channelsdata, setchannelsdata] = useState([])
@@ -53,6 +54,7 @@ const Music = ({ route }) => {
   const { position, buffered, duration } = useProgress()
   const [muusicUrl, setmuusicUrl] = useState(null)
   const [selectedPodcast, setSelectedPodcast] = useState(null);
+  const [showLoader, setShowLoader] = useState(null);
 
   const closeModal = () => {
     setModalVisible(false);
@@ -132,10 +134,21 @@ const Music = ({ route }) => {
     getChannels()
   }, [podcastDetails])
 
-  const toogle = async () => {
+  useEffect(() => {
+    setFirstMusicPlay(true);
+    setShowLoader(true);
+    setTimeout(() => {
+      setShowLoader(false);
+    }, 100);
+  }, [])
+
+  const toogle = async (alwaysPause) => {
+    if (route.params?.pause) {
+      route.params.pause = false;
+    }
     const state = await TrackPlayer.getState();
-    setSate(state)
-    if (state == State.Playing) {
+    setSate(alwaysPause ? 0 : state)
+    if (state == State.Playing || alwaysPause) {
       TrackPlayer.pause();
     } else {
       TrackPlayer.play();
@@ -299,6 +312,7 @@ const Music = ({ route }) => {
     })
     setdownloadedPodcastID(courseName)
     setdownloadedPodcast(parseMusics)
+    TrackPlayer.play()
   }
 
   const downloadPodcast = async (item, channelName) => {
@@ -409,6 +423,13 @@ const Music = ({ route }) => {
 
     setdownloadedPodcastID(newItemsID)
   }
+
+  const pauseTrack = async () => {
+    navigate(language?.Home, { pauseMusic: true })
+    toogle(true);
+  }
+
+
   return (
     <ScrollView style={styles.mainBox}>
       <ListModals
@@ -442,7 +463,7 @@ const Music = ({ route }) => {
               downloadedPodcastID?.includes(podcastDetails.id) && podcastDetails.id === podcastDetails.id ? <>
                 <View style={{ marginTop: '5%', justifyContent: 'center', width: 80, justifyContent: 'center', alignItems: 'center' }}>
                   <TouchableOpacity onPress={() => {
-                    removeDownloadFile(podcastDetails.id, getDownloadMusic)
+                    removeDownloadFile(podcastDetails.id, undefined, pauseTrack)
                   }} style={{ alignItems: "center", justifyContent: "center", }}>
                     {/* <Image style={{ height: 27, width: 30 }} source={require('../assets/Images/downloadwhite.png')} /> */}
                     <Ionicons
@@ -484,7 +505,11 @@ const Music = ({ route }) => {
           <Image style={{ height: 32, width: 30 }} source={require('../assets/Images/replay.png')} />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => toogle()}>
-          <AntDesign name={sate == 2 || sate == 0 ? "play" : "pause"} size={80} color={'white'} />
+          {
+            showLoader ?
+              <ActivityIndicator size={80} color="white" /> :
+              <AntDesign name={sate == State.Playing || route.params.pause ? "play" : "pause"} size={80} color={'white'} />
+          }
         </TouchableOpacity>
         <TouchableOpacity onPress={() => forward()}>
           <Image style={{ height: 32, width: 30 }} source={require('../assets/Images/replay1.png')} />

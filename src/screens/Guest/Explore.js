@@ -13,6 +13,7 @@ import SkeletonChannelLoader from '../../components/Loader/SkeletonChannel';
 import ListModals from '../../components/Cards/Modals/ListModals';
 import Toast from 'react-native-simple-toast';
 import TrackPlayer from 'react-native-track-player';
+import { useIsFocused } from '@react-navigation/native';
 
 const Explore = ({ navigation }) => {
   const { language, selectedlang, setSelectedlang, setSate } = useContext(AuthContext);
@@ -35,18 +36,23 @@ const Explore = ({ navigation }) => {
 
   const [isSearch, setIsSearch] = useState(false);
 
+  const focus = useIsFocused();
 
   useEffect(() => {
-    setLoading(true)
-    fetch(`https://socialagri.com/agriFM/wp-json/wp/v2/intereses/?lang=${selectedlang == "pt" ? "pt-br" : selectedlang}`)
-      .then(res => res.json())
-      .then((data) => {
-        // console.log("🚀 ~ file: Explore.js:43 ~ .then ~ data:", data)
-        setInterest(data.length == 0 ? undefined || null : (data));
-        // setSearchProduct(data.length == 0 ? undefined || null : (data))
-        setLoading(false)
-      })
-  }, [])
+    if (focus) {
+      setIsSearch(false);
+
+      setLoading(true)
+      fetch(`https://socialagri.com/agriFM/wp-json/wp/v2/intereses/?lang=${selectedlang == "pt" ? "pt-br" : selectedlang}`)
+        .then(res => res.json())
+        .then((data) => {
+          // console.log("🚀 ~ file: Explore.js:43 ~ .then ~ data:", data)
+          setInterest(data.length == 0 ? undefined || null : (data));
+          // setSearchProduct(data.length == 0 ? undefined || null : (data))
+          setLoading(false)
+        })
+    }
+  }, [focus])
 
   const fetchData = async () => {
     try {
@@ -129,11 +135,14 @@ const Explore = ({ navigation }) => {
   }
 
   useEffect(() => {
-    // fetchData();
-    fetchData1();
-    fetchChannels();
-    fetchNewPodcast()
-  }, [])
+    if (focus) {
+
+      // fetchData();
+      fetchData1();
+      fetchChannels();
+      fetchNewPodcast()
+    }
+  }, [focus])
 
   const setProducts = text => {
     // setSerachInpVal(text);

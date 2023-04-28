@@ -20,6 +20,7 @@ export const AuthProvider = props => {
   const [trackForMiniPlayer, settrackForMiniPlayer] = useState({})
   const [musicdatafordownload, setmusicdatafordownload] = useState()
   const [favouritePodcasts, setfavouritePodcasts] = useState([]);
+  const [firstMusicPlay, setFirstMusicPlay] = useState(false);
 
 
   // const getDownloadMusic = async () => {
@@ -73,7 +74,9 @@ export const AuthProvider = props => {
         trackForMiniPlayer,
         settrackForMiniPlayer,
         favouritePodcasts,
-        setfavouritePodcasts
+        setfavouritePodcasts,
+        firstMusicPlay,
+        setFirstMusicPlay
       }}>
       {props.children}
     </AuthContext.Provider>

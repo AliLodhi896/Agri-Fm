@@ -76,11 +76,11 @@ export const GuestStack = ({ navigation }) => {
         options={{ headerShown: false }}
       />
 
-      <MainStack.Screen
+      {/* <MainStack.Screen
         name="Home"
         component={Home}
         options={{ headerShown: false }}
-      />
+      /> */}
       <MainStack.Screen
         name="ChannelDetails"
         component={ChannelDetails}
