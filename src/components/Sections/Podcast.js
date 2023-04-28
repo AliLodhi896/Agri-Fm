@@ -8,7 +8,7 @@ import Colors from '../../constant/Colors';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FeaturedCard from '../Cards/FeaturedCard';
 import ChannelCard from '../Cards/ChannelCard';
-import { useIsFocused, useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
 import { AuthContext } from '../../context/Context';
 import Toast from 'react-native-simple-toast';
 import RNFS from 'react-native-fs';
@@ -27,16 +27,22 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNFetchBlob from 'rn-fetch-blob';
 import { onValue, ref, remove } from 'firebase/database';
 import database from '../../../firebaseConfig';
+import downloadFile from '../../constant/download';
 
 const Podcast = (props) => {
-  const { UserData, setSate, setpodcast_id, podcast_id, setTracks, firstMusicPlay,downloadedPodcast, favoritePodcat_id, setfavoritePodcat_id, setdownloadedPodcastID, setdownloadedPodcast, downloadedPodcastID, language } = useContext(AuthContext);
+  const { UserData, setSate, setpodcast_id, podcast_id, setTracks, firstMusicPlay, downloadedPodcast, favoritePodcat_id, setfavoritePodcat_id, setdownloadedPodcastID, setdownloadedPodcast, downloadedPodcastID, language } = useContext(AuthContext);
   const navigation = useNavigation();
   const [podCastData, setPodcastData] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const [fromDownload, setFromDownload] = useState(false);
   const [podcastLoading, setPodcastLoading] = useState(false);
   const [loading, setLoading] = useState(false)
   const [muusicUrl, setmuusicUrl] = useState(null)
-  const [musicdatafordownload, setmusicdatafordownload] = useState()
+  const [musicdatafordownload, setmusicdatafordownload] = useState({})
+
+  let filteredArr = downloadedPodcast?.filter(value => {
+    return value?.ID !== undefined;
+  });
 
   const focus = useIsFocused();
 
@@ -142,7 +148,13 @@ const Podcast = (props) => {
 
   // console.log('item', podcast_id)
 
-  const download = (item) => {
+  const download = (item, download = false) => {
+    // console.log(item.id);
+    // console.log(item.acf);
+    // console.log(item.channelName);
+    // return;
+    // musicdatafordownload
+    setFromDownload(download)
     const itemID = item?.acf?.id ? item?.acf?.id : item?.ID ? item?.ID : item?.id;
     // console.log(itemID);
     // return;
@@ -309,7 +321,37 @@ const Podcast = (props) => {
   //   setmusicdatafordownload(item)
   //   // downloadPodcast(item)s
   // }
-  console.log('downloadedPodcast', downloadedPodcast)
+  // console.log('downloadedPodcast', downloadedPodcast)
+  const getDownloadMusic = async () => {
+    const value = await AsyncStorage.getItem('musics')
+    const parseMusics = JSON.parse(value)
+    let courseName = parseMusics?.map(itemxx => {
+      return itemxx.ID
+    })
+    setdownloadedPodcastID(courseName)
+    setdownloadedPodcast(parseMusics)
+    // TrackPlayer.play()
+  }
+
+  useEffect(() => {
+    if (focus) {
+      let filteredArr = downloadedPodcast?.filter(value => {
+        return value?.ID !== undefined;
+      });
+      if (!filteredArr?.length) {
+        setModalVisible(false)
+      }
+
+    }
+  }, [downloadedPodcast])
+
+  useFocusEffect(
+    React.useCallback(() => {
+
+      return () => setModalVisible(false);
+    }, [])
+  );
+
   return (
     <View>
       <ListModals
@@ -318,25 +360,30 @@ const Podcast = (props) => {
         onPressClose={() => setModalVisible(false)}
         onPressaddTo={() => AddPodcastToLiabrary()}
         onClose={() => setModalVisible(false)}
-        onPressDownload={() => downloadPodcast()}
+        // onPressDownload={() => downloadPodcast()}
+        onPressDownload={() => {
+          downloadFile(musicdatafordownload.acf.link_podcast1, musicdatafordownload?.title?.rendered, musicdatafordownload.id, musicdatafordownload.acf.imagen_podcast1, musicdatafordownload?.channelName, getDownloadMusic)
+        }}
         onPressShare={() => onShare()}
         onPressRemoveDownload={() => RemoveDownload()}
         onPressRemove={() => RemovePodcastFromLiabrary()}
+        addRemoveLib={fromDownload}
       />
       <View style={styles.cardBox}>
         <Text style={{ fontSize: 20, color: Colors.primary, fontWeight: 'bold' }}>Your Downloads</Text>
-        {downloadedPodcast?.length == 0 || downloadedPodcast == null ?
+        {filteredArr?.length == 0 || filteredArr == null ?
           <Text style={{ fontSize: 16, color: Colors.primary, fontWeight: 'bold', marginVertical: '20%', textAlign: 'center' }}>No Podcasts In your Downloads !</Text>
           :
           downloadedPodcast?.map((item) => {
             console.log('item', item)
+            if (!item?.image || !item?.ID || !item.TITLE) return;
             return (
               <FeaturedCard
                 // onPressDownload={()=>downloadPodcast(item)}
                 textstyle={{ color: Colors.primary }}
                 headingText={{ color: 'grey' }}
                 timeText={{ color: 'grey' }}
-                onPressIcon={() => download(item)}
+                onPressIcon={() => download(item, true)}
                 onPress={() => trackResetAndNavgateDownload(item)}
                 purpleIcon={true}
                 channelName={item?.CHANNEL_NAME}
@@ -360,6 +407,7 @@ const Podcast = (props) => {
               <Text style={{ fontSize: 16, color: Colors.primary, fontWeight: 'bold', marginTop: '20%', textAlign: 'center' }}>No Podcasts In your Liabrary !</Text>
               :
               podCastData.map((item) => {
+                // console.log('lib item >>>>>>>>>>>>>', item?.acf?.link_podcast1);
                 return (
                   <FeaturedCard
                     onPressDownload={() => downloadPodcast(item)}
@@ -372,6 +420,8 @@ const Podcast = (props) => {
                     channelName={item.channelName}
                     podcastname={item.title.rendered}
                     image={item?.acf?.imagen_podcast1}
+                    link={item?.acf?.link_podcast1}
+                    id={item.id}
                   />
                 );
               })}

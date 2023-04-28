@@ -19,6 +19,9 @@ import Toast from 'react-native-simple-toast';
 const FeaturedCard = (props) => {
     const { language, downloadedPodcast, downloadedPodcastID, setdownloadedPodcastID, setdownloadedPodcast, isSignin } = useContext(AuthContext);
     // console.log('props.id',props.ID)
+    let filteredArr = downloadedPodcastID?.filter(value => {
+        return value !== null && value !== undefined;
+    });
 
     const getDownloadMusic = async () => {
         const value = await AsyncStorage.getItem('musics')
@@ -87,7 +90,7 @@ const FeaturedCard = (props) => {
                         size={25}
                     />
                 </TouchableOpacity>
-                {downloadedPodcastID?.includes(props.id) && props.id === props.id ?
+                {filteredArr?.includes(props.id) && props.id === props.id ?
                     <TouchableOpacity onPress={() => {
                         removeDownloadFile(props.id, getDownloadMusic)
                     }}>
@@ -102,9 +105,9 @@ const FeaturedCard = (props) => {
                     <>
                         {/* <TouchableOpacity onPress={props.onPressDownload}> */}
                         <TouchableOpacity onPress={() => {
-                            isSignin?
-                            downloadFile(props.link, props.podcastname, props.id, props.image, props.channelName ? props.channelName : "", getDownloadMusic):
-                            Toast.show('Login to use this feature', Toast.SHORT)
+                            isSignin ?
+                                downloadFile(props.link, props.podcastname, props.id, props.image, props.channelName ? props.channelName : "", getDownloadMusic) :
+                                Toast.show('Login to use this feature', Toast.SHORT)
                             // getDownloadMusic();
                         }}>
                             <Ionicons

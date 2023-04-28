@@ -6,7 +6,8 @@ import TrackPlayer from 'react-native-track-player';
 const removeDownloadFile = (
     id,
     getDownloadMusic = () => null,
-    callback = () => null
+    callback = () => null,
+    closeModal = () => null
 ) => {
     if (!id) return;
     callback();
@@ -25,6 +26,7 @@ const removeDownloadFile = (
 
                 Toast.show('Download Removed', Toast.LONG)
                 getDownloadMusic();
+                closeModal();
                 // TrackPlayer.pause();
             })
             .catch((error) => {
