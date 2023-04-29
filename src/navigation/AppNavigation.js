@@ -69,21 +69,22 @@ export const UserStack = ({ navigation }) => {
       </TouchableOpacity>
     ),
   };
+  const { language } = useContext(AuthContext);
 
   return (
     <MainStack.Navigator screenOptions={defaultStackNavOptions}>
 
-      <MainStack.Screen
+      {/* <MainStack.Screen
         name='tabs'
         component={AppNavigation}
         options={{ headerShown: false }}
-      />
+      /> */}
 
-      {/* <MainStack.Screen
-        name="Home"
+      <MainStack.Screen
+        name={language?.Home}
         component={Home}
         options={{ headerShown: false }}
-      /> */}
+      />
       <MainStack.Screen
         name="ChannelDetails"
         component={ChannelDetails}
@@ -173,6 +174,7 @@ export const AppNavigation = navigation => {
   const { language, selectedlang, setSelectedlang } = useContext(AuthContext);
 
   const defaultTabNavOptions = {
+    tabBarHideOnKeyboard: true,
     tabBarActiveTintColor: "#fff",
     tabBarInactiveTintColor: "#fff",
     tabBarActiveBackgroundColor: "#93bf1e",
@@ -191,7 +193,7 @@ export const AppNavigation = navigation => {
       screenOptions={{ ...defaultTabNavOptions }}>
       <Tab.Screen
         name={language?.Home}
-        component={Home}
+        component={UserStack}
         options={{
           headerShown: false,
           tabBarShowLabel: true,

@@ -12,7 +12,7 @@ const {language,setIsSignin,isSignin,selectedlang} = useContext(AuthContext);
 console.log('isSignin',isSignin)
   return (
     <NavigationContainer ref={_navigator}>
-      {selectedlang == '' ? <Auth /> :  isSignin == false ? <GuestStack /> : <UserStack /> }
+      {selectedlang == '' ? <Auth /> :  isSignin == false ? <GuestNavigation /> : <AppNavigation /> }
       {/* {selectedlang == '' && <Auth />}
       { !isSignin  && <GuestNavigation />}
       { isSignin  && <AppNavigation />} */}

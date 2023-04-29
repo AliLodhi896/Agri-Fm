@@ -67,20 +67,17 @@ export const GuestStack = ({ navigation }) => {
     ),
   };
 
+  const { language } = useContext(AuthContext);
+
+
   return (
     <MainStack.Navigator screenOptions={defaultStackNavOptions}>
 
       <MainStack.Screen
-        name='tabs'
-        component={GuestNavigation}
-        options={{ headerShown: false }}
-      />
-
-      {/* <MainStack.Screen
-        name="Home"
+        name={language?.Home}
         component={Home}
         options={{ headerShown: false }}
-      /> */}
+      />
       <MainStack.Screen
         name="ChannelDetails"
         component={ChannelDetails}
@@ -167,6 +164,7 @@ export const GuestNavigation = navigation => {
   const { language, selectedlang, setSelectedlang } = useContext(AuthContext);
 
   const defaultTabNavOptions = {
+    tabBarHideOnKeyboard: true,
     tabBarActiveTintColor: "#fff",
     tabBarInactiveTintColor: "#fff",
     tabBarActiveBackgroundColor: "#93bf1e",
@@ -181,16 +179,16 @@ export const GuestNavigation = navigation => {
   };
   return (
     <Tab.Navigator
-      initialRouteName="Home"
+      initialRouteName={language?.Home}
       screenOptions={{ ...defaultTabNavOptions }}>
       <Tab.Screen
         name={language?.Home}
-        component={Home}
+        component={GuestStack}
         options={{
           headerShown: false,
           tabBarShowLabel: true,
           tabBarVisible: true,
-          tabBarIcon: ({ focused, color, size }) => (
+          tabBarIcon: () => (
             <View style={{ marginBottom: -10 }}>
               <Image style={{ width: 25, height: 25 }} source={require('../assets/Images/home.png')} />
             </View>
@@ -205,7 +203,7 @@ export const GuestNavigation = navigation => {
           tabBarShowLabel: true,
           tabBarVisible: true,
 
-          tabBarIcon: ({ focused, color, size }) => (
+          tabBarIcon: () => (
             <View style={{ marginBottom: -10 }}>
               <Image style={{ width: 25, height: 25 }} source={require('../assets/Images/explore.png')} />
             </View>
@@ -219,7 +217,7 @@ export const GuestNavigation = navigation => {
           headerShown: false,
           tabBarShowLabel: true,
           tabBarVisible: true,
-          tabBarIcon: ({ focused, color, size }) => (
+          tabBarIcon: () => (
             <View style={{ marginBottom: -10 }}>
               <Image style={{ width: 30, height: 25 }} source={require('../assets/Images/heart.png')} />
             </View>
@@ -233,7 +231,7 @@ export const GuestNavigation = navigation => {
           headerShown: false,
           tabBarShowLabel: true,
           tabBarVisible: true,
-          tabBarIcon: ({ focused, color, size }) => (
+          tabBarIcon: () => (
             <View style={{ marginBottom: -10 }}>
               <Image style={{ width: 25, height: 25 }} source={require('../assets/Images/profile.png')} />
             </View>

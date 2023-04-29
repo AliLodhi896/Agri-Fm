@@ -8,6 +8,7 @@ import { onValue, ref } from 'firebase/database';
 import database from '../../../../firebaseConfig';
 import removeDownloadFile from '../../../constant/removeDownload';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import Toast from 'react-native-simple-toast';
 
 const ListModals = (props) => {
@@ -73,7 +74,12 @@ const ListModals = (props) => {
                             <Text style={{ color: Colors.primary, fontSize: 16 }}>
                                 {language?.GoToLibrary}
                             </Text>
-                            <Image style={{ width: '15%', height: 25 }} source={require('../../../assets/Images/asdsa.png')} />
+                            {/* <Ionicons
+                                name="ios-heart-outline"
+                                color={Colors.primary}
+                                size={25}
+                            /> */}
+                            <Image style={{ width: '15%', height: 25 }} resizeMode='contain' source={require('../../../assets/Images/heart1.png')} />
                         </TouchableOpacity>
                         <View style={{ height: 1, backgroundColor: Colors.primary, opacity: 0.5, marginTop: 15 }}></View>
 
