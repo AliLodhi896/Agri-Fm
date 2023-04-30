@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect, useCallback } from 'react'
-import { StyleSheet, View, Image, Text, ScrollView, Share } from "react-native"
+import { StyleSheet, View, Image, Text, ScrollView, Share, ActivityIndicator } from "react-native"
 import Header from "../../components/Header/Header";
 import Colors from "../../constant/Colors";
 import Toast from 'react-native-simple-toast';
@@ -99,7 +99,7 @@ const Music = ({ route }) => {
     }, []),
   );
   const setupPlayermusic = async () => {
-    await TrackPlayer.setupPlayer()
+    // await TrackPlayer.setupPlayer()
     await TrackPlayer.add([track])
     await TrackPlayer.updateOptions({
       stopWithApp: true,
@@ -266,7 +266,12 @@ const Music = ({ route }) => {
           <Image style={{ height: 32, width: 30 }} source={require('../../assets/Images/replay.png')} />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => toogle()}>
-          <AntDesign name={sate == 2 || sate == 0 ? "play" : "pause"} size={80} color={'white'} />
+          {
+            duration < 1 ?
+              <ActivityIndicator size={80} color="white" /> :
+              <AntDesign name={sate == State.Playing ? "play" : "pause"} size={80} color={'white'} />
+          }
+          {/* <AntDesign name={sate == 2 || sate == 0 ? "play" : "pause"} size={80} color={'white'} /> */}
         </TouchableOpacity>
         <TouchableOpacity onPress={() => forward()}>
           <Image style={{ height: 32, width: 30 }} source={require('../../assets/Images/replay1.png')} />

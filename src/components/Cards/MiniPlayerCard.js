@@ -21,7 +21,7 @@ import { useNavigation } from '@react-navigation/native';
 const MiniPlayerCard = (props) => {
   const { tracks, setSate, sate, trackForMiniPlayer } = useContext(AuthContext);
   const setupPlayermusic = async () => {
-    await TrackPlayer.setupPlayer()
+    // await TrackPlayer.setupPlayer()
     await TrackPlayer.add([tracks])
 
     await TrackPlayer.updateOptions({

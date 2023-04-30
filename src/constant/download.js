@@ -2,6 +2,7 @@ import { PermissionsAndroid } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-simple-toast';
 import RNFetchBlob from 'rn-fetch-blob';
+import RNFS from 'react-native-fs';
 
 const downloadFile = async (
     url,
@@ -11,6 +12,7 @@ const downloadFile = async (
     channelName,
     getDownloadMusic = () => null
 ) => {
+
     const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
         {
@@ -56,54 +58,99 @@ const downloadFile = async (
     const { config, fs } = RNFetchBlob;
     const downloads = fs.dirs.DownloadDir;
 
-    Toast.show('Download Started...', Toast.SHORT)
-    AsyncStorage.setItem('isDownloading', JSON.stringify(true));
+    RNFS.exists(`${downloads}/${fileName}.mp3`)
+        .then(async (exists) => {
 
-    return config({
-        fileCache: true,
-        addAndroidDownloads: {
-            useDownloadManager: true,
-            notification: true,
-            mediaScannable: true,
-            title: fileName,
-            mime: 'audio/mpeg',
-            path: `${downloads}/${fileName}.mp3`,
-        },
-    })
-        .fetch('GET', url)
-        .then(async () => {
-            console.log('File downloaded');
+            Toast.show('Download Started...', Toast.SHORT)
+            AsyncStorage.setItem('isDownloading', JSON.stringify(true));
 
-            Toast.show('Download Ended', Toast.LONG)
-            AsyncStorage.setItem('isDownloading', JSON.stringify(false));
+            if (exists) {
+                console.log('File exists!');
 
+                const newObject = {
+                    ID: id,
+                    TITLE: podcastname,
+                    image: image,
+                    LINK: `${downloads}/${fileName}.mp3`,
+                    CHANNEL_NAME: channelName ? channelName : ""
+                };
 
-            const newObject = {
-                ID: id,
-                TITLE: podcastname,
-                image: image,
-                LINK: `${downloads}/${fileName}.mp3`,
-                CHANNEL_NAME: channelName ? channelName : ""
-            };
+                let data = [];
 
-            let data = [];
+                if (previousData !== null) {
+                    data = JSON.parse(previousData);
+                    data.push(newObject);
+                    const dataString = JSON.stringify(data);
+                    await AsyncStorage.setItem('musics', dataString);
+                } else {
+                    data.push(newObject);
+                    const dataString = JSON.stringify(data);
+                    await AsyncStorage.setItem('musics', dataString);
+                }
+                console.log('File saved!');
 
-            if (previousData !== null) {
-                data = JSON.parse(previousData);
-                data.push(newObject);
-                const dataString = JSON.stringify(data);
-                await AsyncStorage.setItem('musics', dataString);
+                Toast.show('Download Ended', Toast.LONG)
+                AsyncStorage.setItem('isDownloading', JSON.stringify(false));
+
+                getDownloadMusic();
+
             } else {
-                data.push(newObject);
-                const dataString = JSON.stringify(data);
-                await AsyncStorage.setItem('musics', dataString);
+                console.log('File does not exist.');
+
+                return config({
+                    fileCache: true,
+                    addAndroidDownloads: {
+                        useDownloadManager: true,
+                        notification: true,
+                        mediaScannable: true,
+                        title: fileName,
+                        mime: 'audio/mpeg',
+                        path: `${downloads}/${fileName}.mp3`,
+                    },
+                })
+                    .fetch('GET', url)
+                    .then(async () => {
+                        console.log('File downloaded');
+
+                        Toast.show('Download Ended', Toast.LONG)
+                        AsyncStorage.setItem('isDownloading', JSON.stringify(false));
+
+
+                        const newObject = {
+                            ID: id,
+                            TITLE: podcastname,
+                            image: image,
+                            LINK: `${downloads}/${fileName}.mp3`,
+                            CHANNEL_NAME: channelName ? channelName : ""
+                        };
+
+                        let data = [];
+
+                        if (previousData !== null) {
+                            data = JSON.parse(previousData);
+                            data.push(newObject);
+                            const dataString = JSON.stringify(data);
+                            await AsyncStorage.setItem('musics', dataString);
+                        } else {
+                            data.push(newObject);
+                            const dataString = JSON.stringify(data);
+                            await AsyncStorage.setItem('musics', dataString);
+                        }
+
+
+                        getDownloadMusic();
+
+                    })
+                    .catch(error => {
+                        console.log('Error downloading file: ', error);
+
+                        Toast.show('Download Failed', Toast.LONG)
+                        AsyncStorage.setItem('isDownloading', JSON.stringify(false));
+                    });
             }
-
-            getDownloadMusic();
-
         })
         .catch(error => {
-            console.log('Error downloading file: ', error);
+            console.log('Error checking file availiblity: ', error);
 
             Toast.show('Download Failed', Toast.LONG)
             AsyncStorage.setItem('isDownloading', JSON.stringify(false));

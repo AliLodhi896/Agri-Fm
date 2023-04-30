@@ -92,10 +92,12 @@ const Music = ({ route }) => {
     useCallback(() => {
       setTracks(track)
       TrackPlayer.add([track])
+      TrackPlayer.play();
+
     }, []),
   );
   const setupPlayermusic = async () => {
-    await TrackPlayer.setupPlayer()
+    // await TrackPlayer.setupPlayer()
     await TrackPlayer.add([track])
     await TrackPlayer.updateOptions({
       stopWithApp: true,
@@ -136,10 +138,10 @@ const Music = ({ route }) => {
 
   useEffect(() => {
     setFirstMusicPlay(true);
-    setShowLoader(true);
-    setTimeout(() => {
-      setShowLoader(false);
-    }, 100);
+    // setShowLoader(true);
+    // setTimeout(() => {
+    //   setShowLoader(false);
+    // }, 100);
   }, [])
 
   const toogle = async (alwaysPause) => {
@@ -315,6 +317,16 @@ const Music = ({ route }) => {
     TrackPlayer.play()
   }
 
+  const getDownloadMusic1 = async () => {
+    const value = await AsyncStorage.getItem('musics')
+    const parseMusics = JSON.parse(value)
+    let courseName = parseMusics?.map(itemxx => {
+      return itemxx.ID
+    })
+    setdownloadedPodcastID(courseName)
+    setdownloadedPodcast(parseMusics)
+  }
+
   const downloadPodcast = async (item, channelName) => {
     // setloaderwhileLoader(true)
     const granted = await PermissionsAndroid.request(
@@ -463,7 +475,7 @@ const Music = ({ route }) => {
               downloadedPodcastID?.includes(podcastDetails.id) && podcastDetails.id === podcastDetails.id ? <>
                 <View style={{ marginTop: '5%', justifyContent: 'center', width: 80, justifyContent: 'center', alignItems: 'center' }}>
                   <TouchableOpacity onPress={() => {
-                    removeDownloadFile(podcastDetails.id, undefined, pauseTrack)
+                    removeDownloadFile(podcastDetails.id, getDownloadMusic1, pauseTrack)
                   }} style={{ alignItems: "center", justifyContent: "center", }}>
                     {/* <Image style={{ height: 27, width: 30 }} source={require('../assets/Images/downloadwhite.png')} /> */}
                     <Ionicons
@@ -506,9 +518,9 @@ const Music = ({ route }) => {
         </TouchableOpacity>
         <TouchableOpacity onPress={() => toogle()}>
           {
-            showLoader ?
+            duration < 1 ?
               <ActivityIndicator size={80} color="white" /> :
-              <AntDesign name={sate == State.Playing || route.params.pause ? "play" : "pause"} size={80} color={'white'} />
+              <AntDesign name={sate == State.Playing ? "play" : "pause"} size={80} color={'white'} />
           }
         </TouchableOpacity>
         <TouchableOpacity onPress={() => forward()}>

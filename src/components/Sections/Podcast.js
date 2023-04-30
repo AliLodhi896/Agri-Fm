@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { View, Text, ScrollView, StyleSheet, Image, TouchableOpacity, SafeAreaView, Share, PermissionsAndroid, ActivityIndicator } from 'react-native'
+import { View, Text, ScrollView, StyleSheet, Image, TouchableOpacity, SafeAreaView, Share, PermissionsAndroid, ActivityIndicator, Alert } from 'react-native'
 
 // import Constants
 import Colors from '../../constant/Colors';
@@ -28,6 +28,7 @@ import RNFetchBlob from 'rn-fetch-blob';
 import { onValue, ref, remove } from 'firebase/database';
 import database from '../../../firebaseConfig';
 import downloadFile from '../../constant/download';
+import removeDownloadFile from '../../constant/removeDownload';
 
 const Podcast = (props) => {
   const { UserData, setSate, setpodcast_id, podcast_id, setTracks, firstMusicPlay, downloadedPodcast, favoritePodcat_id, setfavoritePodcat_id, setdownloadedPodcastID, setdownloadedPodcast, downloadedPodcastID, language } = useContext(AuthContext);
@@ -132,17 +133,45 @@ const Podcast = (props) => {
   }
 
   const trackResetAndNavgateDownload = (item) => {
+    // console.log("🚀 ~ file: Podcast.js:136 ~ trackResetAndNavgateDownload ~ item:", item);
+    // return
     const itemID = item?.acf?.id ? item?.acf?.id : item?.ID ? item?.ID : item?.id;
 
-    TrackPlayer.reset();
-    setSate(3)
-    navigation.navigate('Music', {
-      podcastDetails: {
-        acf: { link_podcast1: item?.LINK, imagen_podcast1: item?.image },
-        id: itemID,
-        title: { rendered: item.TITLE },
-      }, Fromlibrary: false, pause: !firstMusicPlay ? true : false
-    });
+    RNFS.exists(item?.LINK)
+      .then(exists => {
+        if (exists) {
+
+          TrackPlayer.reset();
+          setSate(0)
+          navigation.navigate('Music', {
+            podcastDetails: {
+              acf: { link_podcast1: item?.LINK, imagen_podcast1: item?.image },
+              id: itemID,
+              title: { rendered: item.TITLE },
+            }, Fromlibrary: false, pause: !firstMusicPlay ? true : false
+          });
+
+        } else {
+          console.log('File does not exist.');
+
+          Alert.alert('File Not Found', 'Do you want to delete podcast?', [
+            {
+              text: 'Cancel',
+              onPress: () => console.log('Cancel Pressed'),
+              style: 'cancel',
+            },
+            { text: 'Delete', onPress: () => removeDownloadFile(itemID, getDownloadMusic) },
+          ]);
+
+        }
+
+      })
+      .catch(error => {
+        console.log(error);
+        Toast.show('Error parsing file try again. ', Toast.SHORT);
+      });
+
+
 
   }
 

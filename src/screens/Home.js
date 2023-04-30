@@ -43,7 +43,7 @@ import downloadFile from '../constant/download';
 const Home = () => {
 
 
-  const { setmusicdatafordownload, musicdatafordownload, firstMusicPlay, downloadedPodcast, setfavouritePodcasts, downloadedPodcastID, language, selectedlang, sate, setSate, UserData, setpodcast_id, podcast_id, setfavoritePodcat_id, setdownloadedPodcastID, setdownloadedPodcast } = useContext(AuthContext);
+  const { setmusicdatafordownload, settrackForMiniPlayer, setTracks, musicdatafordownload, firstMusicPlay, downloadedPodcast, setfavouritePodcasts, downloadedPodcastID, language, selectedlang, sate, setSate, UserData, setpodcast_id, podcast_id, setfavoritePodcat_id, setdownloadedPodcastID, setdownloadedPodcast } = useContext(AuthContext);
   const navigation = useNavigation();
   const [podCastData, setPodcastData] = useState([]);
   const [interest, setInterest] = useState([])
@@ -213,6 +213,21 @@ const Home = () => {
   };
 
   const trackResetAndNavgate = (item) => {
+    //   item.acf.link_podcast1 = "file:///storage/emulated/0/Download/Dr. Roselina Calci.mp3";
+
+    // setSate(3)
+    // const track = {
+    //   id: item?.id,
+    //   url: item?.acf?.link_podcast1,
+    //   title: item?.title?.rendered,
+    //   artist: 'deadmau5',
+    //   artwork: item?.acf?.imagen_podcast1,
+    //   duration: 166
+    // };
+    // setTracks(track)
+
+    // console.log("🚀 ~ file: Home.js:217 ~ trackResetAndNavgate ~ item:", item.acf.link_podcast1)
+
     TrackPlayer.reset();
     setSate(0)
     navigation.navigate('Music', { podcastDetails: item, Fromlibrary: false, pause: !firstMusicPlay ? true : false });
