@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, { useContext, useState } from 'react';
 import {
   View,
   Text,
@@ -15,19 +15,13 @@ import Colors from '../../constant/Colors';
 // import packages
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
+const placeholderimage = "https://sternbergclinic.com.au/wp-content/uploads/2020/03/placeholder.png";
 
-const InterestCard = props => {
-  console.log(props.img_intereses);
-  // props.checkFunc('"HellowWorld');
-  console.log(props.id, 'image');
+const InterestCard = (props) => {
   return (
     <TouchableOpacity
       onPress={props.onPress}
       style={[styles.mainBox1, props.mainStyle]}>
-      {/* <Image
-                        source={props.image}
-                        style={{width: '100%', height: '100%',borderRadius:10,opacity:0.5}}
-                    /> */}
       <Image
         style={{
           width: '100%',
@@ -35,7 +29,7 @@ const InterestCard = props => {
           borderRadius: 10,
           opacity: props.opacity ? 1 : 0.5,
         }}
-        source={{uri: props.img_intereses}}
+        source={{ uri: props.img_intereses ? props.img_intereses : placeholderimage }}
       />
       <View
         style={{
@@ -43,11 +37,11 @@ const InterestCard = props => {
           alignContent: 'center',
           justifyContent: 'center',
         }}>
-        <Text style={styles.textStyle}>{props.description}</Text>
+        <Text style={[styles.textStyle, props.textStyle]}>{props.description}</Text>
       </View>
     </TouchableOpacity>
   );
-
+}
 const styles = StyleSheet.create({
   mainBox1: {
     aspectRatio: 1 / 1,

@@ -26,26 +26,13 @@ import Dropdown from '../../components/Input/Dropdown';
 
 const UserData = () => {
   const route = useRoute();
-  console.log('AccountDetails', route.params);
-  // console.log(route.params.form, 'CheckFromAboveFinal');
   const navigation = useNavigation();
   const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
-  // const [registration, setRegistration] = useState({
-  //   Job: '',
-  //   Activity: '',
-  //   Language: '',
-  //   County: '',
-  // });
   const combineObject = {...UserdataObject, ...route.params.form};
   const [Jobs, setJob] = useState([{}]);
   const [Activity, setActivity] = useState([{}]);
   const [Language, setLanguage] = useState([{}]);
   const [Countries, setCountries] = useState([{}]);
-  // const [items, setItems] = useState([
-  //   {label: 'Male', value: 'male'},
-  //   {label: 'Female', value: 'female'},
-  //   {label: 'Others', value: 'others'},
-  // ]);
   const [ivalueJob, setIvalueJob] = useState(null);
   const [ivalueCountry, setIvalueCountry] = useState(null);
   const [ivalueActivity, setIvalueActivity] = useState(null);
@@ -57,6 +44,8 @@ const UserData = () => {
     County: ivalueCountry,
   };
 
+  console.log('language',selectedlang)
+
   const onSubmit = () => {
     combineObject.jobValue = ivalueJob;
     combineObject.country = ivalueCountry;
@@ -67,48 +56,77 @@ const UserData = () => {
     });
   };
 
-  useEffect(() => {
-    fetch(
-      'https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/cargo-app.php',
-    )
-      .then(res => res.json())
 
-      .then(data => {
-        console.log(data, 'Jobs'),
-          setJob(data.map(el => ({label: el.nombrees, value: el.z})));
+  const GetJObs = async data => {
+    try {
+      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/cargo-app-end.php?lang=${selectedlang}`;
+      const response = await fetch(baseUrl, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+        },
       });
-  }, []);
-  useEffect(() => {
-    fetch(
-      'https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/actividad-app.php',
-    )
-      .then(res => res.json())
+      const responseData = await response.json();
+      if(responseData){
+        setJob(responseData?.map(el => ({label: el.name, value: el.id})));
+      }else{
+          
+      }
+    } catch (error) {
+      console.log('Network Request Failed=> ', error);
+    }
+  };
 
-      .then(data => {
-        console.log(data, 'Jobs'),
-          setActivity(data.map(el => ({label: el.nombrees, value: el.id})));
+  const GetActivity = async data => {
+    try {
+      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/actividad-app-end.php?lang=${selectedlang}`;
+      const response = await fetch(baseUrl, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+        },
       });
-  }, []);
-  useEffect(() => {
-    fetch(
-      'https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/idioma-app.php',
-    )
-      .then(res => res.json())
+      const responseData = await response.json();
+      console.log('response-------->',responseData)
+      if(responseData){
+        setActivity(responseData?.map(el => ({label: el.name, value: el.id})));
+      }else{
+          
+      }
+    } catch (error) {
+      console.log('Network Request Failed=> ', error);
+    }
+  };
 
-      .then(data => {
-        console.log(data, 'Jobs'),
-          setLanguage(
-            data.map(el => ({
-              id: el.id,
-              label: el.nombrees,
-              value: el.id,
-            })),
-          );
+  const GetLanguages = async data => {
+    try {
+      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/idioma-app-end.php?lang=${selectedlang}`;
+      const response = await fetch(baseUrl, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+        },
       });
+      const responseData = await response.json();
+      if(responseData){
+        setLanguage(responseData?.map(el => ({label: el.name, value: el.id})));
+      }else{
+          
+      }
+    } catch (error) {
+      console.log('Network Request Failed=> ', error);
+    }
+  };
+
+  useEffect(() => {
+   GetJObs();
+   GetActivity();
+   GetLanguages();
   }, []);
+
+
   useEffect(
     () => {
-      console.log(ivaluelanguage, 'checkLanguage');
       if (ivaluelanguage === 'Português') {
         fetch(
           'https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/country-app-pt.php',
@@ -116,7 +134,6 @@ const UserData = () => {
           .then(res => res.json())
 
           .then(data => {
-            console.log(data, 'Jobs'),
               setCountries(
                 data.map(el => ({
                   id: el.id,
@@ -132,7 +149,6 @@ const UserData = () => {
           .then(res => res.json())
 
           .then(data => {
-            console.log(data, 'Jobs'),
               setCountries(
                 data.map(el => ({
                   id: el.id,
@@ -148,7 +164,6 @@ const UserData = () => {
           .then(res => res.json())
 
           .then(data => {
-            console.log(data, 'Jobs'),
               setCountries(
                 data.map(el => ({
                   id: el.id,
@@ -179,6 +194,7 @@ const UserData = () => {
         />
       </View>
       <View style={{marginVertical: 30, marginHorizontal: 20}}>
+        <Text style={{fontSize:16,fontWeight:'bold',marginLeft:30,marginBottom:-20}}>Select Job : {ivalueJob}</Text>
         <Dropdown
           searchable={true}
           items={Jobs}
@@ -188,6 +204,7 @@ const UserData = () => {
           zIndex={998}
           placeholder={language?.ChooseYourJob}
         />
+        <Text style={{fontSize:16,fontWeight:'bold',marginLeft:30,marginBottom:-20}}>Select Activity : {ivalueActivity}</Text>
         <Dropdown
           // searchable={true}
           items={Activity}
@@ -197,6 +214,8 @@ const UserData = () => {
           zIndex={998}
           placeholder={language?.ChooseYourActivity}
         />
+        <Text style={{fontSize:16,fontWeight:'bold',marginLeft:30,marginBottom:-20}}>Select Language : {ivaluelanguage}</Text>
+
         <Dropdown
           searchable={true}
           items={Language}
@@ -206,6 +225,8 @@ const UserData = () => {
           zIndex={998}
           placeholder={language?.ChooseYourLanguage}
         />
+        <Text style={{fontSize:16,fontWeight:'bold',marginLeft:30,marginBottom:-20}}>Select Countries : {ivalueCountry}</Text>
+
         <Dropdown
           searchable={true}
           items={Countries}

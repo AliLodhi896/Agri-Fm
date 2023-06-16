@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext,useCallback,useEffect} from 'react';
 import {
   StyleSheet,
   View,
@@ -10,6 +10,8 @@ import {
 } from 'react-native';
 import Header from '../components/Header/Header';
 import Colors from '../constant/Colors';
+import {useNavigation,useFocusEffect} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // ====================== icons ====================
 import Input from '../components/Input/Input';
@@ -17,9 +19,11 @@ import CommonButton from '../components/Buttons/CommonButton';
 import {AuthContext} from '../context/Context';
 import {useForm} from 'react-hook-form';
 import { base_url } from '../constant/Url';
+import Toast from 'react-native-simple-toast';
+import Dropdown from '../components/Input/Dropdown';
 
 const EditProfile = () => {
-  const {UserData} = useContext(AuthContext);
+  const {UserData,setUserData,lang,setPhoneNumber,phoneNumber} = useContext(AuthContext);
   const {
     control,
     register,
@@ -28,65 +32,158 @@ const EditProfile = () => {
   } = useForm({
     mode: 'all',
     defaultValues: {
-      actual_name: UserData.nombre,
-      surname: UserData.apellidos,
-      ActualCompany: UserData.nombre,
-      ActualMobilePhone: UserData.nombre,
-      NewJob: UserData.cargo,
-      NewActivity: UserData.actividad,
-      NewLanguage: UserData.idioma,
-      NewCountry: UserData.nombre,
+      actual_name: UserData[0]?.nombre,
+      surname: UserData[0]?.apellidos,
+      ActualCompany: UserData[0]?.empresa,
+      ActualMobilePhone: UserData[0]?.movil,
+      NewJob: UserData[0]?.cargo,
+      NewActivity: UserData[0]?.actividad,
+      NewLanguage: UserData[0]?.idioma == 1 ? "Brazil" : UserData?.idioma == 2 ? "Spain" : "English",
+      NewCountry: UserData[0]?.nombre,
     },
   });
+    const navigation = useNavigation();
+    const json_Empresa = JSON.stringify(UserData[0]?.empresa)
 
-  const onSubmit = async data => {
-    const {
-      ActualCompany,
-      actual_name,
-      ActualMobilePhone,
-      surname,
-      NewActivity,
-      NewCountry,
-      NewJob,
-      NewLanguage,
-    } = data;
-    setLoading(true);
-    try {
-      let baseUrl = `${base_url}/ajax/editprofile-app.php`;
 
-      const response = await fetch(baseUrl, {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-        },
-        body: JSON.stringify({
-          name: Name,
-          lastname: Surname,
-          codltf: '34',
-          telefono: Phone,
-          password: password,
-          email: Email,
-          country: country,
-          NombreEmpresa: Company,
-          actividad: activity,
-          cargo: jobValue,
-          espescies: selectedSpecies.toString(),
-          detalles: selectedSpeciesDetail.toString(),
-          idioma: lang,
-        }),
-      });
-
-      const responseData = await response.json();
-
-      setLoading(false);
-      //   navigation.navigate('Home');
-    } catch (error) {
-      console.log('error => ', error);
-      setLoading(false);
-      //
-      //
+   const UpdateUser = async data => {
+  try {
+    let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/editprofile-app.php?id_user=${UserData[0]?.user}&lastname_user=${data?.surname}&name_user=${data?.actual_name}&empresa=${json_Empresa}&cargo=1&actividad=1&idioma=1&country=2&phone=${data?.ActualMobilePhone}`;
+    const response = await fetch(baseUrl, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+      },
+    });
+    const response_array = []
+    const responseData = await response.json();
+    response_array.push(responseData)
+    if(response_array[0]?.user === null){
+      Toast.show('User ID not found !', Toast.LONG);
+    }else{
+        const jsonValue = JSON.stringify(response_array);
+        await AsyncStorage.setItem('userDetails',jsonValue)
+        const value = await AsyncStorage.getItem('userDetails')
+        const parseUserDetails = JSON.parse(value)
+        setPhoneNumber(data?.ActualMobilePhone)
+        if(parseUserDetails.length !== 0)
+        {
+          setUserData(parseUserDetails)
+        }
+        Toast.show('Profile has been updated sucessfully', Toast.LONG);
+        navigation.navigate('Home');
     }
-  };
+
+  } catch (error) {
+    console.log('error => ', error);
+  }
+};
+
+const [Jobs, setJob] = useState([{}]);
+const [Activity, setActivity] = useState([{}]);
+const [Language, setLanguage] = useState([{}]);
+const [Countries, setCountries] = useState([{}]);
+const [ivalueJob, setIvalueJob] = useState(null);
+const [ivalueCountry, setIvalueCountry] = useState(null);
+const [ivalueActivity, setIvalueActivity] = useState(null);
+const [ivaluelanguage, setIvalueLanguage] = useState(null);
+useEffect(() => {
+  fetch(
+    'https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/cargo-app.php',
+  )
+    .then(res => res.json())
+
+    .then(data => {
+        setJob(data.map(el => ({label: el.nombrees, value: el.z})));
+    });
+}, []);
+useEffect(() => {
+  fetch(
+    'https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/actividad-app.php',
+  )
+    .then(res => res.json())
+
+    .then(data => {
+        setActivity(data.map(el => ({label: el.nombrees, value: el.id})));
+    });
+}, []);
+useEffect(() => {
+  fetch(
+    'https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/idioma-app.php',
+  )
+    .then(res => res.json())
+
+    .then(data => {
+        setLanguage(
+          data.map(el => ({
+            id: el.id,
+            label: el.nombrees,
+            value: el.id,
+          })),
+        );
+    });
+}, []);
+useEffect(
+  () => {
+    if (ivaluelanguage === 'Português') {
+      fetch(
+        'https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/country-app-pt.php',
+      )
+        .then(res => res.json())
+
+        .then(data => {
+            setCountries(
+              data.map(el => ({
+                id: el.id,
+                label: el.nombrees,
+                value: el.id,
+              })),
+            );
+        });
+    } else if (ivaluelanguage === 'Espanhol') {
+      fetch(
+        'https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/country-app.php',
+      )
+        .then(res => res.json())
+
+        .then(data => {
+            setCountries(
+              data.map(el => ({
+                id: el.id,
+                label: el.nombrees,
+                value: el.id,
+              })),
+            );
+        });
+    } else {
+      fetch(
+        'https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/country-app-es.php',
+      )
+        .then(res => res.json())
+
+        .then(data => {
+            setCountries(
+              data.map(el => ({
+                id: el.id,
+                label: el.nombrees,
+                value: el.id,
+              })),
+            );
+        });
+    }
+  },
+  [ivaluelanguage],
+  [],
+);
+
+
+
+
+
+
+
+
+
   const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
   return (
     <ScrollView style={styles.mainBox}>
@@ -149,56 +246,46 @@ const EditProfile = () => {
             * {errors.ActualMobilePhone.message}
           </Text>
         )}
-        <Input
-          name="NewJob"
-          control={control}
-          rules={{
-            required: 'New Job is required',
-          }}
-          placeholder={language?.NewJob}
+      <View style={{marginHorizontal: 40}}>
+        <Dropdown
+          searchable={true}
+          items={Jobs}
+          setItems={setJob}
+          value={ivalueJob}
+          setValue={setIvalueJob}
+          zIndex={998}
+          placeholder={language?.ChooseYourJob}
         />
-        {errors.NewJob && (
-          <Text style={styles.errormessage}>* {errors.NewJob.message}</Text>
-        )}
-        <Input
-          name="NewActivity"
-          control={control}
-          rules={{
-            required: 'New Activity is required',
-          }}
-          placeholder={language?.NewActivity}
+        <Dropdown
+          // searchable={true}
+          items={Activity}
+          setItems={setActivity}
+          value={ivalueActivity}
+          setValue={setIvalueActivity}
+          zIndex={998}
+          placeholder={language?.ChooseYourActivity}
         />
-        {errors.NewActivity && (
-          <Text style={styles.errormessage}>
-            * {errors.NewActivity.message}
-          </Text>
-        )}
-        <Input
-          name="NewLanguage"
-          control={control}
-          rules={{
-            required: 'New Language is required',
-          }}
-          placeholder={language?.NewLanguage}
+        <Dropdown
+          searchable={true}
+          items={Language}
+          setItems={setLanguage}
+          value={ivaluelanguage}
+          setValue={setIvalueLanguage}
+          zIndex={998}
+          placeholder={language?.ChooseYourLanguage}
         />
-        {errors.NewLanguage && (
-          <Text style={styles.errormessage}>
-            * {errors.NewLanguage.message}
-          </Text>
-        )}
-        <Input
-          name="NewCountry"
-          control={control}
-          rules={{
-            required: 'New Country is required',
-          }}
-          placeholder={language?.NewCountry}
+        <Dropdown
+          searchable={true}
+          items={Countries}
+          setItems={setCountries}
+          value={ivalueCountry}
+          setValue={setIvalueCountry}
+          zIndex={998}
+          placeholder={language?.ChooseYourCountry}
         />
-        {errors.NewCountry && (
-          <Text style={styles.errormessage}>* {errors.NewCountry.message}</Text>
-        )}
+      </View>
         <View style={{marginVertical: 30}}>
-          <CommonButton green={true} title={language?.Update} />
+          <CommonButton green={true} title={language?.Update} onPress={handleSubmit(UpdateUser)} />
           <Text
             style={{
               marginTop: 20,
@@ -207,7 +294,7 @@ const EditProfile = () => {
               color: 'white',
               fontWeight: 'bold',
             }}>
-            Cancel
+            {language?.cancel}
           </Text>
         </View>
       </View>

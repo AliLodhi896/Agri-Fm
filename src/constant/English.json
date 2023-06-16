@@ -16,15 +16,20 @@
     "CreateProfile": "Create Profile",
     "TrendingInterest": "Trending Interest",
     "seeAll": "See All",
+    "passRecovery": "Password Recovery",
 
 
     "ExploreOurPodcast": "Explore our podcast",
     "Interests": "Interests",
+    "SelectedJob": "Selected Job",
 
     "Podcasts": "Podcasts",
     "Channels": "Channels",
+    "Filter": "Filter",
     "Play": "Play",
-
+    "closesession": "Close Session",
+    "Cancel": "Cancel",
+"ForgotPassword":"Forgot Password",
     "Welcome": "Welcome",
     "Mobile": "Mobile",
     "Company": "Company",
@@ -39,6 +44,7 @@
 
     "Download": "Download",
     "AddToMyLibrary": "Add to my library",
+    "MyLibrary": "My library",
 
     "Name": "Name",
     "Surname": "Surname",
@@ -47,12 +53,13 @@
 
     "YourEmail": "Your Email",
     "YourPassword": "Your Password",
+    "VerifyPassword": "Verify Password",
 
     "ChooseYourJob": "Choose your job",
     "ChooseYourActivity": "Choose your activity",
     "ChooseYourLanguage": "Choose your language",
     "ChooseYourCountry": "Choose your country",
-    
+    "YourLiabrary":"Your Library",
     "SelectYourSpecies": "Select Your Species",
     "SelectYourSpeciesDetails": "Select Your Species Details",
 
@@ -78,7 +85,19 @@
     "Home": "Home",
     "Explore": "Explore",
     "Library": "Library",
-    "MyAgriFm": "MyAgriFm"
+    "Account": "Account",
+    "MyAgriFm": "Register",
+    "UnFollow": "UnFollow",
+    "RemoveFromLibrary":"Remove from Library",
+    "removeDownload" : "Remove from Downloads",
+    "Youarelistening" : "You are listening",
+    "Biosecurity": "Biosecurity",
+    "Welfare": "Welfare",
+    "YourInterest": "Your Interest",
+    "channelofInterest":"Channel of Interest",
+    "RelatedPodcast":"Related Podcast",
+
+    "registerationError": "To use this function you must register or log in with your email"
 
 
 

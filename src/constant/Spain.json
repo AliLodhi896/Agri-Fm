@@ -6,25 +6,27 @@
     "Nutrition": "Nutrición",
     "Aqua": "Agua",
     "LastChannels": "Últimos Canales",
-    "FeaturedPodcasts": "Podcasts Destacados",
+    "FeaturedPodcasts": "Lo más destacado",
     "GoToLibrary": "Ir a la Biblioteca",
     "DownloadPodcast": "Descargar Podcast",
-    "Share": "Cuota",
+    "Share": "Share",
     "AddToLibrary": "Agregar a la Biblioteca",
     "FeaturedChannels": "Canales Destacados",
     "CreateChannel": "Crear Canal",
     "CreateProfile": "Crear Perfil",
     "TrendingInterest": "Tendencia de Interés",
     "seeAll": "ver todo",
+    "passRecovery": "Recuperacion de Contrasena",
 
-    "ExploreOurPodcast": "Explora nuestro podcast",
+    "ExploreOurPodcast": "Explorar podcasts",
     "Interests": "Intereses",
 
     "Podcasts": "Podcasts",
     "Channels": "Canales",
-    "Play": "Jugar",
+    "Filter": "Filtros",
+    "Play": "Escuchar",
 
-    "Welcome": "Welcome",
+    "Welcome": "Bienvenido",
     "Mobile": "Móvil",
     "Company": "Empresa",
     "Job": "Trabajo",
@@ -37,14 +39,18 @@
 
     "Download": "Descargar",
     "AddToMyLibrary": "Añadir a mi librería",
+    "MyLibrary": "mi biblioteca",
+    "closesession": "Cerrar sesión",
+    "Cancel": "Cerrar",
 
     "Name": "Nombre",
     "Surname": "Apellido",
     "Phone": "Teléfono",
-    "Next":  "Próximo",
+    "Next":  "Siguiente",
 
-    "YourEmail": "Tu correo electrónico",
+    "YourEmail": "Su email",
     "YourPassword": "Tu Contraseña",
+    "VerifyPassword": "Verificar contraseña",
 
     "ChooseYourJob": "Elige tu trabajo",
     "ChooseYourActivity": "Elige tu actividad",
@@ -60,9 +66,10 @@
     "GoBack": "Regresa",
 
     "Register": "Registro",
-    "Login": "Acceso",
+    "Login": "Entrar",
     "Follow": "Seguir",
-
+    "ForgotPassword": "¿Ha olvidado su contraseña? Restablece contraseña",
+    "YourLiabrary":"Tu biblioteca",
     "ActualName": "Nombre Real",
     "ActualSurname": "Apellido Real",
     "ActualCompany": "Empresa Real",
@@ -71,13 +78,25 @@
     "NewActivity": "Nueva actividad",
     "NewLanguage": "Nuevo Idioma",
     "NewCountry": "Nuevo País",
-    "Update": "actualizar",
-
+    "Update": "atualizar",
+    "Youarelistening" : "Estás escuchando",
     
 
     "Home": "Casa",
     "Explore": "Explorar",
     "Library": "Biblioteca",
-    "MyAgriFm": "MiagriFm"
+    "Account": "cuenta",
+    "MyAgriFm": "Registro",
+    "UnFollow": "dejar de seguir",
+    "RemoveFromLibrary":"Eliminar de la biblioteca",
+    "removeDownload" : "Quitar de Descargas",
+    "Biosecurity": "Bioseguridad",
+    "Welfare": "Bienestar",
+    "YourInterest": "Tu interés",
+    "channelofInterest":"Canales de su interés",
+    "RelatedPodcast":"Podcasts relacionados",
+
+
+    "registerationError": "Para utilizar esta función debe registrarse o iniciar sesión con su correo"
 
 }

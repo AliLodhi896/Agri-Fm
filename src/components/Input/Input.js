@@ -29,6 +29,7 @@ const Input = forwardRef((props, ref) => {
         autoComplete={props.autoComplete}
         editable={props.editable}
         textAlignVertical={props.textAlignVertical}
+        autoCapitalize={props.autoCapitalize}
       />
     </View>
   );

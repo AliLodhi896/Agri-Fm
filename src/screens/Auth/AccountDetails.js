@@ -8,18 +8,13 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import SocialModal from '../../components/Cards/Modals/SocialModal';
 import Header from '../../components/Header/Header';
 import Colors from '../../constant/Colors';
 
 // ====================== icons ====================
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import WhiteButton from '../../components/Buttons/WhiteButton';
 import Input from '../../components/Input/Input';
 import CommonButton from '../../components/Buttons/CommonButton';
 import {useNavigation} from '@react-navigation/native';
-import CommonBack from '../../components/CommonBack';
 import {AuthContext} from '../../context/Context';
 import {useForm} from 'react-hook-form';
 import {useRoute} from '@react-navigation/native';
@@ -35,6 +30,7 @@ const AccountDetails = () => {
     Phone: '',
   });
   const combineObject = {...registration, ...route.params.password};
+  console.log('route=======>',route.params.email)
   const {
     control,
     register,
@@ -43,7 +39,9 @@ const AccountDetails = () => {
   } = useForm({mode: 'all'});
 
   const onSubmit = data => {
-    data.password = route.params.password.password;
+    data.password = route.params.password;
+    data.email = route.params.email;
+    console.log('email',data?.email)
     navigation.navigate('UserData', {form: data});
   };
 
@@ -90,20 +88,7 @@ const AccountDetails = () => {
         {errors.Surname && (
           <Text style={styles.errormessage}>* {errors.Surname.message}</Text>
         )}
-
-        <Input
-          name="Email"
-          control={control}
-          // style={[styles.input, styles.text]}
-          // onChangeText={(username)=>{setRegistration(prev => ({...prev, Surname: username})) }}
-          rules={{
-            required: 'Surname is required',
-          }}
-          placeholder={language?.YourEmail}
-        />
-        {errors.Email && (
-          <Text style={styles.errormessage}>* {errors.Email.message}</Text>
-        )}
+        
         <Input
           name="Company"
           control={control}
@@ -129,6 +114,7 @@ const AccountDetails = () => {
           // onChangeText={username => {
           //   setRegistration(prev => ({...prev, Phone: username}));
           // }}
+          keyboardType="number-pad"
           placeholder={language?.Phone}
         />
         {errors.Phone && (

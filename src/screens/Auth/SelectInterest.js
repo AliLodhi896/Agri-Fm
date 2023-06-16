@@ -18,8 +18,9 @@ import {useNavigation} from '@react-navigation/native';
 import {AuthContext} from '../../context/Context';
 import {base_url} from '../../constant/Url';
 
+
 const SelectInterest = () => {
-  const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
+  const {language, selectedlang, setSelectedlang,setUserData,UserData,setIsSignin,isSignin} = useContext(AuthContext);
   const [interest, setInterest] = useState([]);
   const [check, setCheck] = useState('');
   const [selectedIntrest, setSelectedIntrest] = useState([]);
@@ -35,14 +36,18 @@ const SelectInterest = () => {
       id: 3,
     },
   ];
+  console.log('isSignin',isSignin)
   const navigation = useNavigation();
   useEffect(() => {
+    setLoading(true);
     fetch('https://socialagri.com/agriFM/wp-json/wp/v2/intereses/')
       .then(res => res.json())
 
       .then(data => {
         setInterest(data.length == 0 ? undefined || null : data);
       });
+      setLoading(false);
+
   }, []);
 
   const _selectIntrest = id => {
@@ -58,25 +63,24 @@ const SelectInterest = () => {
   };
 
   const onSubmit = async data => {
+    setIsSignin(true)
+
     setLoading(true);
     try {
       let baseUrl = `${base_url}/ajax/intereses-app.php?id_user=22301&intereses=${selectedIntrest.toString()}`;
       const response = await fetch(baseUrl, {
-        method: 'GET',
+        method: 'POST',
         headers: {
           Accept: 'application/json',
         },
       });
       const responseData = await response.json();
-      console.log('responseData', responseData);
-
+      if(responseData){
+      }
       setLoading(false);
-      //   navigation.navigate('Home');
     } catch (error) {
       console.log('error => ', error);
       setLoading(false);
-      //
-      //
     }
   };
 

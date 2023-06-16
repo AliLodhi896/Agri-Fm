@@ -8,12 +8,12 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import SocialModal from '../../components/Cards/Modals/SocialModal';
 import Header from '../../components/Header/Header';
 import Colors from '../../constant/Colors';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import {useRoute} from '@react-navigation/native';
 
+import Toast from 'react-native-simple-toast';
 // ====================== icons ====================
 
 import CheckBoxWithLable from '../../components/CheckBox/CheckboxWithLable';
@@ -25,10 +25,9 @@ import {base_url} from '../../constant/Url';
 
 const ProfessionalDatas = () => {
   const route = useRoute();
-  console.log(route.params.value, route.params.updatedform, 'testing <');
 
   const navigation = useNavigation();
-  const {language, selectedlang, setSelectedlang} = useContext(AuthContext);
+  const {language, selectedlang, setSelectedlang,setUserData,UserData,setIsSignin} = useContext(AuthContext);
   const [selectSpecies, setSelectSpecies] = useState(false);
   const [Species, setSpecies] = useState([{}]);
   const [DetailSpecies, setDetailSpecies] = useState([{}]);
@@ -37,39 +36,57 @@ const ProfessionalDatas = () => {
 
   const [selectedSpecies, setSelectedSpecies] = useState([]);
   const [selectedSpeciesDetail, setSelectedSpeciesDetail] = useState([]);
+  const [selectedSpeciesName, setSelectedSpeciesName] = useState([]);
+  const [selectedSpeciesDetailName, setSelectedSpeciesDetailName] = useState([]);
 
-  useEffect(() => {
-    fetch(
-      'https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/especies-app.php',
-    )
-      .then(res => res.json())
-
-      .then(data => {
-        console.log(data, 'Jobs'), setSpecies(data);
+  const GetSpecies = async data => {
+    try {
+      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/especies-app-end.php?lang=${selectedlang}`;
+      const response = await fetch(baseUrl, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+        },
       });
-  }, []);
-  useEffect(() => {
-    fetch(
-      'https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/animals-app.php',
-    )
-      .then(res => res.json())
-
-      .then(data => {
-        console.log(data, 'Jobs'), setDetailSpecies(data);
-      });
-  }, []);
-  const fetchData = () => {
-    return fetch(
-      'https://socialagri.com/agriFM/wpcontent/themes/agriFM/laptop/ajax/registroapp.php',
-    )
-      .then(response => response.json())
-      .then(data => {
-        console.log(data, 'CheckResult');
-      })
-      .catch(err => {
-        console.log(err, 'API Failed');
-      });
+      const responseData = await response.json();
+      if(responseData){
+        setSpecies(responseData);
+      }else{
+          
+      }
+    } catch (error) {
+      console.log('Network Request Failed=> ', error);
+    }
   };
+
+  const GetSpeciesDetail = async data => {
+    try {
+      let baseUrl = `https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/animals-app-end.php?lang=${selectedlang}`;
+      const response = await fetch(baseUrl, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+      const responseData = await response.json();
+      if(responseData){
+        setDetailSpecies(responseData);
+      }else{
+          
+      }
+    } catch (error) {
+      console.log('Network Request Failed=> ', error);
+    }
+  };
+  
+
+  useEffect(() => {
+    GetSpecies()
+    GetSpeciesDetail()
+  }, []);
+
+
+
 
   const onSubmit = async data => {
     const {
@@ -82,82 +99,92 @@ const ProfessionalDatas = () => {
       jobValue,
       lang,
       password,
-      Email,
+      email,
     } = route.params.updatedform;
     setLoading(true);
-    try {
-      let baseUrl = `${base_url}/ajax/registroapp.php`;
+    var myHeaders = new Headers();
+    myHeaders.append("USPTO-API-KEY", "i5P2hLSjYRREYNt7NO3rzZJYCrqZDIcH");
+    myHeaders.append("Content-Type", "application/json");
+    
+    var raw = JSON.stringify({
+          'name': Name,
+          'lastname': Surname,
+          'codltf': '34',
+          'telefono': Phone,
+          'password': password,
+          'email': email,
+          'country': country,
+          'NombreEspresa': Company,
+          'actividad': activity,
+          'cargo': jobValue,
+          'especies': selectedSpecies.toString(),
+          'detalles': selectedSpeciesDetail.toString(),
+          'idioma': lang,
+    });
+    
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+    
+    fetch("https://socialagri.com/agriFM/wp-content/themes/agriFM/laptop/ajax/registroapp-end.php", requestOptions)
+      .then(response => response.text())
+      .then(result => 
+        {console.log('result----------------->',result)
+          if(result == 'Email ya registrado'){
+          Toast.show('Email already registered', Toast.LONG);
+          navigation.navigate('LoginEmail');
+        }else{
+          setUserData(result);
+          console.log('result',result)
+          Toast.show('Registered successfully', Toast.LONG);
+          // setIsSignin(true)
+          // navigation.navigate('SelectInterest');
+          // console.log('else result->',result)
+        }}
+        )
+      .catch(error => console.log('error', error));
+    setLoading(false);
 
-      const response = await fetch(baseUrl, {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-        },
-        body: JSON.stringify({
-          name: Name,
-          lastname: Surname,
-          codltf: '34',
-          telefono: Phone,
-          password: password,
-          email: Email,
-          country: country,
-          NombreEmpresa: Company,
-          actividad: activity,
-          cargo: jobValue,
-          espescies: selectedSpecies.toString(),
-          detalles: selectedSpeciesDetail.toString(),
-          idioma: lang,
-        }),
-      });
 
-      const responseData = await response.json();
 
-      setLoading(false);
-      //   navigation.navigate('Home');
-    } catch (error) {
-      console.log('error => ', error);
-      setLoading(false);
-      //
-      //
-    }
   };
 
-  console.log('tsting 123 => ', route.params.updatedform);
 
-  const object = {
-    name: 'Ayan',
-    lastname: 'Ahmed',
-    codltf: '34',
-    telefono: '66666666',
-    password: 'testttt',
-    email: 'ayan@gmail.com',
-    country: '92',
-    NombreEmpresa: 'Grupo',
-    actividad: '12',
-    cargo: '2',
-    espescies: '1,2',
-    detalles: '8,9',
-    idioma: '1',
-  };
-
-  const _selectSpecies = id => {
+  const _selectSpecies = itemx => {
+    console.log('itemxxx',itemx)
     const _input = [...selectedSpecies];
-    if (_input.includes(id)) {
-      const newarray = _input.filter((item, index) => item !== id);
+    const _names = [...selectedSpeciesName]
+    if (_input.includes(itemx?.id)) {
+      const newarray = _input.filter((item, index) => item !== itemx?.id);
+      const namearray = _names.filter((item, index) => item !== itemx?.nombrees);
+      setSelectedSpeciesName(namearray)
       setSelectedSpecies(newarray);
     } else {
-      _input.push(id);
+      _input.push(itemx?.id);
+      _names.push(itemx?.nombrees)
       setSelectedSpecies(_input);
+      setSelectedSpeciesName(_names)
     }
   };
-
-  const _selectSpeciesDetails = id => {
+  // selectedSpeciesDetailName
+  // setSelectedSpeciesDetailName
+  const _selectSpeciesDetails = itemx => {
     const _input = [...selectedSpeciesDetail];
-    if (_input.includes(id)) {
-      const newarray = _input.filter((item, index) => item !== id);
+    const _names = [...selectedSpeciesDetailName];
+
+    if (_input.includes(itemx?.id)) {
+      const newarray = _input.filter((item, index) => item !== itemx?.id);
+      const namearray = _names.filter((item, index) => item !== itemx?.id);
+
       setSelectedSpeciesDetail(newarray);
+      setSelectedSpeciesDetailName(namearray)
     } else {
-      _input.push(id);
+      _input.push(itemx?.id);
+      _names.push(itemx?.nombrees)
+      setSelectedSpeciesDetailName(_names)
       setSelectedSpeciesDetail(_input);
     }
   };
@@ -169,7 +196,7 @@ const ProfessionalDatas = () => {
         textStyle={{color: Colors.primary, fontWeight: 'Bold'}}
         backgroundColor={'white'}
         icon={true}
-        title={'Change Production'}
+        title={'Select Interest'}
       />
       <View style={{height: 100, marginHorizontal: 20, marginTop: 30}}>
         <Image
@@ -189,16 +216,35 @@ const ProfessionalDatas = () => {
           flexDirection: 'row',
           marginTop: 20,
           borderRadius: 10,
+          flexWrap:"wrap"
         }}>
-        <Text
-          style={{
-            fontSize: 20,
-            textAlign: 'center',
-            fontWeight: 'bold',
-            color: Colors.secondary,
-          }}>
-          {language?.SelectYourSpecies}
-        </Text>
+            {selectedSpeciesName?.length !== 0 ?
+              selectedSpeciesName?.slice(0, 2).map((item)=>{
+                return(
+                  <Text
+                  style={{
+                    fontSize: 20,
+                    fontWeight: 'bold',
+                    color: Colors.secondary,
+                  }}>
+                  {item},
+                  </Text>
+                );
+              })
+            : 
+            <Text
+                  style={{
+                    fontSize: 20,
+                    textAlign: 'center',
+                    fontWeight: 'bold',
+                    color: Colors.secondary,
+                  }}>
+                  {language?.SelectYourSpecies}
+                  </Text>
+            }
+
+          
+       
         <SimpleLineIcons
           name="arrow-down"
           color={'white'}
@@ -212,8 +258,8 @@ const ProfessionalDatas = () => {
             return (
               <CheckBoxWithLable
                 status={selectedSpecies.includes(item.id)}
-                lable={item.nombrees}
-                onPress={() => _selectSpecies(item.id)}
+                lable={item.name}
+                onPress={() => _selectSpecies(item)}
               />
             );
           })}
@@ -233,7 +279,21 @@ const ProfessionalDatas = () => {
           marginTop: 50,
           borderRadius: 10,
         }}>
-        <Text
+          {selectedSpeciesDetailName?.length !== 0 ?
+            selectedSpeciesDetailName?.slice(0, 2).map((item)=>{
+              return(
+                <Text
+                style={{
+                  fontSize: 20,
+                  fontWeight: 'bold',
+                  color: Colors.secondary,
+                }}>
+                {item},
+                </Text>
+              );
+            })
+          :
+          <Text
           style={{
             fontSize: 20,
             textAlign: 'center',
@@ -242,6 +302,8 @@ const ProfessionalDatas = () => {
           }}>
           {language?.SelectYourSpeciesDetails}
         </Text>
+          }
+        
         <SimpleLineIcons
           name="arrow-down"
           color={'white'}
@@ -255,8 +317,8 @@ const ProfessionalDatas = () => {
             return (
               <CheckBoxWithLable
                 status={selectedSpeciesDetail.includes(item.id)}
-                lable={item.nombrees}
-                onPress={() => _selectSpeciesDetails(item.id)}
+                lable={item.name}
+                onPress={() => _selectSpeciesDetails(item)}
               />
             );
           })}
@@ -265,10 +327,9 @@ const ProfessionalDatas = () => {
 
       <CommonButton
         green={true}
-        onPress={() => {
-          onSubmit(), navigation.navigate('SelectInterest');
-        }}
+        onPress={() =>onSubmit()}
         title={language?.Next}
+        loading={loading}
       />
       <CommonBack title={language?.GoBack} />
     </ScrollView>
